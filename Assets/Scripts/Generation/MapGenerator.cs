@@ -92,24 +92,25 @@ namespace Sketch.Generation
                 };
             }).ToArray();
             DrawRoom(_availableRooms[0], 0, 0);
-            for (int y = 0; y < _availableRooms[0].Height; y++)
+            foreach (var door in _availableRooms[0].Doors)
             {
-                for (int x = 0; x < _availableRooms[0].Width; x++)
-                {
-                    if (_availableRooms[0].Data[x, y] == TileType.DOOR)
-                    {
-                        GenerateRoom(x, y, 5);
-                    }
-                }
+                GenerateRoom(door.x, door.y, 1);
+                break; // DEBUG
             }
         }
 
         private void GenerateRoom(int x, int y, int count)
         {
+            if (count == 0)
+            {
+                return;
+            }
+            Debug.Log($"Looking at {x};{y}");
             foreach (var room in _availableRooms.OrderBy(x => UnityEngine.Random.value)) // For all rooms...
             {
                 foreach (var door in room.Doors) // For all doors...
                 {
+                    Debug.Log($"Door offset at {door.x};{door.y}");
                     bool isValid = true;
                     for (int dy = 0; dy < room.Height; dy++)
                     {
@@ -137,6 +138,7 @@ namespace Sketch.Generation
                         break;
                     }
                 }
+                break; // DEBUG
             }
         }
 
@@ -157,6 +159,14 @@ namespace Sketch.Generation
                         {
                             instance = Instantiate(_wallPrefab, _roomsParent);
                             instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                            instance.name = $"Wall ({p.x};{p.y})";
+                        }
+                        else if (room.Data[dx, dy] == TileType.DOOR) // DEBUG
+                        {
+                            instance = Instantiate(_wallPrefab, _roomsParent);
+                            instance.GetComponent<SpriteRenderer>().color = Color.red;
+                            instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                            instance.name = $"Floo ({p.x};{p.y})";
                         }
                         _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
                     }
