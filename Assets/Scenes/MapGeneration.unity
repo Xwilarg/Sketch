@@ -167,6 +167,7 @@ MonoBehaviour:
   _rooms:
   - {fileID: 4900000, guid: 1c4cb26ed6653db4eb2377992ab5cafa, type: 3}
   - {fileID: 4900000, guid: eb71f2460a57d84419595763fc548ac2, type: 3}
+  - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
   _wallPrefab: {fileID: 4738975240478743032, guid: 8e485d7db31bdd44b874f237420e80c3, type: 3}
   _tilePixelSize: 32
 --- !u!1 &519420028
