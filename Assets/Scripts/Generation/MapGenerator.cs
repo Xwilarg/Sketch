@@ -12,9 +12,6 @@ namespace Sketch.Generation
         private TextAsset[] _rooms;
 
         [SerializeField]
-        private TextAsset _startingRoom;
-
-        [SerializeField]
         private GameObject _wallPrefab;
 
         [SerializeField]
@@ -91,6 +88,7 @@ namespace Sketch.Generation
                     Data = data
                 };
             }).ToArray();
+            DrawRoom(_availableRooms[0], 0, 0);
             GenerateRoom(5);
         }
 
@@ -107,13 +105,13 @@ namespace Sketch.Generation
                 {
                     var xPos = x + dx;
                     var yPos = y + dy;
-                    var p = new Vector2Int(dx, dy);
+                    var p = new Vector2Int(xPos, yPos);
                     Assert.True(!_tiles.ContainsKey(p) || _tiles[p].Tile == room.Data[dy, dx]);
                     GameObject instance = null;
                     if (!_tiles.ContainsKey(p) && room.Data[dy, dx] == TileType.WALL) // We didn't already place the tile and it's a wall
                     {
                         instance = Instantiate(_wallPrefab, _roomsParent);
-                        instance.transform.position = (Vector2)p / _tilePixelSize / 100f;
+                        instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
                     }
                     _tiles.Add(p, new() { GameObject =  instance, Tile = room.Data[dy, dx] });
                 }
