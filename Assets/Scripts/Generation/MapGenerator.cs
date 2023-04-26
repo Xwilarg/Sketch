@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,10 +90,24 @@ namespace Sketch.Generation
                     Doors = _doors.ToArray()
                 };
             }).ToArray();
-            DrawRoom(_availableRooms[0], 0, 0);
-            foreach (var door in _availableRooms[0].Doors)
+            var startingRoom = _availableRooms.Last();
+            DrawRoom(startingRoom, 0, 0);
+            foreach (var door in startingRoom.Doors)
             {
                 GenerateRoom(door.x, door.y, 5);
+            }
+            var directions = new[]
+            {
+                Vector2Int.up, Vector2Int.down,
+                Vector2Int.left, Vector2Int.right
+            };
+            foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
+            {
+                if (directions.Count(x => !_tiles.ContainsKey(door.Key + x) || _tiles[door.Key + x].Tile != TileType.FLOOR) >= 3)
+                {
+                    // DEBUG
+                    door.Value.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                }
             }
         }
 
