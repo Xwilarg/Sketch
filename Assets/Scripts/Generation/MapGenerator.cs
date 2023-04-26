@@ -136,7 +136,10 @@ namespace Sketch.Generation
                     if (isValid && !isSuperposition)
                     {
                         DrawRoom(room, x - door.x, y - door.y);
-                        GenerateRoom(x - door.x, y - door.y, count - 1);
+                        foreach (var d in room.Doors)
+                        {
+                            GenerateRoom(x - door.x + d.x, y - door.y + d.y, count - 1);
+                        }
                         break;
                     }
                 }
