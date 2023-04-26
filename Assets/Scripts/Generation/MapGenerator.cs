@@ -94,8 +94,7 @@ namespace Sketch.Generation
             DrawRoom(_availableRooms[0], 0, 0);
             foreach (var door in _availableRooms[0].Doors)
             {
-                GenerateRoom(door.x, door.y, 1);
-                break; // DEBUG
+                GenerateRoom(door.x, door.y, 5);
             }
         }
 
@@ -105,25 +104,28 @@ namespace Sketch.Generation
             {
                 return;
             }
-            Debug.Log($"Looking at {x};{y}");
             foreach (var room in _availableRooms.OrderBy(x => UnityEngine.Random.value)) // For all rooms...
             {
                 foreach (var door in room.Doors) // For all doors...
                 {
-                    Debug.Log($"Door offset at {door.x};{door.y}");
                     bool isValid = true;
+                    bool isSuperposition = true;
                     for (int dy = 0; dy < room.Height; dy++)
                     {
                         for (int dx = 0; dx < room.Width; dx++)
                         {
-                            var globalPos = new Vector2Int(x + dx + door.x, y + dy + door.y);
+                            var globalPos = new Vector2Int(x - door.x + dx, y - door.y + dy);
                             var me = room.Data[dx, dy] == TileType.WALL;
                             var other = _tiles.ContainsKey(globalPos) && _tiles[globalPos].Tile == TileType.WALL;
-                            if (other && me) // We can't place the tile if we are a wall but there is already a wall there
+                            if (other && !me) // We can't place the tile if we are a wall but there is already a wall there
                             {
                                 // So let's check the next room
                                 isValid = false;
                                 break;
+                            }
+                            if (other != me) // Make sure the 2 rooms aren't just on top of each other
+                            {
+                                isSuperposition = false;
                             }
                         }
                         if (!isValid)
@@ -131,14 +133,13 @@ namespace Sketch.Generation
                             break;
                         }
                     }
-                    if (isValid)
+                    if (isValid && !isSuperposition)
                     {
-                        DrawRoom(room, x + door.x, y + door.y);
-                        GenerateRoom(x + door.x, y + door.y, count - 1);
+                        DrawRoom(room, x - door.x, y - door.y);
+                        GenerateRoom(x - door.x, y - door.y, count - 1);
                         break;
                     }
                 }
-                break; // DEBUG
             }
         }
 
