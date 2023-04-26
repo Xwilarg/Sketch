@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Sketch.Generation
 {
     public record RoomData
@@ -6,5 +8,7 @@ namespace Sketch.Generation
         public int Height;
 
         public TileType[,] Data;
+
+        public Vector2Int[] Doors;
     }
 }

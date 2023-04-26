@@ -58,6 +58,7 @@ namespace Sketch.Generation
                     return y < 0 || y >= txt.Length || x < 0 || x >= txt[y].Length ? TileType.NONE : data[x, y];
                 }
 
+                List<Vector2Int> _doors = new();
                 // Go over the tiles again to see if we see a door
                 for (int y = 0; y < height; y++)
                 {
@@ -78,6 +79,7 @@ namespace Sketch.Generation
                             left == TileType.WALL && right == TileType.WALL && ((up == TileType.NONE && down == TileType.FLOOR) || (up == TileType.FLOOR && down == TileType.NONE))))
                         {
                             data[x, y] = TileType.DOOR;
+                            _doors.Add(new(x, y));
                         }
                     }
                 }
@@ -85,16 +87,57 @@ namespace Sketch.Generation
                 {
                     Width = width,
                     Height = height,
-                    Data = data
+                    Data = data,
+                    Doors = _doors.ToArray()
                 };
             }).ToArray();
             DrawRoom(_availableRooms[0], 0, 0);
-            GenerateRoom(5);
+            for (int y = 0; y < _availableRooms[0].Height; y++)
+            {
+                for (int x = 0; x < _availableRooms[0].Width; x++)
+                {
+                    if (_availableRooms[0].Data[x, y] == TileType.DOOR)
+                    {
+                        GenerateRoom(x, y, 5);
+                    }
+                }
+            }
         }
 
-        private void GenerateRoom(int count)
+        private void GenerateRoom(int x, int y, int count)
         {
-
+            foreach (var room in _availableRooms.OrderBy(x => UnityEngine.Random.value)) // For all rooms...
+            {
+                foreach (var door in room.Doors) // For all doors...
+                {
+                    bool isValid = true;
+                    for (int dy = 0; dy < room.Height; dy++)
+                    {
+                        for (int dx = 0; dx < room.Width; dx++)
+                        {
+                            var globalPos = new Vector2Int(x + dx + door.x, y + dy + door.y);
+                            var me = room.Data[dx, dy] == TileType.WALL;
+                            var other = _tiles.ContainsKey(globalPos) && _tiles[globalPos].Tile == TileType.WALL;
+                            if (other && me) // We can't place the tile if we are a wall but there is already a wall there
+                            {
+                                // So let's check the next room
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        if (!isValid)
+                        {
+                            break;
+                        }
+                    }
+                    if (isValid)
+                    {
+                        DrawRoom(room, x + door.x, y + door.y);
+                        GenerateRoom(x + door.x, y + door.y, count - 1);
+                        break;
+                    }
+                }
+            }
         }
 
         private void DrawRoom(RoomData room, int x, int y)
@@ -106,14 +149,17 @@ namespace Sketch.Generation
                     var xPos = x + dx;
                     var yPos = y + dy;
                     var p = new Vector2Int(xPos, yPos);
-                    Assert.True(!_tiles.ContainsKey(p) || _tiles[p].Tile == room.Data[dy, dx]);
+                    //Assert.True(!_tiles.ContainsKey(p) || _tiles[p].Tile == room.Data[dy, dx]);
                     GameObject instance = null;
-                    if (!_tiles.ContainsKey(p) && room.Data[dy, dx] == TileType.WALL) // We didn't already place the tile and it's a wall
+                    if (!_tiles.ContainsKey(p)) // We didn't already place the tile and it's a wall
                     {
-                        instance = Instantiate(_wallPrefab, _roomsParent);
-                        instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                        if (room.Data[dx, dy] == TileType.WALL)
+                        {
+                            instance = Instantiate(_wallPrefab, _roomsParent);
+                            instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                        }
+                        _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
                     }
-                    _tiles.Add(p, new() { GameObject =  instance, Tile = room.Data[dy, dx] });
                 }
             }
         }
