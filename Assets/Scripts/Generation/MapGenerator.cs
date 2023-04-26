@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Sketch.Generation
 {
@@ -103,6 +104,7 @@ namespace Sketch.Generation
             };
             foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
             {
+                // If a door have more than 3 non-floor adjacent, it either lead outside or to something we can't walk on
                 if (directions.Count(x => !_tiles.ContainsKey(door.Key + x) || _tiles[door.Key + x].Tile != TileType.FLOOR) >= 3)
                 {
                     // DEBUG
@@ -165,10 +167,13 @@ namespace Sketch.Generation
             {
                 for (var dx = 0; dx < room.Width; dx++)
                 {
+                    if (room.Data[dx, dy] == TileType.NONE)
+                    {
+                        continue; // Tile outside of the room, we ignore it
+                    }
                     var xPos = x + dx;
                     var yPos = y + dy;
                     var p = new Vector2Int(xPos, yPos);
-                    //Assert.True(!_tiles.ContainsKey(p) || _tiles[p].Tile == room.Data[dy, dx]);
                     GameObject instance = null;
                     if (!_tiles.ContainsKey(p)) // We didn't already place the tile and it's a wall
                     {
