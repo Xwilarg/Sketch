@@ -23,12 +23,13 @@ namespace Sketch.Generation
 
         private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
 
-        private const int _generationSize = 40;
+        private Camera _cam;
 
-        private readonly List<(Vector2Int, int)> _nextDoors = new();
+        private readonly List<Vector2Int> _nextDoors = new();
 
         private void Awake()
         {
+            _cam = Camera.main;
             _roomsParent = new GameObject("Rooms").transform;
             _availableRooms = _rooms.Select(r => // Convert all room text assets to RoomData
             {
@@ -97,37 +98,55 @@ namespace Sketch.Generation
             }).ToArray();
             var startingRoom = _availableRooms.Last();
             DrawRoom(startingRoom, 0, 0);
-            _nextDoors.AddRange(startingRoom.Doors.Select(x => (x, _generationSize)));
+            _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
         }
 
         private IEnumerator Generate()
         {
-            var i = 0;
-            while (i < _nextDoors.Count)
-            {
-                var target = _nextDoors[i];
-                yield return GenerateRoom(target.Item1.x, target.Item1.y, target.Item2);
-                i++;
-            }
             var directions = new[]
             {
                 Vector2Int.up, Vector2Int.down,
                 Vector2Int.left, Vector2Int.right
             };
-            foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
+            while (_nextDoors.Any())
             {
-                // If a door have more than 3 non-floor adjacent, it either lead outside or to something we can't walk on
-                if (directions.Count(x => !_tiles.ContainsKey(door.Key + x) || _tiles[door.Key + x].Tile != TileType.FLOOR) >= 3)
+                var target = _nextDoors[0];
+                yield return GenerateRoom(target.x, target.y);
+                _nextDoors.RemoveAt(0);
+                foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
                 {
-                    // DEBUG
-                    door.Value.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    // Remove doors that lead to a wall or another door
+                    if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile != TileType.FLOOR && _tiles[door.Key + x].Tile != TileType.NONE) >= 3)
+                    {
+                        // DEBUG
+                        door.Value.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    }
                 }
             }
         }
 
-        private IEnumerator GenerateRoom(int x, int y, int count)
+        // http://answers.unity.com/answers/502236/view.html
+        private Bounds CalculateBounds()
         {
+            float screenAspect = Screen.width / (float)Screen.height;
+            float cameraHeight = _cam.orthographicSize * 2;
+            Bounds bounds = new(
+                _cam.transform.position,
+                new Vector3(cameraHeight * screenAspect, cameraHeight, 0));
+            return bounds;
+        }
+
+        private IEnumerator GenerateRoom(int x, int y)
+        {
+            var realPos = new Vector2(x, y) * _tilePixelSize / 100f;
+            var bounds = CalculateBounds();
+            if (realPos.x < bounds.min.x || realPos.x > bounds.max.x || realPos.y < bounds.min.y || realPos.y > bounds.max.y)
+            {
+                // We are outside of the bounds so no need to continue further in this direction
+                yield break;
+            }
+
             foreach (var room in _availableRooms.OrderBy(x => UnityEngine.Random.value)) // For all rooms...
             {
                 foreach (var door in room.Doors) // For all doors...
@@ -161,7 +180,7 @@ namespace Sketch.Generation
                     {
                         yield return new WaitForEndOfFrame();
                         DrawRoom(room, x - door.x, y - door.y);
-                        _nextDoors.AddRange(room.Doors.Select(d => (new Vector2Int(x - door.x + d.x, y - door.y + d.y), count - 1)).Where(d => d.Item2 > 0));
+                        _nextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
                         break;
                     }
                 }
