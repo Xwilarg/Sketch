@@ -151,6 +151,7 @@ namespace Sketch.Generation
             return ret;
         }
 
+        private int _currentlyCheckedRoom;
         private IEnumerator Generate()
         {
             var directions = new[]
@@ -158,28 +159,35 @@ namespace Sketch.Generation
                 Vector2Int.up, Vector2Int.down,
                 Vector2Int.left, Vector2Int.right
             };
-            while (_nextDoors.Any())
+            while (true) // Even if we are out of room, we keep that loop alive
             {
-                var target = _nextDoors[0];
-                yield return GenerateRoom(target.x, target.y);
-                _nextDoors.RemoveAt(0);
-                foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
+                while (_currentlyCheckedRoom < _nextDoors.Count)
                 {
-                    // Remove doors that lead to a wall or another door
-                    if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile != TileType.FLOOR && _tiles[door.Key + x].Tile != TileType.NONE) >= 3)
+                    // Attempt to place a room
+                    var target = _nextDoors[_currentlyCheckedRoom];
+                    yield return GenerateRoom(target.x, target.y);
+
+                    // Fill doors
+                    foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
                     {
-                        // DEBUG
-                        door.Value.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
-                        door.Value.Tile = TileType.WALL;
-                    }
-                    // Same for inside doors
-                    else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
-                    {
-                        Destroy(door.Value.GameObject);
-                        door.Value.GameObject = null;
-                        door.Value.Tile = TileType.FLOOR;
+                        // Remove doors that lead to a wall or another door
+                        if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile != TileType.FLOOR && _tiles[door.Key + x].Tile != TileType.NONE) >= 3)
+                        {
+                            // DEBUG
+                            door.Value.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                            door.Value.Tile = TileType.WALL;
+                        }
+                        // Same for inside doors
+                        else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
+                        {
+                            Destroy(door.Value.GameObject);
+                            door.Value.GameObject = null;
+                            door.Value.Tile = TileType.FLOOR;
+                        }
                     }
                 }
+                _currentlyCheckedRoom = 0;
+                yield return new WaitForEndOfFrame();
             }
         }
 
@@ -201,6 +209,7 @@ namespace Sketch.Generation
             if (realPos.x < bounds.min.x || realPos.x > bounds.max.x || realPos.y < bounds.min.y || realPos.y > bounds.max.y)
             {
                 // We are outside of the bounds so no need to continue further in this direction
+                _currentlyCheckedRoom++;
                 yield break;
             }
 
@@ -235,13 +244,21 @@ namespace Sketch.Generation
                     }
                     if (isValid && !isSuperposition)
                     {
+                        // Place the room
                         yield return new WaitForEndOfFrame();
                         DrawRoom(room, x - door.x, y - door.y);
                         _nextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
-                        break;
+                        _nextDoors.RemoveAt(_currentlyCheckedRoom);
+                        yield break;
                     }
                 }
             }
+            // We can't do anything with that door
+            var target = _tiles[new(x, y)];
+            target.Tile = TileType.FLOOR;
+            Destroy(target.GameObject);
+            target.GameObject = null;
+            _nextDoors.RemoveAt(_currentlyCheckedRoom);
         }
 
         private void DrawRoom(RoomData room, int x, int y)
