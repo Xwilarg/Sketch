@@ -158,9 +158,9 @@ namespace Sketch.Generation
                         for (int dx = 0; dx < room.Width; dx++)
                         {
                             var globalPos = new Vector2Int(x - door.x + dx, y - door.y + dy);
-                            var me = room.Data[dx, dy] == TileType.WALL;
-                            var other = _tiles.ContainsKey(globalPos) && _tiles[globalPos].Tile == TileType.WALL;
-                            if (other && !me) // We can't place the tile if we are a wall but there is already a wall there
+                            var me = room.Data[dx, dy];
+                            var other = !_tiles.ContainsKey(globalPos) ? TileType.NONE : _tiles[globalPos].Tile;
+                            if (other != TileType.NONE && other != me) // We can't place the tile if we are a wall but there is already a wall there
                             {
                                 // So let's check the next room
                                 isValid = false;
