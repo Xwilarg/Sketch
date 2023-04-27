@@ -167,6 +167,14 @@ namespace Sketch.Generation
                     {
                         // DEBUG
                         door.Value.GameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                        door.Value.Tile = TileType.WALL;
+                    }
+                    // Same for inside doors
+                    else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
+                    {
+                        Destroy(door.Value.GameObject);
+                        door.Value.GameObject = null;
+                        door.Value.Tile = TileType.FLOOR;
                     }
                 }
             }
