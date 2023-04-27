@@ -204,9 +204,10 @@ namespace Sketch.Generation
 
         private IEnumerator GenerateRoom(int x, int y)
         {
-            var realPos = new Vector2(x, y) * _tilePixelSize / 100f;
+            var pxlSize = _tilePixelSize / 100f;
+            var realPos = new Vector2(x, y) * pxlSize;
             var bounds = CalculateBounds();
-            if (realPos.x < bounds.min.x || realPos.x > bounds.max.x || realPos.y < bounds.min.y || realPos.y > bounds.max.y)
+            if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
             {
                 // We are outside of the bounds so no need to continue further in this direction
                 _currentlyCheckedRoom++;
