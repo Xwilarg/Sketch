@@ -31,7 +31,7 @@ namespace Sketch.Generation
         {
             _cam = Camera.main;
             _roomsParent = new GameObject("Rooms").transform;
-            _availableRooms = _rooms.Select(r => // Convert all room text assets to RoomData
+            _availableRooms = _rooms.SelectMany(r => // Convert all room text assets to RoomData
             {
                 var txt = r.text.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
                 var height = txt.Length;
@@ -88,18 +88,64 @@ namespace Sketch.Generation
                         }
                     }
                 }
-                return new RoomData
+                List<RoomData> rooms = new()
                 {
-                    Width = width,
-                    Height = height,
-                    Data = data,
-                    Doors = _doors.ToArray()
+                    new()
+                    {
+                        Width = width,
+                        Height = height,
+                        Data = data,
+                        Doors = _doors.ToArray()
+                    }
                 };
+                // Also add the rooms for each possible rotation
+                for (int i = 0; i < 3; i++)
+                {
+                    (height, width) = (width, height);
+                    var last = rooms.Last();
+                    var rot = Rotate(last.Data, last.Width, last.Height);
+                    _doors = new();
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            if (rot[x, y] == TileType.DOOR)
+                            {
+                                _doors.Add(new(x, y));
+                            }
+                        }
+                    }
+                    var first = new RoomData
+                    {
+                        Width = width,
+                        Height = height,
+                        Data = rot,
+                        Doors = _doors.ToArray()
+                    };
+                    rooms.Add(first);
+                }
+                return rooms;
             }).ToArray();
-            var startingRoom = _availableRooms.Last();
+            var startingRoom = _availableRooms[0];
             DrawRoom(startingRoom, 0, 0);
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
+        }
+
+        // https://stackoverflow.com/a/42535
+        private TileType[,] Rotate(TileType[,] array, int width, int height)
+        {
+            var ret = new TileType[height, width];
+
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
+                    ret[y, x] = array[width - x - 1, y];
+                }
+            }
+
+            return ret;
         }
 
         private IEnumerator Generate()
