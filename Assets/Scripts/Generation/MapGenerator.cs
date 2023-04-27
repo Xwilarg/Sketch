@@ -1,8 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Sketch.Generation
 {
@@ -22,6 +22,10 @@ namespace Sketch.Generation
         private RoomData[] _availableRooms;
 
         private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
+
+        private const int _generationSize = 40;
+
+        private readonly List<(Vector2Int, int)> _nextDoors = new();
 
         private void Awake()
         {
@@ -93,9 +97,18 @@ namespace Sketch.Generation
             }).ToArray();
             var startingRoom = _availableRooms.Last();
             DrawRoom(startingRoom, 0, 0);
-            foreach (var door in startingRoom.Doors)
+            _nextDoors.AddRange(startingRoom.Doors.Select(x => (x, _generationSize)));
+            StartCoroutine(Generate());
+        }
+
+        private IEnumerator Generate()
+        {
+            var i = 0;
+            while (i < _nextDoors.Count)
             {
-                GenerateRoom(door.x, door.y, 5);
+                var target = _nextDoors[i];
+                yield return GenerateRoom(target.Item1.x, target.Item1.y, target.Item2);
+                i++;
             }
             var directions = new[]
             {
@@ -113,12 +126,8 @@ namespace Sketch.Generation
             }
         }
 
-        private void GenerateRoom(int x, int y, int count)
+        private IEnumerator GenerateRoom(int x, int y, int count)
         {
-            if (count == 0)
-            {
-                return;
-            }
             foreach (var room in _availableRooms.OrderBy(x => UnityEngine.Random.value)) // For all rooms...
             {
                 foreach (var door in room.Doors) // For all doors...
@@ -150,11 +159,9 @@ namespace Sketch.Generation
                     }
                     if (isValid && !isSuperposition)
                     {
+                        yield return new WaitForEndOfFrame();
                         DrawRoom(room, x - door.x, y - door.y);
-                        foreach (var d in room.Doors)
-                        {
-                            GenerateRoom(x - door.x + d.x, y - door.y + d.y, count - 1);
-                        }
+                        _nextDoors.AddRange(room.Doors.Select(d => (new Vector2Int(x - door.x + d.x, y - door.y + d.y), count - 1)).Where(d => d.Item2 > 0));
                         break;
                     }
                 }
