@@ -9,12 +9,15 @@ namespace Sketch.Generation
     public class MapGenerator : MonoBehaviour
     {
         [SerializeField]
+        [Tooltip("Available rooms we can spawn")]
         private TextAsset[] _rooms;
 
         [SerializeField]
+        [Tooltip("Prefab to use as a wall")]
         private GameObject _wallPrefab;
 
         [SerializeField]
+        [Tooltip("Size in pixel of _wallPrefab")]
         private int _tilePixelSize;
 
         private Transform _roomsParent;
