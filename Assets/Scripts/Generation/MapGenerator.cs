@@ -1,3 +1,4 @@
+using Sketch.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -191,22 +192,11 @@ namespace Sketch.Generation
             }
         }
 
-        // http://answers.unity.com/answers/502236/view.html
-        private Bounds CalculateBounds()
-        {
-            float screenAspect = Screen.width / (float)Screen.height;
-            float cameraHeight = _cam.orthographicSize * 2;
-            Bounds bounds = new(
-                _cam.transform.position,
-                new Vector3(cameraHeight * screenAspect, cameraHeight, 0));
-            return bounds;
-        }
-
         private IEnumerator GenerateRoom(int x, int y)
         {
             var pxlSize = _tilePixelSize / 100f;
             var realPos = new Vector2(x, y) * pxlSize;
-            var bounds = CalculateBounds();
+            var bounds = _cam.CalculateBounds();
             if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
             {
                 // We are outside of the bounds so no need to continue further in this direction

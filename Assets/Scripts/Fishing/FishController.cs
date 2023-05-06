@@ -69,6 +69,11 @@ namespace Sketch.Fishing
                     }
                 }
             }
+
+            if (Mathf.Max(Mathf.Abs(transform.position.x), Mathf.Abs(transform.position.y)) > 10f)
+            {
+                Destroy(gameObject); // TODO: Handle that properly
+            }
         }
     }
 }
