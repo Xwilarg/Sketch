@@ -17,6 +17,7 @@ namespace Sketch.Fishing
                 if (value == null)
                 {
                     _sr.color = Color.white;
+                    _hp = Random.Range(2, 5);
                 }
             }
             get => _hooked;
