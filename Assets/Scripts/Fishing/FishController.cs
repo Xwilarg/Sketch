@@ -11,8 +11,14 @@ namespace Sketch.Fishing
 
         private HookController _target;
 
-        private float _attackTimer;
+        private float _attackTimer; // Time between 2 attacks
         private float AttackTimerRef => Random.Range(1f, 2f);
+
+        private float _attackDurationRef;
+        private float _attackDurationTimer = -1f;
+
+        private float _moveBackTimer = -1f;
+        private const float _moveBackTimerRef = .2f;
 
         private void Awake()
         {
@@ -52,10 +58,28 @@ namespace Sketch.Fishing
                     _target = null;
                     _rb.velocity = transform.right * .6f;
                 }
-                else if (_attackTimer > 0f)
+                else if (_moveBackTimer > 0f) // Going back from bait to initial position
+                {
+                    _moveBackTimer -= Time.deltaTime;
+                    if (_moveBackTimer <= 0f)
+                    {
+                        _attackTimer = AttackTimerRef;
+                    }
+                    transform.position = Vector2.Lerp(_aimPosition, _target.transform.position, Mathf.Clamp01(_moveBackTimer / _moveBackTimerRef));
+                }
+                else if (_attackTimer > 0f) // Waiting to attack
                 {
                     _attackTimer -= Time.deltaTime;
                     if (_attackTimer <= 0f)
+                    {
+                        _attackDurationRef = Random.Range(.25f, .5f);
+                        _attackDurationTimer = _attackDurationRef;
+                    }
+                }
+                else if (_attackDurationTimer > 0f) // Going to bait
+                {
+                    _attackDurationTimer -= Time.deltaTime;
+                    if (_attackDurationTimer <= 0f)
                     {
                         if (_target.TakeDamage())
                         {
@@ -64,9 +88,10 @@ namespace Sketch.Fishing
                         }
                         else
                         {
-                            _attackTimer = AttackTimerRef;
+                            _moveBackTimer = _moveBackTimerRef;
                         }
                     }
+                    transform.position = Vector2.Lerp(_target.transform.position, _aimPosition, Mathf.Clamp01(_attackDurationTimer / _attackDurationRef));
                 }
             }
 
