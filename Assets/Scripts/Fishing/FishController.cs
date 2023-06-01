@@ -7,7 +7,8 @@ namespace Sketch.Fishing
     {
         private Rigidbody2D _rb;
 
-        private Vector2 _aimPosition;
+        private Vector2 _aimPosition; // Where the fish is at when looking at the bait
+        private Vector2 _targetPosition; // Target position including an offset
 
         private HookController _target;
 
@@ -37,6 +38,10 @@ namespace Sketch.Fishing
                 _aimPosition = transform.position;
 
                 _target = collision.GetComponent<HookController>();
+
+                var targetDir = (_aimPosition - (Vector2)_target.transform.position).normalized;
+                _targetPosition += targetDir / 8f;
+
                 _attackTimer = AttackTimerRef;
             }
         }
@@ -65,7 +70,7 @@ namespace Sketch.Fishing
                     {
                         _attackTimer = AttackTimerRef;
                     }
-                    transform.position = Vector2.Lerp(_aimPosition, _target.transform.position, Mathf.Clamp01(_moveBackTimer / _moveBackTimerRef));
+                    transform.position = Vector2.Lerp(_aimPosition, _targetPosition, Mathf.Clamp01(_moveBackTimer / _moveBackTimerRef));
                 }
                 else if (_attackTimer > 0f) // Waiting to attack
                 {
@@ -91,7 +96,7 @@ namespace Sketch.Fishing
                             _moveBackTimer = _moveBackTimerRef;
                         }
                     }
-                    transform.position = Vector2.Lerp(_target.transform.position, _aimPosition, Mathf.Clamp01(_attackDurationTimer / _attackDurationRef));
+                    transform.position = Vector2.Lerp(_targetPosition, _aimPosition, Mathf.Clamp01(_attackDurationTimer / _attackDurationRef));
                 }
             }
 
