@@ -19,6 +19,7 @@ namespace Sketch.Fishing
         private float _target;
 
         private float _timer;
+        private float _maxTimer;
 
         private void OnEnable()
         {
@@ -26,6 +27,7 @@ namespace Sketch.Fishing
             _max = -_height + _fish.rect.height;
             _target = Random.Range(0f, _max);
             _timer = 0f;
+            _maxTimer = 3f;
         }
 
         private void Update()
@@ -41,11 +43,12 @@ namespace Sketch.Fishing
             _cursor.position = new(_cursor.position.x, Mouse.current.position.ReadValue().y + _cursor.rect.height / 2f);
 
             _timer += (_fish.anchoredPosition.y > _cursor.anchoredPosition.y || _fish.anchoredPosition.y + _cursor.rect.height - _fish.rect.height < _cursor.anchoredPosition.y ? -1f : 1f) * Time.deltaTime;
-            if (_timer >= 3f)
+            _maxTimer -= Time.deltaTime * .5f;
+            if (_timer >= _maxTimer)
             {
                 OnDone(true);
             }
-            else if (_timer <= -3f)
+            else if (_timer <= -_maxTimer)
             {
                 OnDone(false);
             }
