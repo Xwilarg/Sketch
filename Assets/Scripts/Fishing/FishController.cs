@@ -82,21 +82,21 @@ namespace Sketch.Fishing
                         if (_target.TakeDamage())
                         {
                             _target.Hooked = this;
-                            Minigame.OnDone = ((bool status) =>
+                            Minigame.OnDone = (bool status) =>
                             {
                                 Minigame.gameObject.SetActive(false);
+                                _target.Hooked = null;
                                 if (status)
                                 {
                                     Destroy(gameObject);
                                 }
                                 else
                                 {
-                                    _target.Hooked = null;
                                     _target = null;
                                     _rb.velocity = transform.right * .6f;
                                 }
 
-                            });
+                            };
                             Minigame.gameObject.SetActive(true);
                         }
                         else
