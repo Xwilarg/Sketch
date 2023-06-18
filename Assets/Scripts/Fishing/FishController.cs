@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Sketch.Fishing
 {
     public class FishController : MonoBehaviour
     {
+        public CatchMinigame Minigame { private get; set; }
+
         private Rigidbody2D _rb;
 
         private Vector2 _aimPosition; // Where the fish is at when looking at the bait
@@ -46,14 +47,6 @@ namespace Sketch.Fishing
             }
         }
 
-        private IEnumerator BitAndWait()
-        {
-            yield return new WaitForSeconds(2f);
-            _target.Hooked = null;
-            _target = null;
-            _rb.velocity = transform.right * .6f;
-        }
-
         private void Update()
         {
             if (_target != null)
@@ -89,7 +82,22 @@ namespace Sketch.Fishing
                         if (_target.TakeDamage())
                         {
                             _target.Hooked = this;
-                            StartCoroutine(BitAndWait());
+                            Minigame.OnDone = ((bool status) =>
+                            {
+                                Minigame.gameObject.SetActive(false);
+                                if (status)
+                                {
+                                    Destroy(gameObject);
+                                }
+                                else
+                                {
+                                    _target.Hooked = null;
+                                    _target = null;
+                                    _rb.velocity = transform.right * .6f;
+                                }
+
+                            });
+                            Minigame.gameObject.SetActive(true);
                         }
                         else
                         {

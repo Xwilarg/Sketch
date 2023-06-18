@@ -9,6 +9,9 @@ namespace Sketch.Fishing
         [SerializeField]
         private GameObject _fishPrefab;
 
+        [SerializeField]
+        private CatchMinigame _minigame;
+
         private Camera _cam;
 
         private void Awake()
@@ -24,7 +27,8 @@ namespace Sketch.Fishing
             var maxDist = Mathf.Max(bounds.max.x, bounds.max.y);
             var dist = Random.insideUnitCircle.normalized * maxDist;
             var angle = Mathf.Atan2(dist.y, dist.x) * Mathf.Rad2Deg + 180f + Random.Range(-45f, 45f);
-            Instantiate(_fishPrefab, dist, Quaternion.AngleAxis(angle, Vector3.forward));
+            var go = Instantiate(_fishPrefab, dist, Quaternion.AngleAxis(angle, Vector3.forward));
+            go.GetComponent<FishController>().Minigame = _minigame;
             yield return Spawn();
         }
     }
