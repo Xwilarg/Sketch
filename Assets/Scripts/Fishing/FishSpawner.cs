@@ -6,16 +6,22 @@ namespace Sketch.Fishing
 {
     public class FishSpawner : MonoBehaviour
     {
+        public static FishSpawner Instance { get; private set; }
+
         [SerializeField]
         private GameObject _fishPrefab;
 
         [SerializeField]
         private CatchMinigame _minigame;
 
+        [SerializeField]
+        private GameObject _congratsText;
+
         private Camera _cam;
 
         private void Awake()
         {
+            Instance = this;
             _cam = Camera.main;
             StartCoroutine(Spawn());
         }
@@ -30,6 +36,14 @@ namespace Sketch.Fishing
             var go = Instantiate(_fishPrefab, dist, Quaternion.AngleAxis(angle, Vector3.forward));
             go.GetComponent<FishController>().Minigame = _minigame;
             yield return Spawn();
+        }
+
+        public IEnumerator Congrats()
+        {
+            _congratsText.SetActive(true);
+            yield return new WaitForSeconds(2f);
+            _congratsText.SetActive(false);
+
         }
     }
 }

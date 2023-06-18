@@ -88,6 +88,7 @@ namespace Sketch.Fishing
                                 _target.Hooked = null;
                                 if (status)
                                 {
+                                    FishSpawner.Instance.StartCoroutine(FishSpawner.Instance.Congrats());
                                     Destroy(gameObject);
                                 }
                                 else
