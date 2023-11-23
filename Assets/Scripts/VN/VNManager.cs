@@ -39,6 +39,12 @@ namespace Sketch.VN
         [SerializeField]
         private Image _characterImage;
 
+        [SerializeField]
+        private Transform _choiceContainer;
+
+        [SerializeField]
+        private GameObject _choicePrefab;
+
         private bool _isSkipEnabled;
         private float _skipTimer;
         private float _skipTimerRef = .1f;
@@ -47,6 +53,27 @@ namespace Sketch.VN
         {
             Instance = this;
             ShowStory(_intro, null);
+
+            _display.OnDisplayDone += (_sender, _e) =>
+            {
+                if (_story.currentChoices.Any())
+                {
+                    foreach (var choice in _story.currentChoices)
+                    {
+                        var button = Instantiate(_choicePrefab, _choiceContainer);
+                        button.GetComponentInChildren<TMP_Text>().text = choice.text;
+
+                        var elem = choice;
+                        button.GetComponent<Button>().onClick.AddListener(() =>
+                        {
+                            _story.ChoosePath(elem.targetPath);
+                            for (int i = 0; i < _choiceContainer.childCount; i++)
+                                Destroy(_choiceContainer.GetChild(i).gameObject);
+                            DisplayStory(_story.Continue());
+                        });
+                    }
+                }
+            };
         }
 
         public bool IsPlayingStory => _container.activeInHierarchy;
