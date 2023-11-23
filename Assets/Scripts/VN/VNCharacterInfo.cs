@@ -7,5 +7,6 @@ namespace Sketch.VN
     {
         public string Name;
         public string DisplayName;
+        public Sprite Image;
     }
 }

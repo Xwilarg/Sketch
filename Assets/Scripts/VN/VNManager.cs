@@ -1,9 +1,12 @@
 ﻿using Ink.Runtime;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Sketch.VN
 {
@@ -33,11 +36,12 @@ namespace Sketch.VN
         [SerializeField]
         private TMP_Text _nameText;
 
+        [SerializeField]
+        private Image _characterImage;
+
         private bool _isSkipEnabled;
         private float _skipTimer;
         private float _skipTimerRef = .1f;
-
-        private Action _onDone;
 
         private void Awake()
         {
@@ -65,7 +69,6 @@ namespace Sketch.VN
             Debug.Log($"[STORY] Playing {asset.name}");
             _display.SetStyle(FontStyles.Normal);
             _currentCharacter = null;
-            _onDone = onDone;
             _story = new(asset.text);
             _isSkipEnabled = false;
             DisplayStory(_story.Continue());
@@ -107,15 +110,18 @@ namespace Sketch.VN
                         break;
                 }
             }
-            _display.ToDisplay = text;
+            _display.ToDisplay = Regex.Replace(text, "\\*([^\\*]+)\\*", "<i>$1</i>"); ;
             if (_currentCharacter == null)
             {
                 _namePanel.SetActive(false);
+                _characterImage.gameObject.SetActive(false);
             }
             else
             {
                 _namePanel.SetActive(true);
                 _nameText.text = _currentCharacter.DisplayName;
+                _characterImage.gameObject.SetActive(true);
+                _characterImage.sprite = _currentCharacter.Image;
             }
         }
 
@@ -138,7 +144,7 @@ namespace Sketch.VN
             else if (!_story.canContinue && !_story.currentChoices.Any())
             {
                 _container.SetActive(false);
-                _onDone?.Invoke();
+                SceneManager.LoadScene("Main");
             }
         }
 
