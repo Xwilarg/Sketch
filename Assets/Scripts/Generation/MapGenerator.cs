@@ -21,6 +21,9 @@ namespace Sketch.Generation
         [Tooltip("Size in pixel of _wallPrefab")]
         private int _tilePixelSize;
 
+        [SerializeField]
+        private Material _blackMat, _stencilMat;
+
         private Transform _roomsParent;
 
         private RoomData[] _availableRooms;
@@ -30,6 +33,8 @@ namespace Sketch.Generation
         private Camera _cam;
 
         private readonly List<Vector2Int> _nextDoors = new();
+
+        private bool _isFovActive;
 
         private void Awake()
         {
@@ -134,6 +139,31 @@ namespace Sketch.Generation
             DrawRoom(startingRoom, 0, 0);
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
+
+            Camera.onPostRender += OnPostRenderCallback;
+        }
+
+        private void OnPostRenderCallback(Camera c)
+        {
+            GL.PushMatrix();
+            GL.LoadOrtho();
+
+            _blackMat.SetPass(0);
+            GL.Begin(GL.QUADS);
+            GL.Vertex(Vector2.zero);
+            GL.Vertex(Vector2.right);
+            GL.Vertex(Vector2.one);
+            GL.Vertex(Vector2.up);
+            GL.End();
+
+            _stencilMat.SetPass(0);
+            GL.Begin(GL.QUADS);
+            GL.Vertex(Vector2.zero);
+            GL.Vertex(Vector2.right);
+            GL.Vertex(Vector2.one);
+            GL.Vertex(Vector2.up);
+            GL.End();
+            GL.PopMatrix();
         }
 
         // https://stackoverflow.com/a/42535
@@ -150,6 +180,11 @@ namespace Sketch.Generation
             }
 
             return ret;
+        }
+
+        public void ToggleFOV()
+        {
+            _isFovActive = false;
         }
 
         private int _currentlyCheckedRoom;
