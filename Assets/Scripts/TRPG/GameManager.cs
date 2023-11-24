@@ -13,10 +13,16 @@ namespace Sketch.TRPG
         [SerializeField]
         private GameObject _filterPrefab;
 
+        [SerializeField]
+        private Material _highlightMat;
+
         private TileData[,] _tiles;
 
         private const int _maxSize = 20;
         private const int _range = 5;
+        private const float _visionRange = 20f;
+
+        private Vector2Int? _clickPos;
 
         private Camera _cam;
 
@@ -45,6 +51,64 @@ namespace Sketch.TRPG
                     };
                 }
             }
+
+            Camera.onPostRender += OnPostRenderCallback;
+        }
+
+        private void OnPostRenderCallback(Camera c)
+        {
+            if (_clickPos == null)
+            {
+                return;
+            }
+
+            GL.PushMatrix();
+            GL.LoadOrtho();
+
+            _highlightMat.SetPass(0);
+
+            Vector2? prevPos = null;
+            var rayCount = 1000;
+            for (int i = 0; i < rayCount; i++)
+            {
+                GL.Begin(GL.TRIANGLES); // Performances :thinking:
+                Vector2 pos;
+
+                var dir = new Vector2(i / (float)rayCount - .5f, .75f).normalized;
+                var hit = Physics2D.Raycast(_clickPos.Value, dir, _visionRange);
+                if (hit.collider == null)
+                {
+                    pos = _clickPos.Value + dir * _visionRange;
+                }
+                else
+                {
+                    pos = hit.point;
+                }
+
+                if (prevPos != null)
+                {
+                    DrawTriangle(_clickPos.Value, prevPos.Value, pos);
+                }
+                prevPos = pos;
+                GL.End();
+            }
+
+            GL.PopMatrix();
+        }
+
+        private void DrawTriangle(Vector2 point1, Vector2 point2, Vector2 point3)
+        {
+            GL.Vertex(WorldToViewport(point1));
+            GL.Vertex(WorldToViewport(point2));
+            GL.Vertex(WorldToViewport(point3));
+            GL.Vertex(WorldToViewport(point1));
+        }
+
+        private Vector3 WorldToViewport(Vector2 pos)
+        {
+            Vector3 newPos = Camera.main.WorldToViewportPoint(pos);
+            newPos.z = 0f;
+            return newPos;
         }
 
         private Vector2Int[] _directions = new[]
@@ -120,7 +184,16 @@ namespace Sketch.TRPG
                         };
 
                         DisplayRangeTile(posI, _range, tiles);
+                        _clickPos = posI;
                     }
+                    else
+                    {
+                        _clickPos = null;
+                    }
+                }
+                else
+                {
+                    _clickPos = null;
                 }
             }
         }
