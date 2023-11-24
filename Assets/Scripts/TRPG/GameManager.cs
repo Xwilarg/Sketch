@@ -1,5 +1,5 @@
-﻿using Ink.Parsed;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -53,7 +53,7 @@ namespace Sketch.TRPG
             Vector2Int.up, Vector2Int.down
         };
 
-        private void DisplayRangeTile(Vector2Int pos, int moveLeft, List<Vector2Int> path)
+        private void DisplayRangeTile(Vector2Int pos, int moveLeft, List<TileDirection> path)
         {
             if (moveLeft == 0)
             {
@@ -64,15 +64,23 @@ namespace Sketch.TRPG
             {
                 var nextPos = pos + d;
 
-                if (!path.Contains(nextPos) && IsInBounds(nextPos.x, nextPos.y) && _tiles[nextPos.y, nextPos.x].Obstacle == null)
+                if (IsInBounds(nextPos.x, nextPos.y) && _tiles[nextPos.y, nextPos.x].Obstacle == null)
                 {
-                    path.Add(nextPos);
+                    if (!path.Any(x => x.Position == nextPos))
+                    {
+                        path.Add(new(nextPos, pos, moveLeft - 1));
 
-                    var tile = Instantiate(_filterPrefab, (Vector2)nextPos, Quaternion.identity);
-                    tile.GetComponent<SpriteRenderer>().color = new(0f, 1f, 0f, .5f);
-                    _helpTiles.Add(tile);
+                        var helpTile = Instantiate(_filterPrefab, (Vector2)nextPos, Quaternion.identity);
+                        helpTile.GetComponent<SpriteRenderer>().color = new(0f, 1f, 0f, .5f);
+                        _helpTiles.Add(helpTile);
 
-                    DisplayRangeTile(nextPos, moveLeft - 1, path);
+                        DisplayRangeTile(nextPos, moveLeft - 1, path);
+                    }
+                    else if (moveLeft > path.First(x => x.Position == nextPos).Score)
+                    {
+                        path[path.IndexOf(path.First(x => x.Position == nextPos))] = new(nextPos, pos, moveLeft - 1);
+                        DisplayRangeTile(nextPos, moveLeft - 1, path);
+                    }
                 }
             }
         }
@@ -106,7 +114,12 @@ namespace Sketch.TRPG
 
                     if (_tiles[posI.y, posI.x].Obstacle == null)
                     {
-                        DisplayRangeTile(posI, _range, new());
+                        List<TileDirection> tiles = new()
+                        {
+                            new(posI, posI, int.MaxValue)
+                        };
+
+                        DisplayRangeTile(posI, _range, tiles);
                     }
                 }
             }
