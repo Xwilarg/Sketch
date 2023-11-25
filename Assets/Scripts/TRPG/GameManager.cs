@@ -68,13 +68,18 @@ namespace Sketch.TRPG
             _highlightMat.SetPass(0);
 
             Vector2? prevPos = null;
-            var rayCount = 1000;
-            for (int i = 0; i < rayCount; i++)
+
+            for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
             {
                 GL.Begin(GL.TRIANGLES); // Performances :thinking:
                 Vector2 pos;
 
-                var dir = new Vector2(i / (float)rayCount - .5f, .75f).normalized;
+                var mousePos = _cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                var angleRad = Mathf.Atan2(mousePos.y - _clickPos.Value.y, mousePos.x - _clickPos.Value.x);
+
+                var angle = angleRad + i - Mathf.PI / 2;
+
+                var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                 var hit = Physics2D.Raycast(_clickPos.Value, dir, _visionRange);
                 if (hit.collider == null)
                 {
