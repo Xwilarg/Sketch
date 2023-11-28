@@ -10,7 +10,7 @@ namespace Sketch.Fishing
         public Action<bool> OnDone { private get; set; }
 
         [SerializeField]
-        private RectTransform _fish, _cursor;
+        private RectTransform _fish, _cursor, _overallProgress;
 
         private float _height;
 
@@ -43,6 +43,7 @@ namespace Sketch.Fishing
             _target = Random.Range(0f, _max);
             _timer = 0f;
             _maxTimer = 3f;
+            _overallProgress.localScale = new(1f, .5f, 1f);
         }
 
         private void Update()
@@ -67,6 +68,11 @@ namespace Sketch.Fishing
             else if (_timer <= -_maxTimer)
             {
                 OnDone(false);
+            }
+            else
+            {
+                var size = ((_timer / _maxTimer) + 1f) / 2f;
+                _overallProgress.localScale = new(1f, size, 1f);
             }
         }
     }
