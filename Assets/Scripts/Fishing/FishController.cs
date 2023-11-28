@@ -5,6 +5,8 @@ namespace Sketch.Fishing
     public class FishController : MonoBehaviour
     {
         public CatchMinigame Minigame { private get; set; }
+        public FishInfo Info { get; set; }
+        public float Size { get; set; }
 
         private Rigidbody2D _rb;
 
@@ -88,7 +90,7 @@ namespace Sketch.Fishing
                                 _target.Hooked = null;
                                 if (status)
                                 {
-                                    FishSpawner.Instance.StartCoroutine(FishSpawner.Instance.Congrats());
+                                    FishSpawner.Instance.StartCoroutine(FishSpawner.Instance.Congrats(this));
                                     Destroy(gameObject);
                                 }
                                 else
