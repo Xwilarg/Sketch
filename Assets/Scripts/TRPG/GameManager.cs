@@ -63,42 +63,47 @@ namespace Sketch.TRPG
             }
 
             GL.PushMatrix();
-            GL.LoadOrtho();
-
-            _highlightMat.SetPass(0);
-
-            Vector2? prevPos = null;
-
-            for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
+            try
             {
-                GL.Begin(GL.TRIANGLES); // Performances :thinking:
-                Vector2 pos;
+                GL.LoadOrtho();
 
-                var mousePos = _cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-                var angleRad = Mathf.Atan2(mousePos.y - _clickPos.Value.y, mousePos.x - _clickPos.Value.x);
+                _highlightMat.SetPass(0);
 
-                var angle = angleRad + i - Mathf.PI / 2;
+                Vector2? prevPos = null;
 
-                var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                var hit = Physics2D.Raycast(_clickPos.Value, dir, _visionRange);
-                if (hit.collider == null)
+                for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
                 {
-                    pos = _clickPos.Value + dir * _visionRange;
-                }
-                else
-                {
-                    pos = hit.point;
-                }
+                    GL.Begin(GL.TRIANGLES); // Performances :thinking:
+                    Vector2 pos;
 
-                if (prevPos != null)
-                {
-                    DrawTriangle(_clickPos.Value, prevPos.Value, pos);
+                    var mousePos = _cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                    var angleRad = Mathf.Atan2(mousePos.y - _clickPos.Value.y, mousePos.x - _clickPos.Value.x);
+
+                    var angle = angleRad + i - Mathf.PI / 2;
+
+                    var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                    var hit = Physics2D.Raycast(_clickPos.Value, dir, _visionRange);
+                    if (hit.collider == null)
+                    {
+                        pos = _clickPos.Value + dir * _visionRange;
+                    }
+                    else
+                    {
+                        pos = hit.point;
+                    }
+
+                    if (prevPos != null)
+                    {
+                        DrawTriangle(_clickPos.Value, prevPos.Value, pos);
+                    }
+                    prevPos = pos;
+                    GL.End();
                 }
-                prevPos = pos;
-                GL.End();
             }
-
-            GL.PopMatrix();
+            finally
+            {
+                GL.PopMatrix();
+            }
         }
 
         private void DrawTriangle(Vector2 point1, Vector2 point2, Vector2 point3)
