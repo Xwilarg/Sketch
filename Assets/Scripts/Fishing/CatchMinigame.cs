@@ -2,7 +2,6 @@ using Sketch.Common;
 using System;
 using System.Collections;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 namespace Sketch.Fishing
