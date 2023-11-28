@@ -47,17 +47,16 @@ namespace Sketch.Fishing
             {
                 var camBounds = CameraUtils.CalculateBounds(_cam);
 
-                var pos = Input.touchCount > 0 ? Input.GetTouch(0).position : Mouse.current.position.ReadValue();
-                var mousePos = _cam.ScreenToWorldPoint(pos);
-                mousePos.z = 0f;
+                var pos = _cam.ScreenToWorldPoint(CursorUtils.Position);
+                pos.z = 0f;
 
                 // We keep the float inside the camera bounds
-                if (mousePos.x < camBounds.min.x) mousePos.x = camBounds.min.x;
-                else if (mousePos.x > camBounds.max.x) mousePos.x = camBounds.max.x;
-                if (mousePos.y < camBounds.min.y) mousePos.y = camBounds.min.y;
-                else if (mousePos.y > camBounds.max.y) mousePos.y = camBounds.max.y;
+                if (pos.x < camBounds.min.x) pos.x = camBounds.min.x;
+                else if (pos.x > camBounds.max.x) pos.x = camBounds.max.x;
+                if (pos.y < camBounds.min.y) pos.y = camBounds.min.y;
+                else if (pos.y > camBounds.max.y) pos.y = camBounds.max.y;
 
-                transform.position = mousePos;
+                transform.position = pos;
             }
         }
 

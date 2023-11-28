@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Sketch.Common;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -92,7 +93,7 @@ namespace Sketch.TRPG
                     GL.Begin(GL.TRIANGLES); // Performances :thinking:
                     Vector2 pos;
 
-                    var mousePos = _cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.Position);
                     var angleRad = Mathf.Atan2(mousePos.y - _playerPos.y, mousePos.x - _playerPos.x);
 
                     var angle = angleRad + i - Mathf.PI / 2;
@@ -205,8 +206,7 @@ namespace Sketch.TRPG
         {
             if (value.performed)
             {
-
-                var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                var pos = Camera.main.ScreenToWorldPoint(CursorUtils.Position);
                 var posI = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
 
                 if (_availableMoves.Contains(posI))

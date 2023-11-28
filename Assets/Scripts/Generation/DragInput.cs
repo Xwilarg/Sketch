@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Sketch.Common;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Sketch.Generation
@@ -20,7 +21,7 @@ namespace Sketch.Generation
         {
             if (value.phase == InputActionPhase.Started)
             {
-                _clickPos = Mouse.current.position.ReadValue();
+                _clickPos = CursorUtils.Position;
             }
             else if (value.phase == InputActionPhase.Canceled)
             {
