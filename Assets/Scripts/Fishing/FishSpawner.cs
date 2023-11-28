@@ -1,5 +1,6 @@
 ﻿using Sketch.Common;
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -40,7 +41,17 @@ namespace Sketch.Fishing
             var go = Instantiate(_fishPrefab, dist, Quaternion.AngleAxis(angle, Vector3.forward));
             var controller = go.GetComponent<FishController>();
             controller.Minigame = _minigame;
+
+            var possibleFishes = _fishes.OrderBy(x => x.MaxSize);
+            var index = 0;
+
+            // Get a random fish but we have higher change to get a small one
+            while (Random.Range(0, 2) == 0 || index == _fishes.Length - 1)
+            {
+                index++;
+            }
             var info = _fishes[Random.Range(0, _fishes.Length)];
+
             controller.Info = info;
 
             var size = Random.Range(info.MinSize, info.MaxSize);
