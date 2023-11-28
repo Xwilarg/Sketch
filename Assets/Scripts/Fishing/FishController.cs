@@ -32,7 +32,7 @@ namespace Sketch.Fishing
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("FISHING_Float"))
+            if (collision.CompareTag("FISHING_Float") && FishSpawner.Instance.IsReady)
             {
                 _rb.velocity = Vector2.zero;
                 var dir = collision.transform.position - transform.position;
@@ -43,6 +43,7 @@ namespace Sketch.Fishing
                 _target = collision.GetComponent<HookController>();
                 _target.IsTargeted = true;
 
+                // Move the target position so the fish only put his month on the hook
                 _targetPosition = _target.transform.position - (dir.normalized * transform.localScale.x / 10f);
 
                 _attackTimer = AttackTimerRef;
@@ -88,6 +89,7 @@ namespace Sketch.Fishing
                             {
                                 Minigame.gameObject.SetActive(false);
                                 _target.Hooked = null;
+                                FishSpawner.Instance.StartCoroutine(FishSpawner.Instance.Rest());
                                 if (status)
                                 {
                                     FishSpawner.Instance.StartCoroutine(FishSpawner.Instance.Congrats(this));

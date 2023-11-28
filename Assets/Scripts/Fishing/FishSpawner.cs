@@ -24,6 +24,12 @@ namespace Sketch.Fishing
 
         private Camera _cam;
 
+        /// <summary>
+        /// A fish will only try to bit the hook when this variable is true
+        /// This allow to let the player rest a bit between 2 bits
+        /// </summary>
+        public bool IsReady { private set; get; } = true;
+
         private void Awake()
         {
             Instance = this;
@@ -68,7 +74,15 @@ namespace Sketch.Fishing
             _fishSizeText.text = $"Size: {Mathf.RoundToInt(fish.Size * 100)}cm";
             yield return new WaitForSeconds(2f);
             _congratsText.gameObject.SetActive(false);
+            IsReady = true;
 
+        }
+
+        public IEnumerator Rest()
+        {
+            IsReady = false;
+            yield return new WaitForSeconds(2f);
+            IsReady = true;
         }
     }
 }
