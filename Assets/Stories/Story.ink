@@ -18,7 +18,21 @@ Ah we are making me sign to continue, okay okay, so what do you want to know nex
 So as you saw this engine allow to display text that will be displayed character by character until you click and properly fit it inside the window
 You can also let the user choose what he want to do like the choice you saw before
 The text is written in ink format and is using their Unity plugin to easy parse it
-Along with tha- my paper is empty, well that's all for the technical parts, anything else you want to know?
+Now let's speak of the features from the buttons on the bottom right of your screen, we will start with the 'Skip' one
+As its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
+... Bah, baa-
+Baah, baa, baaa
+Baaaa, baaaa-
+Baaaaaa
+Baa, bah
+Baaaa baa, baah
+Baaa-
+Baa, baaah
+Baa baaaa-
+Bah baa baaaaaa
+Baaa...
+Amazing isn't it? It feels like no time passed! #skip false
+Along with tha- ah, my paper is empty, well that's all for the technical parts, anything else you want to know?
 -> Choice
 
 === Ending ===

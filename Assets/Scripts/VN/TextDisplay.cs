@@ -33,15 +33,6 @@ namespace Sketch.VN
             private get => _toDisplay;
         }
 
-        public void SetStyle(FontStyles style)
-        {
-            if (_text == null)
-            {
-                Awake();
-            }
-            _text.fontStyle = style;
-        }
-
         public event EventHandler OnDisplayDone;
 
         private string _displayLeft = string.Empty;

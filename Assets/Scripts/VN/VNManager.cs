@@ -94,7 +94,6 @@ namespace Sketch.VN
         public void ShowStory(TextAsset asset, Action onDone)
         {
             Debug.Log($"[STORY] Playing {asset.name}");
-            _display.SetStyle(FontStyles.Normal);
             _currentCharacter = null;
             _story = new(asset.text);
             _isSkipEnabled = false;
@@ -126,9 +125,9 @@ namespace Sketch.VN
                         Debug.Log($"[STORY] Speaker set to {_currentCharacter?.Name}");
                         break;
 
-                    case "format":
-                        if (content == "NONE") _display.SetStyle(FontStyles.Normal);
-                        else if (content == "ITALIC") _display.SetStyle(FontStyles.Italic);
+                    case "skip":
+                        if (content == "TRUE") _isSkipEnabled = true;
+                        else if (content == "FALSE") _isSkipEnabled = false;
                         else Debug.LogError($"[STORY] Unable to find format {content}");
                         break;
 
@@ -175,14 +174,28 @@ namespace Sketch.VN
             }
         }
 
-        public void ToggleSkip(bool value)
-            => _isSkipEnabled = value;
+        public void ToggleSkip()
+        {
+            _isSkipEnabled = !_isSkipEnabled;
+        }
 
         public void OnNextDialogue(InputAction.CallbackContext value)
         {
             if (value.performed)
             {
                 DisplayNextDialogue();
+            }
+        }
+
+        public void OnSkip(InputAction.CallbackContext value)
+        {
+            if (value.phase == InputActionPhase.Started)
+            {
+                _isSkipEnabled = true;
+            }
+            else if (value.phase == InputActionPhase.Canceled)
+            {
+                _isSkipEnabled = false;
             }
         }
     }
