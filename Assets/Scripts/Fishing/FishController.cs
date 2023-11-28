@@ -101,6 +101,7 @@ namespace Sketch.Fishing
 
                             };
                             Minigame.gameObject.SetActive(true);
+                            Minigame.Fish = this;
                         }
                         else
                         {
