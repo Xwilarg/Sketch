@@ -16,13 +16,20 @@ namespace Sketch.TRPG
         [SerializeField]
         private Material _highlightMat;
 
+        [SerializeField]
+        private GameObject _playerPrefab;
+
+        // Instance
+        private GameObject _player;
+        private Vector2Int _playerPos;
+
+        // List of all tiles of the board
         private TileData[,] _tiles;
+        private readonly List<Vector2Int> _availableMoves = new();
 
         private const int _maxSize = 20;
         private const int _range = 5;
         private const float _visionRange = 20f;
-
-        private Vector2Int? _clickPos;
 
         private Camera _cam;
 
@@ -33,6 +40,8 @@ namespace Sketch.TRPG
             _cam = Camera.main;
 
             _tiles = new TileData[_maxSize, _maxSize];
+
+            // We create all tiles and place obstacles randomly
             for (int y = 0; y < _maxSize; y++)
             {
                 for (int x = 0; x < _maxSize; x++)
@@ -52,16 +61,23 @@ namespace Sketch.TRPG
                 }
             }
 
+            // Find a random pos near the center of the board to spawn the player
+            var quarter = Mathf.RoundToInt(_maxSize / 4f);
+            while (_player == null)
+            {
+                _playerPos = new Vector2Int(Random.Range(quarter, 3 * quarter), Random.Range(quarter, 3 * quarter));
+                if (_tiles[_playerPos.x, _playerPos.y].Obstacle == null)
+                {
+                    _player = Instantiate(_playerPrefab, (Vector2)_playerPos, Quaternion.identity);
+                }
+            }
+
             Camera.onPostRender += OnPostRenderCallback;
+            DisplayHintTiles();
         }
 
         private void OnPostRenderCallback(Camera c)
         {
-            if (_clickPos == null)
-            {
-                return;
-            }
-
             GL.PushMatrix();
             try
             {
@@ -77,15 +93,15 @@ namespace Sketch.TRPG
                     Vector2 pos;
 
                     var mousePos = _cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-                    var angleRad = Mathf.Atan2(mousePos.y - _clickPos.Value.y, mousePos.x - _clickPos.Value.x);
+                    var angleRad = Mathf.Atan2(mousePos.y - _playerPos.y, mousePos.x - _playerPos.x);
 
                     var angle = angleRad + i - Mathf.PI / 2;
 
                     var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                    var hit = Physics2D.Raycast(_clickPos.Value, dir, _visionRange);
+                    var hit = Physics2D.Raycast(_playerPos, dir, _visionRange);
                     if (hit.collider == null)
                     {
-                        pos = _clickPos.Value + dir * _visionRange;
+                        pos = _playerPos + dir * _visionRange;
                     }
                     else
                     {
@@ -94,7 +110,7 @@ namespace Sketch.TRPG
 
                     if (prevPos != null)
                     {
-                        DrawTriangle(_clickPos.Value, prevPos.Value, pos);
+                        DrawTriangle(_playerPos, prevPos.Value, pos);
                     }
                     prevPos = pos;
                     GL.End();
@@ -104,6 +120,28 @@ namespace Sketch.TRPG
             {
                 GL.PopMatrix();
             }
+        }
+
+        private void DisplayHintTiles()
+        {
+            // Clear previous data
+            foreach (var t in _helpTiles)
+            {
+                Destroy(t);
+            }
+            _helpTiles.Clear();
+            _availableMoves.Clear();
+
+            var tile = Instantiate(_filterPrefab, (Vector2)_playerPos, Quaternion.identity);
+            tile.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
+            _helpTiles.Add(tile);
+
+            List<TileDirection> tiles = new()
+            {
+                new(_playerPos, _playerPos, int.MaxValue)
+            };
+
+            DisplayRangeTile(_playerPos, _range, tiles);
         }
 
         private void DrawTriangle(Vector2 point1, Vector2 point2, Vector2 point3)
@@ -147,6 +185,7 @@ namespace Sketch.TRPG
                         var helpTile = Instantiate(_filterPrefab, (Vector2)nextPos, Quaternion.identity);
                         helpTile.GetComponent<SpriteRenderer>().color = new(0f, 1f, 0f, .5f);
                         _helpTiles.Add(helpTile);
+                        _availableMoves.Add(nextPos);
 
                         DisplayRangeTile(nextPos, moveLeft - 1, path);
                     }
@@ -159,15 +198,6 @@ namespace Sketch.TRPG
             }
         }
 
-        private void ClearAllTiles()
-        {
-            foreach (var t in _helpTiles)
-            {
-                Destroy(t);
-            }
-            _helpTiles.Clear();
-        }
-
         private bool IsInBounds(int x, int y)
             => x >= 0 && x < _maxSize && y >= 0 && y < _maxSize;
 
@@ -175,35 +205,15 @@ namespace Sketch.TRPG
         {
             if (value.performed)
             {
-                ClearAllTiles();
 
                 var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 var posI = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
 
-                if (IsInBounds(posI.x, posI.y))
+                if (_availableMoves.Contains(posI))
                 {
-                    var tile = Instantiate(_filterPrefab, (Vector2)posI, Quaternion.identity);
-                    tile.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
-                    _helpTiles.Add(tile);
-
-                    if (_tiles[posI.y, posI.x].Obstacle == null)
-                    {
-                        List<TileDirection> tiles = new()
-                        {
-                            new(posI, posI, int.MaxValue)
-                        };
-
-                        DisplayRangeTile(posI, _range, tiles);
-                        _clickPos = posI;
-                    }
-                    else
-                    {
-                        _clickPos = null;
-                    }
-                }
-                else
-                {
-                    _clickPos = null;
+                    _player.transform.position = (Vector2)posI;
+                    _playerPos = posI;
+                    DisplayHintTiles();
                 }
             }
         }
