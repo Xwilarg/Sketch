@@ -41,9 +41,9 @@ namespace Sketch.Fishing
                 _aimPosition = transform.position;
 
                 _target = collision.GetComponent<HookController>();
+                _target.IsTargeted = true;
 
-                var targetDir = (_aimPosition - (Vector2)_target.transform.position).normalized;
-                _targetPosition += targetDir / 8f;
+                _targetPosition = _target.transform.position - (dir.normalized * transform.localScale.x / 10f);
 
                 _attackTimer = AttackTimerRef;
             }
