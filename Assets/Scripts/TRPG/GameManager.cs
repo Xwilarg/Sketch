@@ -77,50 +77,50 @@ namespace Sketch.TRPG
             DisplayHintTiles();
         }
 
+        private void OnDestroy()
+        {
+            Camera.onPostRender -= OnPostRenderCallback;
+        }
+
         private void OnPostRenderCallback(Camera c)
         {
             GL.PushMatrix();
-            try
+
+            GL.LoadOrtho();
+
+            _highlightMat.SetPass(0);
+
+            Vector2? prevPos = null;
+
+            for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
             {
-                GL.LoadOrtho();
+                GL.Begin(GL.TRIANGLES); // Performances :thinking:
+                Vector2 pos;
 
-                _highlightMat.SetPass(0);
+                var mousePos = _cam.ScreenToWorldPoint(CursorUtils.Position);
+                var angleRad = Mathf.Atan2(mousePos.y - _playerPos.y, mousePos.x - _playerPos.x);
 
-                Vector2? prevPos = null;
+                var angle = angleRad + i - Mathf.PI / 2;
 
-                for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
+                var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                var hit = Physics2D.Raycast(_playerPos, dir, _visionRange);
+                if (hit.collider == null)
                 {
-                    GL.Begin(GL.TRIANGLES); // Performances :thinking:
-                    Vector2 pos;
-
-                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.Position);
-                    var angleRad = Mathf.Atan2(mousePos.y - _playerPos.y, mousePos.x - _playerPos.x);
-
-                    var angle = angleRad + i - Mathf.PI / 2;
-
-                    var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                    var hit = Physics2D.Raycast(_playerPos, dir, _visionRange);
-                    if (hit.collider == null)
-                    {
-                        pos = _playerPos + dir * _visionRange;
-                    }
-                    else
-                    {
-                        pos = hit.point;
-                    }
-
-                    if (prevPos != null)
-                    {
-                        DrawTriangle(_playerPos, prevPos.Value, pos);
-                    }
-                    prevPos = pos;
-                    GL.End();
+                    pos = _playerPos + dir * _visionRange;
                 }
+                else
+                {
+                    pos = hit.point;
+                }
+
+                if (prevPos != null)
+                {
+                    DrawTriangle(_playerPos, prevPos.Value, pos);
+                }
+                prevPos = pos;
+                GL.End();
             }
-            finally
-            {
-                GL.PopMatrix();
-            }
+            GL.PopMatrix();
         }
 
         private void DisplayHintTiles()
