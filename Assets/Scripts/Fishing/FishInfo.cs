@@ -6,6 +6,7 @@ namespace Sketch.Fishing
     public class FishInfo : ScriptableObject
     {
         public string Name;
+        public string FullName;
         public float MinSize, MaxSize;
 
         public float Speed;

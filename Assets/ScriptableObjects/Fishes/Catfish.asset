@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9b80c9d53d344e44a6dc60a04980ee2, type: 3}
-  m_Name: Mackerel
+  m_Name: Catfish
   m_EditorClassIdentifier: 
-  Name: Mackerel
-  FullName: Atlantic Mackerel
-  MinSize: 0.3
-  MaxSize: 0.66
-  Speed: 0.98
+  Name: Catfish
+  FullName: Catfish
+  MinSize: 1.2
+  MaxSize: 2
+  Speed: 0.35

@@ -439,6 +439,9 @@ MonoBehaviour:
   _fishSizeText: {fileID: 1744860852}
   _fishes:
   - {fileID: 11400000, guid: b4002c0336b616345813d4c26da9a169, type: 2}
+  - {fileID: 11400000, guid: 77706a37a2d703c48bf8811cf93ee3ce, type: 2}
+  - {fileID: 11400000, guid: dddb5c8732a5204439586bd20912ac06, type: 2}
+  - {fileID: 11400000, guid: 0e91315bc32fd5b479f9eb53c405e0a2, type: 2}
 --- !u!1 &1289108348
 GameObject:
   m_ObjectHideFlags: 0
