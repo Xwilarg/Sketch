@@ -1,6 +1,8 @@
 using Sketch.Common;
 using System;
+using System.Collections;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 namespace Sketch.Fishing
@@ -11,6 +13,10 @@ namespace Sketch.Fishing
 
         [SerializeField]
         private RectTransform _fish, _cursor, _overallProgress;
+
+        [SerializeField]
+        [Tooltip("Text to inform the player the minigame is starting")]
+        private GameObject _catchIt;
 
         private float _height;
 
@@ -44,10 +50,25 @@ namespace Sketch.Fishing
             _timer = 0f;
             _maxTimer = 3f;
             _overallProgress.localScale = new(1f, .5f, 1f);
+            _cursor.position = new(_cursor.position.x, _height / 2f + _cursor.rect.height);
+            StartCoroutine(StartMinigame());
+        }
+
+        private IEnumerator StartMinigame()
+        {
+            _catchIt.SetActive(true);
+            yield return new WaitForSeconds(1f);
+            _catchIt.SetActive(false);
         }
 
         private void Update()
         {
+            if (_catchIt.activeInHierarchy)
+            {
+                // Player text info is still active, we wait for it to be gone
+                return;
+            }
+
             var dir = Time.deltaTime * (_fish.anchoredPosition.y < _target ? 1f : -1f) * _fishBaseSpeed * Fish.Size;
             _fish.anchoredPosition = new(_fish.anchoredPosition.x, _fish.anchoredPosition.y + dir);
 
