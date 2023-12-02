@@ -58,6 +58,7 @@ namespace Sketch.VN
             {
                 if (_story.currentChoices.Any())
                 {
+                    _isSkipEnabled = false;
                     foreach (var choice in _story.currentChoices)
                     {
                         var button = Instantiate(_choicePrefab, _choiceContainer);
