@@ -6,20 +6,26 @@ Speaking about myself... showing the technical abilities of the engine... and.. 
 
 === Choice ===
 * [Tell me about yourself] -> SelfIntro
+* [Tell me about Ink] -> Ink
 * [Tell me about the engine] -> Engine
 * [That's all] -> Ending
 
 === SelfIntro ===
-So about me, I'm Yuzu! My body was kindly drawn by FractalStella (check him out on Twitter!), my favorite food are fruits and I dream to one day go to Goathland and-
+So about me, I'm Yuzu! My favorite food are fruits and I dream to one day go to Goathland and-
 Ah we are making me sign to continue, okay okay, so what do you want to know next?
 -> Choice
 
+=== Ink ===
+Ink is a narrative scripting language that give a simple syntax to write down text and then allow it to be easily used programmatically thanks to a plugin
+The role of the custom engine itself is then to use this plugin to properly display the text on screen, and this is what you end up seeing!
+If you want to know more about it I highly suggest you to check https://www.inklestudios.com/ink/
+-> Choice
+
 === Engine ===
-So as you saw this engine allow to display text that will be displayed character by character until you click and properly fit it inside the window
-You can also let the user choose what he want to do like the choice you saw before
-The text is written in ink format and is using their Unity plugin to easy parse it
-Now let's speak of the features from the buttons on the bottom right of your screen, we will start with the 'Skip' one
-As its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
+So you already saw the basic features of this engine, display text letter by letter, showing choices on screen...
+But well, what would interest you is probably the others features what make it stand out more, so let's go through them!
+We will speak about the buttons at the lower right corner of the screen
+Let's start with the "Skip" button, as its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
 ... Bah, baa-
 Baah, baa, baaa
 Baaaa, baaaa-
