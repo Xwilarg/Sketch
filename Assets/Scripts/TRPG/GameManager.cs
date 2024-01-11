@@ -8,6 +8,8 @@ namespace Sketch.TRPG
 {
     public class GameManager : MonoBehaviour
     {
+        // Map data
+
         [SerializeField]
         private GameObject _obstaclePrefab;
 
@@ -16,6 +18,14 @@ namespace Sketch.TRPG
 
         [SerializeField]
         private Material _highlightMat;
+
+        [SerializeField]
+        private GameObject _pathPrefab;
+
+        [SerializeField]
+        private Sprite _straightPath, _cornerPath;
+
+        // Player
 
         [SerializeField]
         private GameObject _playerPrefab;
@@ -35,6 +45,13 @@ namespace Sketch.TRPG
         private Camera _cam;
 
         private readonly List<GameObject> _helpTiles = new();
+        private List<TileDirection> _dirInfo;
+        private readonly List<GameObject> _dirInstances = new();
+
+        /// <summary>
+        /// Last mouse position, used to generate path
+        /// </summary>
+        private Vector2Int? _lastMousePos;
 
         private void Awake()
         {
@@ -82,6 +99,76 @@ namespace Sketch.TRPG
             Camera.onPostRender -= OnPostRenderCallback;
         }
 
+        private void Update()
+        {
+            var mousePos = GetMousePosI();
+            if (_lastMousePos == null || mousePos != _lastMousePos)
+            {
+                // Clear path tiles
+                foreach (var go in _dirInstances) Destroy(go);
+                _dirInstances.Clear();
+
+                _lastMousePos = mousePos;
+
+                // Display path
+                var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePos);
+                Vector2? lastDir = null;
+                if (nextPos != null) // Mouse is a valid position we can move to
+                {
+                    while (nextPos.From != nextPos.Position) // While we have tiles to display
+                    {
+                        // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
+                        var dir = nextPos.Position - nextPos.From;
+                        var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir.Value, dir)) == 1f;
+
+                        Quaternion rot = Quaternion.identity;
+                        if (isStraight)
+                        {
+                            if (dir == Vector2.up || dir == Vector2.down)
+                            {
+                                rot = Quaternion.Euler(0f, 0f, 90f);
+                            }
+                        }
+                        else
+                        {
+                            if ((lastDir.Value == Vector2.left && dir == Vector2.up))
+                            {
+                                rot = Quaternion.Euler(0f, 0f, 90f);
+                            }
+                            else if ((lastDir.Value == Vector2.right && dir == Vector2.up))
+                            {
+                                rot = Quaternion.Euler(0f, 0f, 180f);
+                            }
+                            else if ((lastDir.Value == Vector2.right && dir == Vector2.down))
+                            {
+                                rot = Quaternion.Euler(0f, 0f, -90f);
+                            }
+                        }
+
+                        var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
+                        var sr = tile.GetComponent<SpriteRenderer>();
+                        sr.sprite = isStraight ? _straightPath : _cornerPath;
+                        sr.color = Color.black;
+
+                        _dirInstances.Add(tile);
+
+                        nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+                        lastDir = dir;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get mouse position as a Vector2Int
+        /// </summary>
+        /// <returns>Mouse position, rounded to the closest tile</returns>
+        private Vector2Int GetMousePosI()
+        {
+            var pos = Camera.main.ScreenToWorldPoint(CursorUtils.Position);
+            return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+        }
+
         private void OnPostRenderCallback(Camera c)
         {
             if (OptionsManager.Instance.ShowLos)
@@ -126,6 +213,17 @@ namespace Sketch.TRPG
             }
         }
 
+        /// <summary>
+        /// Display path over the help tiles showing show to go from A to B
+        /// </summary>
+        private void DisplayPath()
+        {
+
+        }
+
+        /// <summary>
+        /// Display hint tiles around the player to show where he can move
+        /// </summary>
         private void DisplayHintTiles()
         {
             // Clear previous data
@@ -140,12 +238,14 @@ namespace Sketch.TRPG
             tile.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
             _helpTiles.Add(tile);
 
-            List<TileDirection> tiles = new()
+            _lastMousePos = null;
+
+            _dirInfo = new()
             {
                 new(_playerPos, _playerPos, int.MaxValue)
             };
 
-            DisplayRangeTile(_playerPos, _range, tiles);
+            DisplayRangeTile(_playerPos, _range, _dirInfo);
         }
 
         private void DrawTriangle(Vector2 point1, Vector2 point2, Vector2 point3)
@@ -163,7 +263,7 @@ namespace Sketch.TRPG
             return newPos;
         }
 
-        private Vector2Int[] _directions = new[]
+        private readonly Vector2Int[] _directions = new[]
         {
             Vector2Int.left, Vector2Int.right,
             Vector2Int.up, Vector2Int.down
@@ -209,8 +309,7 @@ namespace Sketch.TRPG
         {
             if (value.performed)
             {
-                var pos = Camera.main.ScreenToWorldPoint(CursorUtils.Position);
-                var posI = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+                var posI = GetMousePosI();
 
                 if (_availableMoves.Contains(posI))
                 {

@@ -775,6 +775,9 @@ MonoBehaviour:
   _obstaclePrefab: {fileID: 6736391836107652179, guid: 14b813185d31de641a60f8c296ee9197, type: 3}
   _filterPrefab: {fileID: 235402677391368776, guid: c0890262927de9045940d5a50767ee1f, type: 3}
   _highlightMat: {fileID: 2100000, guid: 196661d8d03fc07459c8ddcbb7c0674e, type: 2}
+  _pathPrefab: {fileID: 5973522342365104979, guid: 16b5eb58070b5264b80823d55e932f27, type: 3}
+  _straightPath: {fileID: 21300000, guid: 1b22ad9bcfa68d64fbed5708cdaecf65, type: 3}
+  _cornerPath: {fileID: 21300000, guid: 038e943e09b0f29468fff3f80a1fca01, type: 3}
   _playerPrefab: {fileID: 3195001349232320568, guid: d13ecdaf79289cd4387b69b8dc6fae75, type: 3}
 --- !u!114 &1576288350
 MonoBehaviour:
