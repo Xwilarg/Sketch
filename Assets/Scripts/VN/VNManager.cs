@@ -92,7 +92,7 @@ namespace Sketch.VN
             }
         }
 
-        public void ShowStory(TextAsset asset, Action onDone)
+        public void ShowStory(TextAsset asset)
         {
             Debug.Log($"[STORY] Playing {asset.name}");
             _currentCharacter = null;
