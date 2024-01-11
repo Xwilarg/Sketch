@@ -12,7 +12,7 @@ Speaking about myself... showing the technical abilities of the engine... and.. 
 
 === SelfIntro ===
 So about me, I'm Yuzu! My favorite food are fruits and I dream to one day go to Goathland and-
-Ah we are making me sign to continue, okay okay, so what do you want to know next?
+Ah we are making me sign to go a bit quicker, let's go about another topic then
 -> Choice
 
 === Ink ===
@@ -25,8 +25,14 @@ If you want to know more about it I highly suggest you to check https://www.inkl
 So you already saw the basic features of this engine, display text letter by letter, showing choices on screen...
 But well, what would interest you is probably the others features what make it stand out more, so let's go through them!
 We will speak about the buttons at the lower right corner of the screen
-Let's start with the "Auto" button, it allow you to pass the dialogues automatically when they end, feel free to try it for the rest of this introduction!
-Let's start with the "Skip" button, as its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
+
+Let's start with the "Auto" button, it allow you to pass the dialogues automatically when they end, feel free to try it for the rest of this introduction
+With it, you can read things without having to touch your keyboard!
+
+Then we have the "Hide" button, its use is pretty straighfoward too, it allow to hide the interface to better see the background image
+Here the background image is, well, pretty simple, but still feel free to use it to see how it works
+
+After that we have the "Skip" button, as its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
 ... Bah, baa-
 Baah, baa, baaa
 Baaaa, baaaa-
@@ -39,7 +45,8 @@ Baa baaaa-
 Bah baa baaaaaa
 Baaa...
 Amazing isn't it? It feels like no time passed! #skip false
-Along with tha- ah, my paper is empty, well that's all for the technical parts, anything else you want to know?
+
+Along with tha- ah, my paper is empty, well that's all for the technical part!
 -> Choice
 
 === Ending ===
