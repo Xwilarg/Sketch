@@ -25,6 +25,7 @@ If you want to know more about it I highly suggest you to check https://www.inkl
 So you already saw the basic features of this engine, display text letter by letter, showing choices on screen...
 But well, what would interest you is probably the others features what make it stand out more, so let's go through them!
 We will speak about the buttons at the lower right corner of the screen
+Let's start with the "Auto" button, it allow you to pass the dialogues automatically when they end, feel free to try it for the rest of this introduction!
 Let's start with the "Skip" button, as its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
 ... Bah, baa-
 Baah, baa, baaa

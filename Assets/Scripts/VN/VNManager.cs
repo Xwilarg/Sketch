@@ -1,9 +1,11 @@
 ﻿using Ink.Runtime;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -49,6 +51,8 @@ namespace Sketch.VN
         private float _skipTimer;
         private float _skipTimerRef = .1f;
 
+        private bool _isAutoEnabled;
+
         private void Awake()
         {
             Instance = this;
@@ -74,7 +78,21 @@ namespace Sketch.VN
                         });
                     }
                 }
+
+                if (_isAutoEnabled)
+                {
+                    StartCoroutine(AutoNextDialogue());
+                }
             };
+        }
+
+        private IEnumerator AutoNextDialogue()
+        {
+            yield return new WaitForSeconds(1f);
+            if (_isAutoEnabled)
+            {
+                DisplayNextDialogue();
+            }
         }
 
         public bool IsPlayingStory => _container.activeInHierarchy;
@@ -180,10 +198,34 @@ namespace Sketch.VN
             _isSkipEnabled = !_isSkipEnabled;
         }
 
+        public void ToggleAuto()
+        {
+            _isAutoEnabled = !_isAutoEnabled;
+
+            if (_isAutoEnabled && _display.IsDisplayDone && _story.canContinue && !_story.currentChoices.Any())
+            {
+                DisplayNextDialogue();
+            }
+        }
+
         public void OnNextDialogue(InputAction.CallbackContext value)
         {
             if (value.performed)
             {
+                // If we click on a button, we don't advance the 
+                PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+                pointerEventData.position = Mouse.current.position.ReadValue();
+                List<RaycastResult> raycastResultsList = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerEventData, raycastResultsList);
+                for (int i = 0; i < raycastResultsList.Count; i++)
+                {
+                    if (raycastResultsList[i].gameObject.TryGetComponent<Button>(out var _))
+                    {
+                        return;
+                    }
+                }
+
+                _isAutoEnabled = false;
                 DisplayNextDialogue();
             }
         }
