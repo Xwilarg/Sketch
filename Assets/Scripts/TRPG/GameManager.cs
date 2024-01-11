@@ -8,7 +8,7 @@ namespace Sketch.TRPG
 {
     public class GameManager : MonoBehaviour
     {
-        // Map data
+        [Header("Map")]
 
         [SerializeField]
         private GameObject _obstaclePrefab;
@@ -25,22 +25,36 @@ namespace Sketch.TRPG
         [SerializeField]
         private Sprite _straightPath, _cornerPath;
 
-        // Player
+        [Header("Player")]
 
         [SerializeField]
         private GameObject _playerPrefab;
 
+        [SerializeField]
+        private GameObject _ghostPrefab;
+
         // Instance
         private GameObject _player;
         private Vector2Int _playerPos;
+        private GameObject _playerGhost;
 
         // List of all tiles of the board
         private TileData[,] _tiles;
         private readonly List<Vector2Int> _availableMoves = new();
 
+        // Size of the grid
         private const int _maxSize = 20;
+        // Max movement range
         private const int _range = 5;
+        // LOS range
         private const float _visionRange = 20f;
+
+        // Chance to spawn a rock
+        private const float _rockChance = .1f;
+        // Number of enemies to spawn
+        private const int _enemyCount = 5;
+        // If the distance between an enemy and a player is inferior to that, he won't spawn there
+        private const float _maxDistWithPlayer = 6f;
 
         private Camera _cam;
 
@@ -66,7 +80,7 @@ namespace Sketch.TRPG
                 {
                     GameObject obstacle = null;
 
-                    if (Random.Range(0f, 1f) < .1f)
+                    if (Random.Range(0f, 1f) < _rockChance)
                     {
                         obstacle = Instantiate(_obstaclePrefab, new Vector2(x, y), Quaternion.identity);
                         obstacle.transform.localScale = new(3.2f, 3.2f, 1f);
@@ -90,6 +104,25 @@ namespace Sketch.TRPG
                 }
             }
 
+            // Add enemies on top of that
+            var c = _enemyCount;
+            while (c >= 0)
+            {
+                var rand = new Vector2Int(Random.Range(0, _maxSize), Random.Range(0, _maxSize));
+
+                if (Vector2.Distance(_playerPos, rand) > _maxDistWithPlayer) // We are not too close from the player
+                {
+                    var enemy = Instantiate(_player, (Vector2)rand, Quaternion.identity);
+                    enemy.GetComponent<SpriteRenderer>().color = Color.red;
+                    _tiles[rand.y, rand.x] = new TileData()
+                    {
+                        Obstacle = enemy
+                    };
+
+                    c--;
+                }
+            }
+
             Camera.onPostRender += OnPostRenderCallback;
             DisplayHintTiles();
         }
@@ -107,19 +140,25 @@ namespace Sketch.TRPG
                 // Clear path tiles
                 foreach (var go in _dirInstances) Destroy(go);
                 _dirInstances.Clear();
+                Destroy(_playerGhost);
 
                 _lastMousePos = mousePos;
 
                 // Display path
                 var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePos);
-                Vector2? lastDir = null;
                 if (nextPos != null) // Mouse is a valid position we can move to
                 {
+                    _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePos, Quaternion.identity);
+
+                    // Don't display path over the ghost so we directy go to the next one
+                    Vector2 lastDir = nextPos.Position - nextPos.From;
+                    nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+
                     while (nextPos.From != nextPos.Position) // While we have tiles to display
                     {
                         // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
                         var dir = nextPos.Position - nextPos.From;
-                        var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir.Value, dir)) == 1f;
+                        var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
 
                         Quaternion rot = Quaternion.identity;
                         if (isStraight)
@@ -131,15 +170,15 @@ namespace Sketch.TRPG
                         }
                         else
                         {
-                            if ((lastDir.Value == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir.Value == Vector2.down))
+                            if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
                             {
                                 rot = Quaternion.Euler(0f, 0f, 90f);
                             }
-                            else if ((lastDir.Value == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir.Value == Vector2.down))
+                            else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
                             {
                                 rot = Quaternion.Euler(0f, 0f, 180f);
                             }
-                            else if ((lastDir.Value == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir.Value == Vector2.up))
+                            else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
                             {
                                 rot = Quaternion.Euler(0f, 0f, -90f);
                             }

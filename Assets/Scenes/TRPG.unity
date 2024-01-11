@@ -779,6 +779,7 @@ MonoBehaviour:
   _straightPath: {fileID: 21300000, guid: 1b22ad9bcfa68d64fbed5708cdaecf65, type: 3}
   _cornerPath: {fileID: 21300000, guid: 038e943e09b0f29468fff3f80a1fca01, type: 3}
   _playerPrefab: {fileID: 3195001349232320568, guid: d13ecdaf79289cd4387b69b8dc6fae75, type: 3}
+  _ghostPrefab: {fileID: 3195001349232320568, guid: 8f0e2ca9be1bd5e4aaf23c02d4543fba, type: 3}
 --- !u!114 &1576288350
 MonoBehaviour:
   m_ObjectHideFlags: 0
