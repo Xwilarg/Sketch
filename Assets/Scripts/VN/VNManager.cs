@@ -52,7 +52,7 @@ namespace Sketch.VN
         private void Awake()
         {
             Instance = this;
-            ShowStory(_intro, null);
+            ShowStory(_intro);
 
             _display.OnDisplayDone += (_sender, _e) =>
             {
