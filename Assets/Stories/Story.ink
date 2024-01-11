@@ -42,5 +42,6 @@ Along with tha- ah, my paper is empty, well that's all for the technical parts, 
 -> Choice
 
 === Ending ===
-That's for doing this demonstration, come back again soon!
+And that's it for this demonstration, things will be added over time so don't hesitate to come back
+You'll be redirected to the main screen, check the others scenes too!
 -> END
