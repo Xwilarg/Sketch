@@ -137,6 +137,7 @@ namespace Sketch.VN
                         break;
                 }
             }
+            _display.ToDisplay = text;
             if (_currentCharacter == null)
             {
                 _namePanel.SetActive(false);
