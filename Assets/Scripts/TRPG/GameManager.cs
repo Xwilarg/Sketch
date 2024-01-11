@@ -62,6 +62,9 @@ namespace Sketch.TRPG
         private List<TileDirection> _dirInfo;
         private readonly List<GameObject> _dirInstances = new();
 
+        // Containers to clean hierarchy
+        private Transform _wallContainer, _enemyContainer, _hintContainer, _pathContainer;
+
         /// <summary>
         /// Last mouse position, used to generate path
         /// </summary>
@@ -70,6 +73,11 @@ namespace Sketch.TRPG
         private void Awake()
         {
             _cam = Camera.main;
+
+            _wallContainer = new GameObject("Walls").transform;
+            _enemyContainer = new GameObject("Enemies").transform;
+            _hintContainer = new GameObject("Hint tiles").transform;
+            _pathContainer = new GameObject("Paths").transform;
 
             _tiles = new TileData[_maxSize, _maxSize];
 
@@ -83,6 +91,7 @@ namespace Sketch.TRPG
                     if (Random.Range(0f, 1f) < _rockChance)
                     {
                         obstacle = Instantiate(_obstaclePrefab, new Vector2(x, y), Quaternion.identity);
+                        obstacle.transform.parent = _wallContainer;
                         obstacle.transform.localScale = new(3.2f, 3.2f, 1f);
                     }
 
@@ -106,13 +115,14 @@ namespace Sketch.TRPG
 
             // Add enemies on top of that
             var c = _enemyCount;
-            while (c >= 0)
+            while (c > 0)
             {
                 var rand = new Vector2Int(Random.Range(0, _maxSize), Random.Range(0, _maxSize));
 
-                if (Vector2.Distance(_playerPos, rand) > _maxDistWithPlayer) // We are not too close from the player
+                if (_tiles[rand.y, rand.x].Obstacle == null && Vector2.Distance(_playerPos, rand) > _maxDistWithPlayer) // We are not too close from the player
                 {
                     var enemy = Instantiate(_player, (Vector2)rand, Quaternion.identity);
+                    enemy.transform.parent = _enemyContainer;
                     enemy.GetComponent<SpriteRenderer>().color = Color.red;
                     _tiles[rand.y, rand.x] = new TileData()
                     {
@@ -185,6 +195,7 @@ namespace Sketch.TRPG
                         }
 
                         var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
+                        tile.transform.parent = _pathContainer;
                         var sr = tile.GetComponent<SpriteRenderer>();
                         sr.sprite = isStraight ? _straightPath : _cornerPath;
                         sr.color = Color.black;
@@ -274,6 +285,7 @@ namespace Sketch.TRPG
             _availableMoves.Clear();
 
             var tile = Instantiate(_filterPrefab, (Vector2)_playerPos, Quaternion.identity);
+            tile.transform.parent = _hintContainer;
             tile.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
             _helpTiles.Add(tile);
 
@@ -284,7 +296,14 @@ namespace Sketch.TRPG
                 new(_playerPos, _playerPos, int.MaxValue)
             };
 
-            DisplayRangeTile(_playerPos, _range, _dirInfo);
+            foreach (var pos in DisplayRangeTile(_playerPos, _range, _dirInfo))
+            {
+                var helpTile = Instantiate(_filterPrefab, (Vector2)pos, Quaternion.identity);
+                helpTile.transform.parent = _hintContainer;
+                helpTile.GetComponent<SpriteRenderer>().color = new(0f, 1f, 0f, .5f);
+                _helpTiles.Add(helpTile);
+                _availableMoves.Add(pos);
+            }
         }
 
         private void DrawTriangle(Vector2 point1, Vector2 point2, Vector2 point3)
@@ -308,34 +327,36 @@ namespace Sketch.TRPG
             Vector2Int.up, Vector2Int.down
         };
 
-        private void DisplayRangeTile(Vector2Int pos, int moveLeft, List<TileDirection> path)
+        private IEnumerable<Vector2Int> DisplayRangeTile(Vector2Int pos, int moveLeft, List<TileDirection> path)
         {
-            if (moveLeft == 0)
+            if (moveLeft > 0)
             {
-                return;
-            }
-
-            foreach (var d in _directions)
-            {
-                var nextPos = pos + d;
-
-                if (IsInBounds(nextPos.x, nextPos.y) && _tiles[nextPos.y, nextPos.x].Obstacle == null)
+                foreach (var d in _directions)
                 {
-                    if (!path.Any(x => x.Position == nextPos))
-                    {
-                        path.Add(new(nextPos, pos, moveLeft - 1));
+                    var nextPos = pos + d;
 
-                        var helpTile = Instantiate(_filterPrefab, (Vector2)nextPos, Quaternion.identity);
-                        helpTile.GetComponent<SpriteRenderer>().color = new(0f, 1f, 0f, .5f);
-                        _helpTiles.Add(helpTile);
-                        _availableMoves.Add(nextPos);
-
-                        DisplayRangeTile(nextPos, moveLeft - 1, path);
-                    }
-                    else if (moveLeft > path.First(x => x.Position == nextPos).Score)
+                    if (IsInBounds(nextPos.x, nextPos.y) && _tiles[nextPos.y, nextPos.x].Obstacle == null)
                     {
-                        path[path.IndexOf(path.First(x => x.Position == nextPos))] = new(nextPos, pos, moveLeft - 1);
-                        DisplayRangeTile(nextPos, moveLeft - 1, path);
+                        if (!path.Any(x => x.Position == nextPos))
+                        {
+                            path.Add(new(nextPos, pos, moveLeft - 1));
+
+                            yield return nextPos;
+                            foreach (var p in DisplayRangeTile(nextPos, moveLeft - 1, path))
+                            {
+                                yield return p;
+                            }
+
+                            
+                        }
+                        else if (moveLeft > path.First(x => x.Position == nextPos).Score)
+                        {
+                            path[path.IndexOf(path.First(x => x.Position == nextPos))] = new(nextPos, pos, moveLeft - 1);
+                            foreach (var p in DisplayRangeTile(nextPos, moveLeft - 1, path))
+                            {
+                                yield return p;
+                            }
+                        }
                     }
                 }
             }
