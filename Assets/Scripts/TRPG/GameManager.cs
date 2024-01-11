@@ -131,15 +131,15 @@ namespace Sketch.TRPG
                         }
                         else
                         {
-                            if ((lastDir.Value == Vector2.left && dir == Vector2.up))
+                            if ((lastDir.Value == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir.Value == Vector2.down))
                             {
                                 rot = Quaternion.Euler(0f, 0f, 90f);
                             }
-                            else if ((lastDir.Value == Vector2.right && dir == Vector2.up))
+                            else if ((lastDir.Value == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir.Value == Vector2.down))
                             {
                                 rot = Quaternion.Euler(0f, 0f, 180f);
                             }
-                            else if ((lastDir.Value == Vector2.right && dir == Vector2.down))
+                            else if ((lastDir.Value == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir.Value == Vector2.up))
                             {
                                 rot = Quaternion.Euler(0f, 0f, -90f);
                             }
