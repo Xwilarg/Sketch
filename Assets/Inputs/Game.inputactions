@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "AltClick",
+                    "type": "Button",
+                    "id": "e2b37cad-6fc1-4fa6-a48d-90bf08a0af1d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Skip",
                     "type": "Button",
                     "id": "263a5a9f-e6ee-4209-be19-f64322bb3066",
@@ -119,6 +128,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Skip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ca91714-63c4-4bc5-a898-bb25d7447967",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "AltClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "52cd57e0-6fd6-4401-a288-2e2ed697f3a2",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "AltClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

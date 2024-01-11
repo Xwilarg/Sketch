@@ -1,5 +1,4 @@
 ﻿using Ink.Runtime;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,7 +61,7 @@ namespace Sketch.VN
             {
                 if (_story.currentChoices.Any())
                 {
-                    _isSkipEnabled = false;
+                    ResetVN();
                     foreach (var choice in _story.currentChoices)
                     {
                         var button = Instantiate(_choicePrefab, _choiceContainer);
@@ -110,12 +109,25 @@ namespace Sketch.VN
             }
         }
 
+        private void ResetVN(bool resetUI = true)
+        {
+            _isSkipEnabled = false;
+            _isAutoEnabled = false;
+
+            if (resetUI)
+            {
+                _container.SetActive(true);
+                _characterImage.gameObject.SetActive(true);
+                _choiceContainer.gameObject.SetActive(true);
+            }
+        }
+
         public void ShowStory(TextAsset asset)
         {
             Debug.Log($"[STORY] Playing {asset.name}");
             _currentCharacter = null;
             _story = new(asset.text);
-            _isSkipEnabled = false;
+            ResetVN();
             DisplayStory(_story.Continue());
         }
 
@@ -208,25 +220,53 @@ namespace Sketch.VN
             }
         }
 
+        public void ToggleHide()
+        {
+            _container.SetActive(!_container.activeInHierarchy);
+
+            _characterImage.gameObject.SetActive(_container.activeInHierarchy);
+            _choiceContainer.gameObject.SetActive(_container.activeInHierarchy);
+
+            ResetVN(resetUI: false);
+        }
+
         public void OnNextDialogue(InputAction.CallbackContext value)
+        {
+            if (value.performed && !_isSkipEnabled)
+            {
+                if (_container.activeInHierarchy)
+                {
+                    // If we click on a button, we don't advance the 
+                    PointerEventData pointerEventData = new(EventSystem.current)
+                    {
+                        position = Mouse.current.position.ReadValue()
+                    };
+                    List<RaycastResult> raycastResultsList = new List<RaycastResult>();
+                    EventSystem.current.RaycastAll(pointerEventData, raycastResultsList);
+                    for (int i = 0; i < raycastResultsList.Count; i++)
+                    {
+                        if (raycastResultsList[i].gameObject.TryGetComponent<Button>(out var _))
+                        {
+                            return;
+                        }
+                    }
+
+                    ResetVN();
+                    DisplayNextDialogue();
+                }
+                else
+                {
+                    // Hide mode is active
+                    _container.SetActive(true);
+                }
+            }
+        }
+
+        public void OnHide(InputAction.CallbackContext value)
         {
             if (value.performed)
             {
-                // If we click on a button, we don't advance the 
-                PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
-                pointerEventData.position = Mouse.current.position.ReadValue();
-                List<RaycastResult> raycastResultsList = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerEventData, raycastResultsList);
-                for (int i = 0; i < raycastResultsList.Count; i++)
-                {
-                    if (raycastResultsList[i].gameObject.TryGetComponent<Button>(out var _))
-                    {
-                        return;
-                    }
-                }
-
-                _isAutoEnabled = false;
-                DisplayNextDialogue();
+                ToggleHide();
             }
         }
 
