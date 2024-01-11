@@ -137,7 +137,6 @@ namespace Sketch.VN
                         break;
                 }
             }
-            _display.ToDisplay = Regex.Replace(text, "\\*([^\\*]+)\\*", "<i>$1</i>"); ;
             if (_currentCharacter == null)
             {
                 _namePanel.SetActive(false);
