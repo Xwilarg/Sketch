@@ -348,11 +348,11 @@ namespace Sketch.Generation
                             instance.name = $"Door ({p.x};{p.y})";
                             rr.Doors.Add(p);
                         }
+                        else
+                        {
+                            rr.Floors.Add(p);
+                        }
                         _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
-                    }
-                    else
-                    {
-                        rr.Floors.Add(p);
                     }
                 }
             }
