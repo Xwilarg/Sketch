@@ -320,7 +320,6 @@ namespace Sketch.Generation
             rr.PixelSize = _tilePixelSize / 100f;
             rr.Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform;
             rr.Data = room;
-            rr.Center = c;
             rr.Container.transform.parent = _roomsParent;
 
             for (var dy = 0; dy < room.Height; dy++)
@@ -361,6 +360,7 @@ namespace Sketch.Generation
                 }
             }
 
+            rr.Center = new(rr.Floors.Sum(p => p.x) / rr.Floors.Count, rr.Floors.Sum(p => p.y) / rr.Floors.Count);
             _runtimeRooms.Add(rr);
         }
     }
