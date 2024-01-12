@@ -21,6 +21,11 @@ namespace Sketch.Generation
         [Tooltip("Size in pixel of _wallPrefab")]
         private int _tilePixelSize;
 
+        // Prefab to display various info
+
+        [SerializeField]
+        private GameObject _lrPrefab;
+
         // Parent object so everything isn't thrown up at the root
         private Transform _roomsParent;
 
@@ -139,7 +144,7 @@ namespace Sketch.Generation
                 return rooms;
             }).ToArray();
             var startingRoom = _availableRooms[0];
-            DrawRoom(startingRoom, 0, 0);
+            DrawRoom(startingRoom, 0, 0, new RuntimeRoom());
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
         }
@@ -174,7 +179,9 @@ namespace Sketch.Generation
                 {
                     // Attempt to place a room
                     var target = _nextDoors[_currentlyCheckedRoom];
-                    yield return GenerateRoom(target.x, target.y);
+                    var rr = new RuntimeRoom();
+
+                    yield return GenerateRoom(target.x, target.y, rr);
 
                     // Fill doors
                     foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
@@ -189,6 +196,11 @@ namespace Sketch.Generation
                         // Same for inside doors
                         else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
                         {
+                            var adjacentRoom = _runtimeRooms.First(x => x.Doors.Contains(door.Key));
+
+                            rr.AddAdjacentRoom(adjacentRoom);
+                            adjacentRoom.AddAdjacentRoom(rr);
+
                             Destroy(door.Value.GameObject);
                             door.Value.GameObject = null;
                             door.Value.Tile = TileType.FLOOR;
@@ -200,7 +212,7 @@ namespace Sketch.Generation
             }
         }
 
-        private IEnumerator GenerateRoom(int x, int y)
+        private IEnumerator GenerateRoom(int x, int y, RuntimeRoom rr)
         {
             var pxlSize = _tilePixelSize / 100f;
             var realPos = new Vector2(x, y) * pxlSize;
@@ -245,7 +257,7 @@ namespace Sketch.Generation
                     {
                         // Place the room
                         yield return new WaitForEndOfFrame();
-                        DrawRoom(room, x - door.x, y - door.y);
+                        DrawRoom(room, x - door.x, y - door.y, rr);
                         _nextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
                         _nextDoors.RemoveAt(_currentlyCheckedRoom);
                         yield break;
@@ -260,15 +272,25 @@ namespace Sketch.Generation
             _nextDoors.RemoveAt(_currentlyCheckedRoom);
         }
 
-        private void DrawRoom(RoomData room, int x, int y)
+        /// <summary>
+        /// Draw a room
+        /// </summary>
+        /// <param name="room">Information about the room to draw</param>
+        /// <param name="x">X position of the drawing</param>
+        /// <param name="y">Y position of the drawing</param>
+        /// <param name="rr">
+        /// Empty RuntimeRoom object that will be filled in this method
+        /// This allow the parent method to then use it to fill the missing data
+        /// </param>
+        /// <returns></returns>
+        private void DrawRoom(RoomData room, int x, int y, RuntimeRoom rr)
         {
             var c = new Vector2(x + room.Width / 2f, y + room.Height / 2f);
-            var rr = new RuntimeRoom
-            {
-                Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform,
-                Data = room,
-                Center = c
-            };
+            rr.LRPrefab = _lrPrefab;
+            rr.PixelSize = _tilePixelSize / 100f;
+            rr.Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform;
+            rr.Data = room;
+            rr.Center = c;
             rr.Container.transform.parent = _roomsParent;
 
             for (var dy = 0; dy < room.Height; dy++)
@@ -298,7 +320,7 @@ namespace Sketch.Generation
                             instance.GetComponent<SpriteRenderer>().color = Color.red;
                             instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
                             instance.name = $"Door ({p.x};{p.y})";
-                            rr.Doors.Add(instance);
+                            rr.Doors.Add(p);
                         }
                         _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
                     }

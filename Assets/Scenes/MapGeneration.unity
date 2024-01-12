@@ -174,6 +174,7 @@ MonoBehaviour:
   - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
   _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
   _tilePixelSize: 32
+  _lrPrefab: {fileID: 4897434291111433263, guid: 61cb39de8b8a02640b976889c8f98e12, type: 3}
 --- !u!114 &399316019
 MonoBehaviour:
   m_ObjectHideFlags: 0
