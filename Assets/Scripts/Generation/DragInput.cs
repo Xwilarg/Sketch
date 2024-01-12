@@ -6,14 +6,12 @@ namespace Sketch.Generation
 {
     public class DragInput : MonoBehaviour
     {
-        private MapGenerator _generator;
         private Camera _cam;
 
         private Vector2? _clickPos;
 
         private void Awake()
         {
-            _generator = GetComponent<MapGenerator>();
             _cam = Camera.main;
         }
 
