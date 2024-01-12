@@ -1,6 +1,7 @@
 ﻿using Sketch.Common;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,6 +65,16 @@ namespace Sketch.TRPG
 
         // Containers to clean hierarchy
         private Transform _wallContainer, _enemyContainer, _hintContainer, _pathContainer;
+
+        // Moving player
+
+        // List of position to reach the destination
+        private readonly List<Vector2Int> _pathToMouse = new();
+        // Is the playing moving
+        private bool _isMoving;
+        // Internal timer to move
+        private float _moveTimer;
+        private Vector2 _lastPos;
 
         /// <summary>
         /// Last mouse position, used to generate path
@@ -144,12 +155,41 @@ namespace Sketch.TRPG
 
         private void Update()
         {
+            if (_isMoving)
+            {
+                _moveTimer += Time.deltaTime * 5f;
+
+                _player.transform.position = Vector2.Lerp(_lastPos, _pathToMouse[0], Mathf.Clamp01(_moveTimer));
+
+                if (_moveTimer >= 1f)
+                {
+                    _lastPos = _pathToMouse[0];
+                    _pathToMouse.RemoveAt(0);
+                    _moveTimer = 0f;
+
+                    if (!_pathToMouse.Any())
+                    {
+                        _playerPos = new(Mathf.RoundToInt(_player.transform.position.x), Mathf.RoundToInt(_player.transform.position.y));
+                        DisplayHintTiles();
+                        _isMoving = false;
+                    }
+                }
+            }
+            if (!_isMoving)
+            {
+                DisplayPath();
+            }
+        }
+
+        private void DisplayPath()
+        {
             var mousePos = GetMousePosI();
             if (_lastMousePos == null || mousePos != _lastMousePos)
             {
                 // Clear path tiles
                 foreach (var go in _dirInstances) Destroy(go);
                 _dirInstances.Clear();
+                _pathToMouse.Clear();
                 Destroy(_playerGhost);
 
                 _lastMousePos = mousePos;
@@ -158,15 +198,17 @@ namespace Sketch.TRPG
                 var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePos);
                 if (nextPos != null) // Mouse is a valid position we can move to
                 {
+                    _pathToMouse.Add(_lastMousePos.Value);
                     _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePos, Quaternion.identity);
 
-                    if (OptionsManager.Instance.ShowPath)
-                    {
-                        // Don't display path over the ghost so we directy go to the next one
-                        Vector2 lastDir = nextPos.Position - nextPos.From;
-                        nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+                    // Don't display path over the ghost so we directy go to the next one
+                    Vector2 lastDir = nextPos.Position - nextPos.From;
+                    nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+                    _pathToMouse.Add(nextPos.Position);
 
-                        while (nextPos.From != nextPos.Position) // While we have tiles to display
+                    while (nextPos.From != nextPos.Position) // While we have tiles to display
+                    {
+                        if (OptionsManager.Instance.ShowPath) // If options say we don't show path we can skip all these calculations
                         {
                             // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
                             var dir = nextPos.Position - nextPos.From;
@@ -203,11 +245,15 @@ namespace Sketch.TRPG
                             sr.color = Color.black;
 
                             _dirInstances.Add(tile);
-
-                            nextPos = _dirInfo.First(x => x.Position == nextPos.From);
                             lastDir = dir;
                         }
+
+                        nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+                        _pathToMouse.Add(nextPos.Position);
                     }
+
+                    // Since the parsing above go from destination to player, we need to reverse the array to it contains path from the player to the mouse
+                    _pathToMouse.Reverse();
                 }
             }
         }
@@ -362,15 +408,14 @@ namespace Sketch.TRPG
 
         public void OnClick(InputAction.CallbackContext value)
         {
-            if (value.performed)
+            if (value.performed && !_isMoving)
             {
                 var posI = GetMousePosI();
 
                 if (_availableMoves.Contains(posI))
                 {
-                    _player.transform.position = (Vector2)posI;
-                    _playerPos = posI;
-                    DisplayHintTiles();
+                    _lastPos = _player.transform.position;
+                    _isMoving = true;
                 }
             }
         }
