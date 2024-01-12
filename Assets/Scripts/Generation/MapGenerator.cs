@@ -21,15 +21,23 @@ namespace Sketch.Generation
         [Tooltip("Size in pixel of _wallPrefab")]
         private int _tilePixelSize;
 
+        // Parent object so everything isn't thrown up at the root
         private Transform _roomsParent;
 
+        // Rooms we can instanciate
         private RoomData[] _availableRooms;
-
-        private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
 
         private Camera _cam;
 
         private readonly List<Vector2Int> _nextDoors = new();
+
+        // All tiles instanciated
+        // This is used as a grid to check if some tile is at a specific position
+        private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
+
+        // All the rooms instanciated
+        // This is used if we need to do stuff between rooms
+        private readonly List<RuntimeRoom> _runtimeRooms = new();
 
         private void Awake()
         {
@@ -254,6 +262,15 @@ namespace Sketch.Generation
 
         private void DrawRoom(RoomData room, int x, int y)
         {
+            var c = new Vector2(x + room.Width / 2f, y + room.Height / 2f);
+            var rr = new RuntimeRoom
+            {
+                Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform,
+                Data = room,
+                Center = c
+            };
+            rr.Container.transform.parent = _roomsParent;
+
             for (var dy = 0; dy < room.Height; dy++)
             {
                 for (var dx = 0; dx < room.Width; dx++)
@@ -270,21 +287,25 @@ namespace Sketch.Generation
                     {
                         if (room.Data[dx, dy] == TileType.WALL)
                         {
-                            instance = Instantiate(_wallPrefab, _roomsParent);
+                            instance = Instantiate(_wallPrefab, rr.Container);
                             instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
                             instance.name = $"Wall ({p.x};{p.y})";
+                            rr.Walls.Add(instance);
                         }
                         else if (room.Data[dx, dy] == TileType.DOOR) // DEBUG
                         {
-                            instance = Instantiate(_wallPrefab, _roomsParent);
+                            instance = Instantiate(_wallPrefab, rr.Container);
                             instance.GetComponent<SpriteRenderer>().color = Color.red;
                             instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
-                            instance.name = $"Floo ({p.x};{p.y})";
+                            instance.name = $"Door ({p.x};{p.y})";
+                            rr.Doors.Add(instance);
                         }
                         _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
                     }
                 }
             }
+
+            _runtimeRooms.Add(rr);
         }
     }
 }
