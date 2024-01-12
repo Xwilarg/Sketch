@@ -13,6 +13,7 @@ namespace Sketch.TRPG
         private GameObject _optionsContainer;
 
         public bool ShowLos { private set; get; } = true;
+        public bool ShowPath { private set; get; } = true;
 
         private void Awake()
         {
@@ -27,6 +28,11 @@ namespace Sketch.TRPG
         public void ToggleShowLos()
         {
             ShowLos = !ShowLos;
+        }
+
+        public void ToggleShowPath()
+        {
+            ShowPath = !ShowPath;
         }
     }
 }

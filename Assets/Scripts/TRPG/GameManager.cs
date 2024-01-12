@@ -160,50 +160,53 @@ namespace Sketch.TRPG
                 {
                     _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePos, Quaternion.identity);
 
-                    // Don't display path over the ghost so we directy go to the next one
-                    Vector2 lastDir = nextPos.Position - nextPos.From;
-                    nextPos = _dirInfo.First(x => x.Position == nextPos.From);
-
-                    while (nextPos.From != nextPos.Position) // While we have tiles to display
+                    if (OptionsManager.Instance.ShowPath)
                     {
-                        // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
-                        var dir = nextPos.Position - nextPos.From;
-                        var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
-
-                        Quaternion rot = Quaternion.identity;
-                        if (isStraight)
-                        {
-                            if (dir == Vector2.up || dir == Vector2.down)
-                            {
-                                rot = Quaternion.Euler(0f, 0f, 90f);
-                            }
-                        }
-                        else
-                        {
-                            if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
-                            {
-                                rot = Quaternion.Euler(0f, 0f, 90f);
-                            }
-                            else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
-                            {
-                                rot = Quaternion.Euler(0f, 0f, 180f);
-                            }
-                            else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
-                            {
-                                rot = Quaternion.Euler(0f, 0f, -90f);
-                            }
-                        }
-
-                        var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
-                        tile.transform.parent = _pathContainer;
-                        var sr = tile.GetComponent<SpriteRenderer>();
-                        sr.sprite = isStraight ? _straightPath : _cornerPath;
-                        sr.color = Color.black;
-
-                        _dirInstances.Add(tile);
-
+                        // Don't display path over the ghost so we directy go to the next one
+                        Vector2 lastDir = nextPos.Position - nextPos.From;
                         nextPos = _dirInfo.First(x => x.Position == nextPos.From);
-                        lastDir = dir;
+
+                        while (nextPos.From != nextPos.Position) // While we have tiles to display
+                        {
+                            // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
+                            var dir = nextPos.Position - nextPos.From;
+                            var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
+
+                            Quaternion rot = Quaternion.identity;
+                            if (isStraight)
+                            {
+                                if (dir == Vector2.up || dir == Vector2.down)
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, 90f);
+                                }
+                            }
+                            else
+                            {
+                                if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, 90f);
+                                }
+                                else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, 180f);
+                                }
+                                else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, -90f);
+                                }
+                            }
+
+                            var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
+                            tile.transform.parent = _pathContainer;
+                            var sr = tile.GetComponent<SpriteRenderer>();
+                            sr.sprite = isStraight ? _straightPath : _cornerPath;
+                            sr.color = Color.black;
+
+                            _dirInstances.Add(tile);
+
+                            nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+                            lastDir = dir;
+                        }
                     }
                 }
             }
@@ -261,14 +264,6 @@ namespace Sketch.TRPG
                 }
                 GL.PopMatrix();
             }
-        }
-
-        /// <summary>
-        /// Display path over the help tiles showing show to go from A to B
-        /// </summary>
-        private void DisplayPath()
-        {
-
         }
 
         /// <summary>
