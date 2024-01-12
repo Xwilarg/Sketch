@@ -29,6 +29,9 @@ namespace Sketch.Generation
         [SerializeField]
         private Material _normalMat, _importantMat;
 
+        [SerializeField]
+        private GameObject _filterTile;
+
         // Parent object so everything isn't thrown up at the root
         private Transform _roomsParent;
 
@@ -313,6 +316,7 @@ namespace Sketch.Generation
             rr.LRPrefab = _lrPrefab;
             rr.NormalMat = _normalMat;
             rr.ImportantMat = _importantMat;
+            rr.FilterTile = _filterTile;
             rr.PixelSize = _tilePixelSize / 100f;
             rr.Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform;
             rr.Data = room;

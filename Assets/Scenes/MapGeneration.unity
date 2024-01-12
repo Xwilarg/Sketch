@@ -177,6 +177,7 @@ MonoBehaviour:
   _lrPrefab: {fileID: 4897434291111433263, guid: 61cb39de8b8a02640b976889c8f98e12, type: 3}
   _normalMat: {fileID: 2100000, guid: 196661d8d03fc07459c8ddcbb7c0674e, type: 2}
   _importantMat: {fileID: 2100000, guid: f0de2a3f621ecfd499416f5a8d0e10e9, type: 2}
+  _filterTile: {fileID: 5675098872774511247, guid: b2e3c2a17857fe74991b01b2193a9edc, type: 3}
 --- !u!114 &399316019
 MonoBehaviour:
   m_ObjectHideFlags: 0
