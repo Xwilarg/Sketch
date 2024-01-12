@@ -46,12 +46,12 @@ namespace Sketch.TRPG
         // Size of the grid
         private const int _maxSize = 20;
         // Max movement range
-        private const int _range = 5;
+        private const int _range = 15;
         // LOS range
         private const float _visionRange = 20f;
 
         // Chance to spawn a rock
-        private const float _rockChance = .1f;
+        private const float _rockChance = .15f;
         // Number of enemies to spawn
         private const int _enemyCount = 5;
         // If the distance between an enemy and a player is inferior to that, he won't spawn there
@@ -282,19 +282,21 @@ namespace Sketch.TRPG
 
                 for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
                 {
+                    var from = (Vector2)_player.transform.position;
+
                     GL.Begin(GL.TRIANGLES); // Performances :thinking:
                     Vector2 pos;
 
                     var mousePos = _cam.ScreenToWorldPoint(CursorUtils.Position);
-                    var angleRad = Mathf.Atan2(mousePos.y - _playerPos.y, mousePos.x - _playerPos.x);
+                    var angleRad = Mathf.Atan2(mousePos.y - from.y, mousePos.x - from.x);
 
                     var angle = angleRad + i - Mathf.PI / 2;
 
                     var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                    var hit = Physics2D.Raycast(_playerPos, dir, _visionRange);
+                    var hit = Physics2D.Raycast(from, dir, _visionRange);
                     if (hit.collider == null)
                     {
-                        pos = _playerPos + dir * _visionRange;
+                        pos = from + dir * _visionRange;
                     }
                     else
                     {
@@ -303,7 +305,7 @@ namespace Sketch.TRPG
 
                     if (prevPos != null)
                     {
-                        DrawTriangle(_playerPos, prevPos.Value, pos);
+                        DrawTriangle(from, prevPos.Value, pos);
                     }
                     prevPos = pos;
                     GL.End();
