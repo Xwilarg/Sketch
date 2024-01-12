@@ -166,12 +166,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rooms:
-  - {fileID: 4900000, guid: df0627ef6f207ed43918938fc06e23b8, type: 3}
-  - {fileID: 4900000, guid: 6722b4ed6c936bf4f857936189486523, type: 3}
-  - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
   - {fileID: 4900000, guid: 64a17dc9172deaa43935308b22369081, type: 3}
-  - {fileID: 4900000, guid: 1c4cb26ed6653db4eb2377992ab5cafa, type: 3}
+  - {fileID: 4900000, guid: df0627ef6f207ed43918938fc06e23b8, type: 3}
   - {fileID: 4900000, guid: ffaba7a2e8d79cb499349eaf69c7997f, type: 3}
+  - {fileID: 4900000, guid: 141c53891e9572941a2003fc576bb9c7, type: 3}
+  - {fileID: 4900000, guid: c5b24268f7f77f341a6572d2aeaa26ef, type: 3}
+  - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
   _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
   _tilePixelSize: 32
 --- !u!114 &399316019
@@ -271,6 +271,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 38aa75ce-4a41-4f17-88df-c1611f5fbc02
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e2b37cad-6fc1-4fa6-a48d-90bf08a0af1d
+    m_ActionName: 'Player/AltClick[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 263a5a9f-e6ee-4209-be19-f64322bb3066
+    m_ActionName: 'Player/Skip[/Keyboard/leftShift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
