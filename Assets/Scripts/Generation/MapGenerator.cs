@@ -166,7 +166,6 @@ namespace Sketch.Generation
 
             var rounded = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
             var room = _runtimeRooms.FirstOrDefault(x => x.Floors.Contains(rounded));
-            Debug.Log(room == null);
             if (room != null)
             {
                 _highlightedRoom = room;

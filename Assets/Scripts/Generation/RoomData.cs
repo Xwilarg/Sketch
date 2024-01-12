@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Sketch.Generation
@@ -18,7 +19,7 @@ namespace Sketch.Generation
         public List<Vector2Int> Doors = new();
         public List<Vector2Int> Floors = new();
 
-        private readonly List<LineRenderer> _lrs = new();
+        public readonly Dictionary<Vector2, (LineRenderer LR, RuntimeRoom RR)> LRs = new();
 
         private readonly List<RuntimeRoom> _adjacentRooms = new();
         public void AddAdjacentRoom(RuntimeRoom room)
@@ -31,22 +32,24 @@ namespace Sketch.Generation
             {
                 (Vector3)Center * PixelSize, (Vector3)room.Center * PixelSize
             });
-            _lrs.Add(lr);
+            LRs.Add(room.Center, (lr, room));
         }
 
         public void Highlight()
         {
-            foreach (var lr in _lrs)
+            foreach (var lr in LRs)
             {
-                lr.material = ImportantMat;
+                lr.Value.LR.material = ImportantMat;
+                lr.Value.RR.LRs.First(x => x.Key == Center).Value.LR.material = ImportantMat;
             }
         }
 
         public void UnHighlight()
         {
-            foreach (var lr in _lrs)
+            foreach (var lr in LRs)
             {
-                lr.material = NormalMat;
+                lr.Value.LR.material = NormalMat;
+                lr.Value.RR.LRs.First(x => x.Key == Center).Value.LR.material = NormalMat;
             }
         }
 
