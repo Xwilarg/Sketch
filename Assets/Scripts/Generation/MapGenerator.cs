@@ -26,6 +26,9 @@ namespace Sketch.Generation
         [SerializeField]
         private GameObject _lrPrefab;
 
+        [SerializeField]
+        private Material _normalMat, _importantMat;
+
         // Parent object so everything isn't thrown up at the root
         private Transform _roomsParent;
 
@@ -43,6 +46,8 @@ namespace Sketch.Generation
         // All the rooms instanciated
         // This is used if we need to do stuff between rooms
         private readonly List<RuntimeRoom> _runtimeRooms = new();
+
+        private RuntimeRoom _highlightedRoom;
 
         private void Awake()
         {
@@ -147,6 +152,26 @@ namespace Sketch.Generation
             DrawRoom(startingRoom, 0, 0, new RuntimeRoom());
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
+        }
+
+        public void HandleClick(Vector2 uiPos)
+        {
+            var pos = _cam.ScreenToWorldPoint(uiPos);
+
+            if (_highlightedRoom != null)
+            {
+                _highlightedRoom.UnHighlight();
+                _highlightedRoom = null;
+            }
+
+            var rounded = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+            var room = _runtimeRooms.FirstOrDefault(x => x.Floors.Contains(rounded));
+            Debug.Log(room == null);
+            if (room != null)
+            {
+                _highlightedRoom = room;
+                room.Highlight();
+            }
         }
 
         // https://stackoverflow.com/a/42535
@@ -287,6 +312,8 @@ namespace Sketch.Generation
         {
             var c = new Vector2(x + room.Width / 2f, y + room.Height / 2f);
             rr.LRPrefab = _lrPrefab;
+            rr.NormalMat = _normalMat;
+            rr.ImportantMat = _importantMat;
             rr.PixelSize = _tilePixelSize / 100f;
             rr.Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform;
             rr.Data = room;
@@ -323,6 +350,10 @@ namespace Sketch.Generation
                             rr.Doors.Add(p);
                         }
                         _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
+                    }
+                    else
+                    {
+                        rr.Floors.Add(p);
                     }
                 }
             }
