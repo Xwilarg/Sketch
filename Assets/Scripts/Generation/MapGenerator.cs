@@ -159,7 +159,7 @@ namespace Sketch.Generation
 
         public void HandleClick(Vector2 uiPos)
         {
-            var pos = _cam.ScreenToWorldPoint(uiPos) * (_tilePixelSize / 10f);
+            var pos = _cam.ScreenToWorldPoint(uiPos);
 
             if (_highlightedRoom != null)
             {
@@ -167,7 +167,7 @@ namespace Sketch.Generation
                 _highlightedRoom = null;
             }
 
-            var rounded = new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+            var rounded = new Vector2Int(Mathf.RoundToInt(pos.x / (_tilePixelSize / 100f)), Mathf.RoundToInt(pos.y / (_tilePixelSize / 100f)));
             var room = _runtimeRooms.FirstOrDefault(x => x.Floors.Contains(rounded));
             if (room != null)
             {
