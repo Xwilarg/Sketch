@@ -156,7 +156,7 @@ namespace Sketch.Generation
 
         public void HandleClick(Vector2 uiPos)
         {
-            var pos = _cam.ScreenToWorldPoint(uiPos);
+            var pos = _cam.ScreenToWorldPoint(uiPos) * (_tilePixelSize / 10f);
 
             if (_highlightedRoom != null)
             {
