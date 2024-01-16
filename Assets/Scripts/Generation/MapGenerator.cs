@@ -178,6 +178,9 @@ namespace Sketch.Generation
             }
         }
 
+        public RuntimeRoom MakeRR()
+            => new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
+
         // https://stackoverflow.com/a/42535
         private TileType[,] Rotate(TileType[,] array, int width, int height)
         {
@@ -202,13 +205,18 @@ namespace Sketch.Generation
                 Vector2Int.up, Vector2Int.down,
                 Vector2Int.left, Vector2Int.right
             };
+            RuntimeRoom rr = null;
             while (true) // Even if we are out of room, we keep that loop alive
             {
                 while (_currentlyCheckedRoom < _nextDoors.Count)
                 {
+                    if (rr == null || !rr.IsEmpty)
+                    {
+                        rr = MakeRR();
+                    }
+
                     // Attempt to place a room
                     var target = _nextDoors[_currentlyCheckedRoom];
-                    RuntimeRoom rr = new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
 
                     yield return GenerateRoom(target.x, target.y, rr);
 
@@ -285,7 +293,10 @@ namespace Sketch.Generation
                         continue;
                     }
 
-                    RuntimeRoom rr = new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
+                    if (rr == null || !rr.IsEmpty)
+                    {
+                        rr = MakeRR();
+                    }
                     rr.Floors.AddRange(group);
                     rr.LateInit();
                     foreach (var t in group)
@@ -296,6 +307,16 @@ namespace Sketch.Generation
                             RR = rr,
                             Tile = TileType.FLOOR
                         });
+                        foreach (var room in directions.Where(d => _tiles.ContainsKey(t + d)))
+                        {
+                            var r = _tiles[t + room].RR;
+                            if (r.ID != rr.ID && r.Doors.Contains(t + room))
+                            {
+                                Debug.Log(group[0]);
+                                rr.AddAdjacentRoom(_tiles[t + room].RR);
+                                _tiles[t + room].RR.AddAdjacentRoom(rr);
+                            }
+                        }
                     }
                     _runtimeRooms.Add(rr);
                 }

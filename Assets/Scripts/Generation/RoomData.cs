@@ -8,6 +8,8 @@ namespace Sketch.Generation
     {
         public RuntimeRoom(int id, Transform parent, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile)
         {
+            ID = id;
+
             Container = new GameObject($"Room {id}").transform;
             Container.transform.parent = parent;
 
@@ -17,6 +19,8 @@ namespace Sketch.Generation
             _importantMat = importantMat;
             _filterTile = filterTile;
         }
+
+        public int ID { get; }
 
         // GameObject that contains all the instanciated data
         public Transform Container { get; }
@@ -36,9 +40,12 @@ namespace Sketch.Generation
         public List<Vector2Int> Doors = new();
         public List<Vector2Int> Floors = new();
 
+        public bool IsEmpty => !Walls.Any() && !Doors.Any() && !Floors.Any();
+
         public void LateInit()
         {
-            _center = new(Floors.Sum(p => p.x) / Floors.Count, Floors.Sum(p => p.y) / Floors.Count);
+            Vector2Int middle = new(Floors.Sum(p => p.x) / Floors.Count, Floors.Sum(p => p.y) / Floors.Count);
+            _center = Floors.OrderBy(p => Vector2.Distance(p, middle)).First();
         }
 
         // Line renderers that link rooms
@@ -56,7 +63,6 @@ namespace Sketch.Generation
 
             _adjacentRooms.Add(room);
 
-            Debug.Log(Container == null);
             var go = Object.Instantiate(_lrPrefab, Container.transform);
             var lr = go.GetComponent<LineRenderer>();
             lr.SetPositions(new[]
