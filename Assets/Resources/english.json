@@ -34,5 +34,11 @@
 
     "ACH_landlockedName": "Landlocked",
     "ACH_landlockedDesc": "Click on a room that doesn't have any door",
-    "ACH_landlockedHint": "There is no way in or out"
+    "ACH_landlockedHint": "There is no way in or out",
+    "ACH_150cmName": "There is always a bigger fish",
+    "ACH_150cmDesc": "Catch a fish of at least 150cm",
+    "ACH_150cmHint": "The hardest they bite, the tastier they are",
+    "ACH_noSkipName": "Attentive listener",
+    "ACH_noSkipDesc": "Read Yuzu rambling without skipping it",
+    "ACH_noSkipHint": "She might tell you it's okay to skip but she will appreciate that you read it too"
 }

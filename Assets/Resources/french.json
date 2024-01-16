@@ -34,5 +34,11 @@
 
     "ACH_landlockedName": "Enclavé",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
-    "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir"
+    "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir",
+    "ACH_150cmName": "Il y a toujours un plus gros poisson",
+    "ACH_150cmDesc": "Attrape un poisson d'au moins 150cm",
+    "ACH_150cmHint": "Le plus fort ils mordent, le plus délicieux ils sont",
+    "ACH_noSkipName": "Auditeur attentif",
+    "ACH_noSkipDesc": "Lire les divaguations de Yuzu sans les passer",
+    "ACH_noSkipHint": "Elle vous dira peut-être que vous pouvez le passer mais elle appréciera que vous l'écouter"
 }

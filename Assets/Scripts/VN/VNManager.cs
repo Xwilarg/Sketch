@@ -1,4 +1,5 @@
 ﻿using Ink.Runtime;
+using Sketch.Achievement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,8 @@ namespace Sketch.VN
         private float _skipTimerRef = .1f;
 
         private bool _isAutoEnabled;
+
+        private bool _didUseSkip;
 
         private void Awake()
         {
@@ -162,6 +165,18 @@ namespace Sketch.VN
                         else Debug.LogError($"[STORY] Unable to find format {content}");
                         break;
 
+                    case "ach-noskip":
+                        if (content == "START") _didUseSkip = false;
+                        else if (content == "STOP")
+                        {
+                            if (!_didUseSkip)
+                            {
+                                AchievementManager.Instance.Unlock(AchievementID.VIS_NoSkip);
+                            }
+                        }
+                        else Debug.LogError($"[STORY] Invalid achievement value {content}");
+                        break;
+
                     default:
                         Debug.LogError($"Unknown story key: {s[0]}");
                         break;
@@ -208,6 +223,11 @@ namespace Sketch.VN
         public void ToggleSkip()
         {
             _isSkipEnabled = !_isSkipEnabled;
+
+            if (_isSkipEnabled)
+            {
+                _didUseSkip = true;
+            }
         }
 
         public void ToggleAuto()

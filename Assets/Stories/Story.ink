@@ -32,7 +32,7 @@ With it, you can read things without having to touch your keyboard!
 Then we have the "Hide" button, its use is pretty straighfoward too, it allow to hide the interface to better see the background image
 Here the background image is, well, pretty simple, but still feel free to use it to see how it works
 
-After that we have the "Skip" button, as its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done
+After that we have the "Skip" button, as its name says, it allow to skip text, try it, I'll ramble for a bit and stop you when I'm done #ach-noskip start
 ... Bah, baa-
 Baah, baa, baaa
 Baaaa, baaaa-
@@ -44,7 +44,7 @@ Baa, baaah
 Baa baaaa-
 Bah baa baaaaaa
 Baaa...
-Amazing isn't it? It feels like no time passed! #skip false
+Amazing isn't it? It feels like no time passed! #skip false #ach-noskip stop
 
 Along with tha- ah, my paper is empty, well that's all for the technical part!
 -> Choice

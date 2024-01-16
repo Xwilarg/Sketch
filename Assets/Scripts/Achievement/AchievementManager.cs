@@ -40,13 +40,17 @@ namespace Sketch.Achievement
 
         public Dictionary<AchievementID, Achievement> Achievements { get; } = new()
         {
-            { AchievementID.GEN_noDoor, new("landlocked") }
+            { AchievementID.GEN_noDoor, new("landlocked") },
+            { AchievementID.FIS_150cm, new("150cm") },
+            { AchievementID.VIS_NoSkip, new("noSkip") },
         };
     }
 
     public enum AchievementID
     {
-        GEN_noDoor
+        GEN_noDoor,
+        FIS_150cm,
+        VIS_NoSkip
     }
 
     public record Achievement

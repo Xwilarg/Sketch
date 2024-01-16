@@ -1,4 +1,5 @@
-﻿using Sketch.Common;
+﻿using Sketch.Achievement;
+using Sketch.Common;
 using Sketch.Translation;
 using System.Collections;
 using System.Linq;
@@ -70,9 +71,15 @@ namespace Sketch.Fishing
 
         public IEnumerator Congrats(FishController fish)
         {
+            var size = Mathf.RoundToInt(fish.Size * 100);
+            if (size >= 150)
+            {
+                AchievementManager.Instance.Unlock(AchievementID.FIS_150cm);
+            }
+
             _congratsText.gameObject.SetActive(true);
             _congratsText.text = $"{Translate.Instance.Tr("youCaught")} {Translate.Instance.Tr(fish.Info.Name)}";
-            _fishSizeText.text = $"{Translate.Instance.Tr("size")} {Mathf.RoundToInt(fish.Size * 100)}cm";
+            _fishSizeText.text = $"{Translate.Instance.Tr("size")} {size}cm";
             yield return new WaitForSeconds(2f);
             _congratsText.gameObject.SetActive(false);
             IsReady = true;
