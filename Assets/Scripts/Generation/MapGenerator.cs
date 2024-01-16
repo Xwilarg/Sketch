@@ -3,13 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Sketch.Generation
 {
     public class MapGenerator : MonoBehaviour
     {
+        public static MapGenerator Instance { private set; get; }
+
         [SerializeField]
         [Tooltip("Available rooms we can spawn")]
         private TextAsset[] _rooms;
@@ -53,8 +54,18 @@ namespace Sketch.Generation
 
         private RuntimeRoom _highlightedRoom;
 
+        public void ToggleAllLinks(bool value)
+        {
+            foreach (var rr in _runtimeRooms)
+            {
+                rr.ToggleLinks(value);
+            }
+        }
+
         private void Awake()
         {
+            Instance = this;
+
             _cam = Camera.main;
             _roomsParent = new GameObject("Rooms").transform;
             _availableRooms = _rooms.SelectMany(r => // Convert all room text assets to RoomData
@@ -312,7 +323,6 @@ namespace Sketch.Generation
                             var r = _tiles[t + room].RR;
                             if (r.ID != rr.ID && r.Doors.Contains(t + room))
                             {
-                                Debug.Log(group[0]);
                                 rr.AddAdjacentRoom(_tiles[t + room].RR);
                                 _tiles[t + room].RR.AddAdjacentRoom(rr);
                             }

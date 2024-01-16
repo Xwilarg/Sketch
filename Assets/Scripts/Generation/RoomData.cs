@@ -40,6 +40,8 @@ namespace Sketch.Generation
         public List<Vector2Int> Doors = new();
         public List<Vector2Int> Floors = new();
 
+        private Vector2 _center;
+
         public bool IsEmpty => !Walls.Any() && !Doors.Any() && !Floors.Any();
 
         public void LateInit()
@@ -49,7 +51,7 @@ namespace Sketch.Generation
         }
 
         // Line renderers that link rooms
-        private readonly Dictionary<Vector2, (LineRenderer LR, RuntimeRoom RR)> LRs = new();
+        private readonly Dictionary<int, (LineRenderer LR, RuntimeRoom RR)> LRs = new();
 
         // Rooms that have a door that lead to this one
         private readonly List<RuntimeRoom> _adjacentRooms = new();
@@ -69,7 +71,17 @@ namespace Sketch.Generation
             {
                 (Vector3)_center * _pixelSize, (Vector3)room._center * _pixelSize
             });
-            LRs.Add(room._center, (lr, room));
+            LRs.Add(room.ID, (lr, room));
+
+            ToggleLinks(OptionsManager.Instance.ShowLinks);
+        }
+
+        public void ToggleLinks(bool value)
+        {
+            foreach (var l in LRs)
+            {
+                l.Value.LR.gameObject.SetActive(value);
+            }
         }
 
         public void Highlight()
@@ -77,7 +89,7 @@ namespace Sketch.Generation
             foreach (var lr in LRs)
             {
                 lr.Value.LR.material = _importantMat;// Highlight our line renderers...
-                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = _importantMat; // ...and the ones going to us
+                lr.Value.RR.LRs.First(x => x.Key == ID).Value.LR.material = _importantMat; // ...and the ones going to us
             }
             foreach (var pos in Floors) // Highlights tiles in the room
             {
@@ -93,7 +105,7 @@ namespace Sketch.Generation
             foreach (var lr in LRs)
             {
                 lr.Value.LR.material = _normalMat;
-                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = _normalMat;
+                lr.Value.RR.LRs.First(x => x.Key == ID).Value.LR.material = _normalMat;
             }
             foreach (var t in _instanciatedHints)
             {
@@ -102,7 +114,26 @@ namespace Sketch.Generation
             _instanciatedHints.Clear();
         }
 
-        private Vector2 _center;
+        public override bool Equals(object obj)
+        {
+            return obj is RuntimeRoom room &&
+                   ID == room.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public static bool operator ==(RuntimeRoom a, RuntimeRoom b)
+        {
+            if (a is null) return b is null;
+            if (b is null) return false;
+            return a.ID == b.ID;
+        }
+
+        public static bool operator !=(RuntimeRoom a, RuntimeRoom b)
+            => !(a == b);
     }
 
     public record RoomData
