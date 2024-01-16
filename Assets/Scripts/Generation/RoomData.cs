@@ -144,7 +144,7 @@ namespace Sketch.Generation
                 Object.Destroy(t);
             }
             _instanciatedHints.Clear();
-            _hintDistanceInstance.color = new(.1f, .5f, .5f);
+            _hintDistanceInstance.color = Color.white;
         }
 
         public override bool Equals(object obj)
