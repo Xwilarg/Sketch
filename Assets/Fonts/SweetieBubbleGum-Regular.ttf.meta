@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0c49a0f721748784899def719cdda887
+guid: b8875a2127c88854fa7e19102b323e7b
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Peach Cake
+  - Sweetie Bubble Gum
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
