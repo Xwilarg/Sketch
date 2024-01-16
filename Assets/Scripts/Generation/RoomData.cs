@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Sketch.Generation
@@ -63,17 +64,18 @@ namespace Sketch.Generation
         // Rooms that have a door that lead to this one
         private readonly List<RuntimeRoom> _adjacentRooms = new();
 
-        private void UpdateDistance(RuntimeRoom rr)
+        public bool UpdateDistances()
         {
-            Distance = rr.Distance + 1;
-            _hintDistanceInstance.text = Distance.ToString();
             foreach (var r in _adjacentRooms)
             {
-                if (r.Distance > Distance)
+                if (Distance - r.Distance > 1)
                 {
-                    r.UpdateDistance(r);
+                    Distance = r.Distance + 1;
+                    _hintDistanceInstance.text = Distance.ToString();
+                    return true;
                 }
             }
+            return false;
         }
 
         public void AddAdjacentRoom(RuntimeRoom room)
@@ -90,13 +92,6 @@ namespace Sketch.Generation
                 Distance = room.Distance + 1;
                 _hintDistanceInstance.text = Distance.ToString();
                 _hintDistanceInstance.transform.position = _center * _pixelSize;
-            }
-            else
-            {
-                if (room.Distance + 1 < Distance)
-                {
-                    UpdateDistance(room);
-                }
             }
 
             _adjacentRooms.Add(room);
@@ -134,6 +129,7 @@ namespace Sketch.Generation
                 go.GetComponent<SpriteRenderer>().color = new(0F, 0f, 1f, .5f);
                 _instanciatedHints.Add(go);
             }
+            _hintDistanceInstance.color = Color.red;
         }
 
         public void UnHighlight()
@@ -148,6 +144,7 @@ namespace Sketch.Generation
                 Object.Destroy(t);
             }
             _instanciatedHints.Clear();
+            _hintDistanceInstance.color = new(.1f, .5f, .5f);
         }
 
         public override bool Equals(object obj)

@@ -213,6 +213,15 @@ namespace Sketch.Generation
             return ret;
         }
 
+        private void AddRoomLinks(RuntimeRoom r1, RuntimeRoom r2)
+        {
+            r1.AddAdjacentRoom(r2);
+            r2.AddAdjacentRoom(r1);
+
+            while (_runtimeRooms.Any(x => x.UpdateDistances()))
+            { }
+        }
+
         private int _currentlyCheckedRoom;
         private IEnumerator Generate()
         {
@@ -253,8 +262,7 @@ namespace Sketch.Generation
                         {
                             var adjacentRoom = _runtimeRooms.First(x => x.Doors.Contains(door.Key));
 
-                            rr.AddAdjacentRoom(adjacentRoom);
-                            adjacentRoom.AddAdjacentRoom(rr);
+                            AddRoomLinks(rr, adjacentRoom);
 
                             Destroy(door.Value.GameObject);
                             door.Value.GameObject = null;
@@ -344,8 +352,7 @@ namespace Sketch.Generation
                                 var r = _tiles[t + room].RR;
                                 if (r != null && r.ID != rr.ID && r.Doors.Contains(t + room))
                                 {
-                                    rr.AddAdjacentRoom(_tiles[t + room].RR);
-                                    _tiles[t + room].RR.AddAdjacentRoom(rr);
+                                    AddRoomLinks(rr, _tiles[t + room].RR);
                                 }
                             }
                         }
