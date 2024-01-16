@@ -219,11 +219,13 @@ namespace Sketch.Generation
             RuntimeRoom rr = null;
             while (true) // Even if we are out of room, we keep that loop alive
             {
+                int roomMade = 0;
                 while (_currentlyCheckedRoom < _nextDoors.Count)
                 {
                     if (rr == null || !rr.IsEmpty)
                     {
                         rr = MakeRR();
+                        roomMade++;
                     }
 
                     // Attempt to place a room
@@ -257,78 +259,96 @@ namespace Sketch.Generation
                 }
                 _currentlyCheckedRoom = 0;
 
-                var camBounds = CameraUtils.CalculateBounds(_cam);
-                var min = camBounds.min * _tilePixelSize / 10f;
-                var max = camBounds.max * _tilePixelSize / 10f;
-
-                List<Vector2Int> empty = new();
-
-                for (int y = Mathf.RoundToInt(min.y); y < Mathf.RoundToInt(max.y); y++)
+                if (roomMade == 0)
                 {
-                    for (int x = Mathf.RoundToInt(min.x); x < Mathf.RoundToInt(max.x); x++)
+                    var camBounds = CameraUtils.CalculateBounds(_cam);
+                    var min = camBounds.min * _tilePixelSize / 10f;
+                    var max = camBounds.max * _tilePixelSize / 10f;
+
+                    List<Vector2Int> empty = new();
+
+                    for (int y = Mathf.RoundToInt(min.y); y < Mathf.RoundToInt(max.y); y++)
                     {
-                        if (!_tiles.ContainsKey(new(x, y)))
+                        for (int x = Mathf.RoundToInt(min.x); x < Mathf.RoundToInt(max.x); x++)
                         {
-                            empty.Add(new(x, y));
-                        }
-                    }
-                }
-
-                List<Vector2Int> group = new();
-                while (empty.Any())
-                {
-                    group.Clear();
-
-                    var first = empty[0];
-                    group.Add(first);
-                    empty.RemoveAt(0);
-
-                    // We get a group of all the adjacent tiles
-                    for (int i = 0; i < empty.Count; i++) // Ugly but I'll optimize that later
-                    {
-                        if (group.Any(x => directions.Any(d => d + empty[i] == x)))
-                        {
-                            group.Add(empty[i]);
-                            empty.RemoveAt(i);
-                            i = -1;
-                        }
-                    }
-
-                    if (group.Any(x => directions.Any(d =>
-                    {
-                        var p = d + x;
-                        return p.x <= Mathf.RoundToInt(min.x) || p.x >= Mathf.RoundToInt(max.x) || p.y <= Mathf.RoundToInt(min.y) || p.y >= Mathf.RoundToInt(max.y);
-                    })))
-                    {
-                        // Room is not finished and going oob
-                        continue;
-                    }
-
-                    if (rr == null || !rr.IsEmpty)
-                    {
-                        rr = MakeRR();
-                    }
-                    rr.Floors.AddRange(group);
-                    rr.LateInit();
-                    foreach (var t in group)
-                    {
-                        _tiles.Add(t, new()
-                        {
-                            GameObject = null,
-                            RR = rr,
-                            Tile = TileType.FLOOR
-                        });
-                        foreach (var room in directions.Where(d => _tiles.ContainsKey(t + d)))
-                        {
-                            var r = _tiles[t + room].RR;
-                            if (r.ID != rr.ID && r.Doors.Contains(t + room))
+                            if (!_tiles.ContainsKey(new(x, y)))
                             {
-                                rr.AddAdjacentRoom(_tiles[t + room].RR);
-                                _tiles[t + room].RR.AddAdjacentRoom(rr);
+                                empty.Add(new(x, y));
                             }
                         }
                     }
-                    _runtimeRooms.Add(rr);
+
+                    List<Vector2Int> group = new();
+                    while (empty.Any())
+                    {
+                        group.Clear();
+
+                        var first = empty[0];
+                        group.Add(first);
+                        empty.RemoveAt(0);
+
+                        // We get a group of all the adjacent tiles
+                        for (int i = 0; i < empty.Count; i++) // Ugly but I'll optimize that later
+                        {
+                            if (group.Any(x => directions.Any(d => d + empty[i] == x)))
+                            {
+                                group.Add(empty[i]);
+                                empty.RemoveAt(i);
+
+                                if (group.Count == 300) break;
+                                else i = -1;
+                            }
+                        }
+
+                        if (group.Count == 300) // Room is too big and will eat all our CPU so we just fill it
+                        {
+                            Debug.Log($"Filling room of size {group.Count}");
+                            foreach (var t in group)
+                            {
+                                var wall = Instantiate(_wallPrefab, (Vector2)t * (_tilePixelSize / 100f), Quaternion.identity);
+                                wall.name = $"Wall ({t.x};{t.y})";
+                                _tiles.Add(t, new() { GameObject = wall, RR = null, Tile = TileType.WALL });
+                            }
+                            continue;
+                        }
+
+                        if (group.Any(x => directions.Any(d =>
+                        {
+                            var p = d + x;
+                            return p.x <= Mathf.RoundToInt(min.x) || p.x >= Mathf.RoundToInt(max.x) || p.y <= Mathf.RoundToInt(min.y) || p.y >= Mathf.RoundToInt(max.y);
+                        })))
+                        {
+                            // Room is not finished and going oob
+                            continue;
+                        }
+
+                        if (rr == null || !rr.IsEmpty)
+                        {
+                            rr = MakeRR();
+                        }
+                        rr.Floors.AddRange(group);
+                        rr.LateInit();
+                        foreach (var t in group)
+                        {
+                            _tiles.Add(t, new()
+                            {
+                                GameObject = null,
+                                RR = rr,
+                                Tile = TileType.FLOOR
+                            });
+                            foreach (var room in directions.Where(d => _tiles.ContainsKey(t + d)))
+                            {
+                                var r = _tiles[t + room].RR;
+                                if (r != null && r.ID != rr.ID && r.Doors.Contains(t + room))
+                                {
+                                    rr.AddAdjacentRoom(_tiles[t + room].RR);
+                                    _tiles[t + room].RR.AddAdjacentRoom(rr);
+                                }
+                            }
+                        }
+                        _runtimeRooms.Add(rr);
+
+                    }
                 }
 
                 yield return new WaitForEndOfFrame();
