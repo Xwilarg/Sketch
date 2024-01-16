@@ -208,6 +208,7 @@ GameObject:
   - component: {fileID: 1532749417}
   - component: {fileID: 1532749419}
   - component: {fileID: 1532749418}
+  - component: {fileID: 1532749420}
   m_Layer: 5
   m_Name: Credits
   m_TagString: Untagged
@@ -254,19 +255,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'All the programming itself is made by me (Zirk)
+  m_text: '{credits1}
 
-    However some of the
-    assets were taken from other source:
-
-
-    Yuzu image from the Visual Novel part
-    was kindly made by FractalStella
+    {credits2}
 
 
-    The font used is Peach Cake by MJType
+    {creditsYuzu}
 
-'
+
+    {creditsFont}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
   m_sharedMaterial: {fileID: 5037081900091743862, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
@@ -345,6 +342,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532749416}
   m_CullTransparentMesh: 1
+--- !u!114 &1532749420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532749416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a85ea0ecfbcd4b498f34ad451185cc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1622843878
 GameObject:
   m_ObjectHideFlags: 0

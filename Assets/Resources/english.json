@@ -1,0 +1,28 @@
+{
+    "intro": "Use the buttons below to switch to a new scene",
+
+    "youCaught": "You caught",
+    "size": "Size:",
+    "catchIt": "Catch It!",
+
+    "carp": "Carp",
+    "catfish": "Catfish",
+    "mackerel": "Mackerel",
+    "pilchard": "Pilchard",
+    "salmon": "Salmon",
+    "seabass": "Seabass",
+
+    "optionsAbbrv": "Opt.",
+
+    "toggleLinks": "Toggle Links",
+    "toggleDistances": "Toggle Distances",
+    "toggleNewRooms": "Toggle Calculate New Rooms",
+
+    "toggleLos": "Toggle LOS",
+    "togglePath": "Toggle Path",
+
+    "credits1": "Programming was done by me (Zirk)",
+    "credits2": "However some of the assets were taken from other source:",
+    "creditsYuzu": "Yuzu image from the Visual Novel part was kindly made by FractalStella",
+    "creditsFont": "The font used is Peach Cake by MJType"
+}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b80c9d53d344e44a6dc60a04980ee2, type: 3}
   m_Name: Seabass
   m_EditorClassIdentifier: 
-  Name: Seabass
+  Name: seabass
   FullName: European Seabass
   MinSize: 0.5
   MaxSize: 1

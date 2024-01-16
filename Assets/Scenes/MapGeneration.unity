@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 115387448}
   - component: {fileID: 115387450}
   - component: {fileID: 115387449}
+  - component: {fileID: 115387451}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -176,7 +177,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Toggle Calculate New Rooms
+  m_text: '{toggleNewRooms}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
   m_sharedMaterial: {fileID: 5037081900091743862, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
@@ -255,6 +256,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 115387447}
   m_CullTransparentMesh: 1
+--- !u!114 &115387451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115387447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a85ea0ecfbcd4b498f34ad451185cc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &202210874
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,6 +279,7 @@ GameObject:
   - component: {fileID: 202210875}
   - component: {fileID: 202210877}
   - component: {fileID: 202210876}
+  - component: {fileID: 202210878}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -312,7 +326,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Toggle Distances
+  m_text: '{toggleDistances}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
   m_sharedMaterial: {fileID: 5037081900091743862, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
@@ -391,6 +405,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 202210874}
   m_CullTransparentMesh: 1
+--- !u!114 &202210878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202210874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a85ea0ecfbcd4b498f34ad451185cc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &223333397
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,7 +1097,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Opt.
+  m_text: '{optionsAbbrv}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
   m_sharedMaterial: {fileID: 5037081900091743862, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
@@ -1277,6 +1303,7 @@ GameObject:
   - component: {fileID: 1326326603491901647}
   - component: {fileID: 5389794461752628518}
   - component: {fileID: 5704940978973738236}
+  - component: {fileID: 5704940978973738237}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1368,7 +1395,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Toggle Links
+  m_text: '{toggleLinks}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
   m_sharedMaterial: {fileID: 5037081900091743862, guid: fc0027e48746962408ab9a962de3ee86, type: 2}
@@ -1439,6 +1466,18 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5704940978973738237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5169300545674637151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a85ea0ecfbcd4b498f34ad451185cc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5877696881943211642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1599,6 +1638,7 @@ GameObject:
   - component: {fileID: 6026906867046498831}
   - component: {fileID: 2203526556500764211}
   - component: {fileID: 1441850909173045056}
+  - component: {fileID: 8316783257926662398}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1606,6 +1646,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8316783257926662398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8316783257926662397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a85ea0ecfbcd4b498f34ad451185cc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &8535099663308310399
 RectTransform:
   m_ObjectHideFlags: 0

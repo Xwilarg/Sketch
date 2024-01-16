@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b80c9d53d344e44a6dc60a04980ee2, type: 3}
   m_Name: Pilchard
   m_EditorClassIdentifier: 
-  Name: Pilchard
+  Name: pilchard
   FullName: European Pilchard
   MinSize: 0.5
   MaxSize: 0.13

@@ -1,0 +1,28 @@
+{
+    "intro": "Utilisez les boutons ci-dessous pour changer de scène",
+
+    "youCaught": "Vous avez attrapez",
+    "size": "Taille :",
+    "catchIt": "Attrapez le !",
+
+    "carp": "Carpe",
+    "catfish": "Poisson-chat",
+    "mackerel": "Maquereau",
+    "pilchard": "Sardine",
+    "salmon": "Saumon",
+    "seabass": "Bar",
+
+    "optionsAbbrv": "Opt.",
+
+    "toggleLinks": "(Dé)activer les liens",
+    "toggleDistances": "(Dé)activer les distances",
+    "toggleNewRooms": "(Dé)activer la calculation des nouvelles salles",
+
+    "toggleLos": "(Dé)activer visée",
+    "togglePath": "(Dé)activer le chemin",
+
+    "credits1": "La programmation a été faites par moi (Zirk)",
+    "credits2": "Cependant certains des assets ont été pris depuis d'autres sources :",
+    "creditsYuzu": "L'image de Yuzu pour le Visual Novel par FractalStella",
+    "creditsFont": "La police d'écriture Peach Cake par MJType"
+}
