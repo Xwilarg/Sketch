@@ -256,6 +256,11 @@ namespace Sketch.Generation
                             Destroy(door.Value.GameObject);
                             door.Value.GameObject = null;
 
+                            var floor = Instantiate(_floorPrefab, rr.Container);
+                            floor.transform.position = (Vector2)door.Key * _tilePixelSize / 100f;
+                            floor.name = $"Floor ({door.Key.x};{door.Key.y})";
+                            door.Value.GameObject = floor;
+
                             door.Value.Tile = TileType.FLOOR;
                         }
                     }
@@ -407,6 +412,12 @@ namespace Sketch.Generation
             target.Tile = TileType.FLOOR;
             Destroy(target.GameObject);
             target.GameObject = null;
+
+            var floor = Instantiate(_floorPrefab, rr.Container);
+            floor.transform.position = (Vector2)new(x, y) * _tilePixelSize / 100f;
+            floor.name = $"Floor ({x};{y})";
+            target.GameObject = floor;
+
             _nextDoors.RemoveAt(_currentlyCheckedRoom);
         }
 
