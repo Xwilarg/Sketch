@@ -153,7 +153,8 @@ namespace Sketch.Generation
                 return rooms;
             }).ToArray();
             var startingRoom = _availableRooms[0];
-            DrawRoom(startingRoom, 0, 0, new RuntimeRoom());
+            RuntimeRoom rr = new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
+            DrawRoom(startingRoom, 0, 0, rr);
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
         }
@@ -207,7 +208,7 @@ namespace Sketch.Generation
                 {
                     // Attempt to place a room
                     var target = _nextDoors[_currentlyCheckedRoom];
-                    var rr = new RuntimeRoom();
+                    RuntimeRoom rr = new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
 
                     yield return GenerateRoom(target.x, target.y, rr);
 
@@ -284,18 +285,8 @@ namespace Sketch.Generation
                         continue;
                     }
 
-                    RuntimeRoom rr = new()
-                    {
-                        LRPrefab = _lrPrefab,
-                        NormalMat = _normalMat,
-                        ImportantMat = _importantMat,
-                        FilterTile = _filterTile,
-                        PixelSize = _tilePixelSize / 100f,
-                        Container = new GameObject($"Room {_runtimeRooms.Count + 1}").transform,
-                        Doors = new(),
-                        Walls = new(),
-                        Floors = new(group)
-                    };
+                    RuntimeRoom rr = new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
+                    rr.Floors.AddRange(group);
                     rr.LateInit();
                     foreach (var t in group)
                     {
@@ -386,15 +377,6 @@ namespace Sketch.Generation
         /// <returns></returns>
         private void DrawRoom(RoomData room, int x, int y, RuntimeRoom rr)
         {
-            var c = new Vector2(x + room.Width / 2f, y + room.Height / 2f);
-            rr.LRPrefab = _lrPrefab;
-            rr.NormalMat = _normalMat;
-            rr.ImportantMat = _importantMat;
-            rr.FilterTile = _filterTile;
-            rr.PixelSize = _tilePixelSize / 100f;
-            rr.Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform;
-            rr.Container.transform.parent = _roomsParent;
-
             for (var dy = 0; dy < room.Height; dy++)
             {
                 for (var dx = 0; dx < room.Width; dx++)

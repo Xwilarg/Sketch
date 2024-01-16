@@ -6,16 +6,28 @@ namespace Sketch.Generation
 {
     public class RuntimeRoom
     {
+        public RuntimeRoom(int id, Transform parent, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile)
+        {
+            Container = new GameObject($"Room {id}").transform;
+            Container.transform.parent = parent;
+
+            _pixelSize = pixelSize;
+            _lrPrefab = lrPrefab;
+            _normalMat = normalMat;
+            _importantMat = importantMat;
+            _filterTile = filterTile;
+        }
+
         // GameObject that contains all the instanciated data
-        public Transform Container;
+        public Transform Container { get; }
 
         // Size of a tile
-        public float PixelSize;
+        private float _pixelSize;
 
         // Prefabs to render stuff
-        public GameObject LRPrefab;
-        public Material NormalMat, ImportantMat;
-        public GameObject FilterTile;
+        private GameObject _lrPrefab;
+        private Material _normalMat, _importantMat;
+        private GameObject _filterTile;
         private readonly List<GameObject> _instanciatedHints = new();
 
         // Runtime tiles
@@ -44,11 +56,12 @@ namespace Sketch.Generation
 
             _adjacentRooms.Add(room);
 
-            var go = Object.Instantiate(LRPrefab, Container.transform);
+            Debug.Log(Container == null);
+            var go = Object.Instantiate(_lrPrefab, Container.transform);
             var lr = go.GetComponent<LineRenderer>();
             lr.SetPositions(new[]
             {
-                (Vector3)_center * PixelSize, (Vector3)room._center * PixelSize
+                (Vector3)_center * _pixelSize, (Vector3)room._center * _pixelSize
             });
             LRs.Add(room._center, (lr, room));
         }
@@ -57,13 +70,13 @@ namespace Sketch.Generation
         {
             foreach (var lr in LRs)
             {
-                lr.Value.LR.material = ImportantMat;// Highlight our line renderers...
-                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = ImportantMat; // ...and the ones going to us
+                lr.Value.LR.material = _importantMat;// Highlight our line renderers...
+                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = _importantMat; // ...and the ones going to us
             }
             foreach (var pos in Floors) // Highlights tiles in the room
             {
-                var go = Object.Instantiate(FilterTile, Container);
-                go.transform.position = (Vector2)pos * PixelSize;
+                var go = Object.Instantiate(_filterTile, Container);
+                go.transform.position = (Vector2)pos * _pixelSize;
                 go.GetComponent<SpriteRenderer>().color = new(0F, 0f, 1f, .5f);
                 _instanciatedHints.Add(go);
             }
@@ -73,8 +86,8 @@ namespace Sketch.Generation
         {
             foreach (var lr in LRs)
             {
-                lr.Value.LR.material = NormalMat;
-                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = NormalMat;
+                lr.Value.LR.material = _normalMat;
+                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = _normalMat;
             }
             foreach (var t in _instanciatedHints)
             {
