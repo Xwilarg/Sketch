@@ -235,6 +235,63 @@ namespace Sketch.Generation
                     }
                 }
                 _currentlyCheckedRoom = 0;
+
+                var camBounds = CameraUtils.CalculateBounds(_cam);
+                var min = camBounds.min * _tilePixelSize / 10f;
+                var max = camBounds.max * _tilePixelSize / 10f;
+
+                List<Vector2Int> empty = new();
+
+                for (int y = Mathf.RoundToInt(min.y); y < Mathf.RoundToInt(max.y); y++)
+                {
+                    for (int x = Mathf.RoundToInt(min.x); x < Mathf.RoundToInt(max.x); x++)
+                    {
+                        if (!_tiles.ContainsKey(new(x, y)))
+                        {
+                            empty.Add(new(x, y));
+                        }
+                    }
+                }
+
+                List<Vector2Int> group = new();
+                while (empty.Any())
+                {
+                    group.Clear();
+
+                    var first = empty[0];
+                    group.Add(first);
+                    empty.RemoveAt(0);
+
+                    // We get a group of all the adjacent tiles
+                    for (int i = 0; i < empty.Count; i++) // Ugly but I'll optimize that later
+                    {
+                        if (group.Any(x => directions.Any(d => d + empty[i] == x)))
+                        {
+                            group.Add(empty[i]);
+                            empty.RemoveAt(i);
+                            i = -1;
+                        }
+                    }
+
+                    if (group.Any(x => directions.Any(d =>
+                    {
+                        var p = d + x;
+                        return p.x <= Mathf.RoundToInt(min.x) || p.x >= Mathf.RoundToInt(max.x) || p.y <= Mathf.RoundToInt(min.y) || p.y >= Mathf.RoundToInt(max.y);
+                    })))
+                    {
+                        // Room is not finished and going oob
+                        continue;
+                    }
+
+                    foreach (var t in group)
+                    {
+                        var go = Instantiate(_filterTile);
+                        go.transform.position = (Vector2)t * _tilePixelSize / 100f;
+                        go.GetComponent<SpriteRenderer>().color = new(0F, 1f, 1f, .5f);
+                    }
+                }
+
+                Debug.Break();
                 yield return new WaitForEndOfFrame();
             }
         }
