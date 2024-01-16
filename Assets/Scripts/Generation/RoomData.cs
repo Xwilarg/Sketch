@@ -52,6 +52,8 @@ namespace Sketch.Generation
 
         public bool IsEmpty => !Walls.Any() && !Doors.Any() && !Floors.Any();
 
+        public bool HasDoors => _adjacentRooms.Any();
+
         public void LateInit()
         {
             Vector2Int middle = new(Floors.Sum(p => p.x) / Floors.Count, Floors.Sum(p => p.y) / Floors.Count);
@@ -139,7 +141,10 @@ namespace Sketch.Generation
                 go.GetComponent<SpriteRenderer>().color = new(0F, 0f, 1f, .5f);
                 _instanciatedHints.Add(go);
             }
-            _hintDistanceInstance.color = Color.red;
+            if (_hintDistanceInstance != null)
+            {
+                _hintDistanceInstance.color = Color.red;
+            }
         }
 
         public void UnHighlight()
@@ -154,7 +159,10 @@ namespace Sketch.Generation
                 Object.Destroy(t);
             }
             _instanciatedHints.Clear();
-            _hintDistanceInstance.color = Color.white;
+            if (_hintDistanceInstance != null)
+            {
+                _hintDistanceInstance.color = Color.white;
+            }
         }
 
         public override bool Equals(object obj)

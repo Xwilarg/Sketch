@@ -30,5 +30,9 @@
     "credits1": "La programmation a été faites par moi (Zirk)",
     "credits2": "Cependant certains des assets ont été pris depuis d'autres sources :",
     "creditsYuzu": "L'image de Yuzu pour le Visual Novel par FractalStella",
-    "creditsFont": "La police d'écriture Sweetie Bubble Gum par Galdino Otten Fonts"
+    "creditsFont": "La police d'écriture Sweetie Bubble Gum par Galdino Otten Fonts",
+
+    "ACH_landlockedName": "Enclavé",
+    "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
+    "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir"
 }

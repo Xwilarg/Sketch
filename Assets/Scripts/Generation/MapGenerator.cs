@@ -1,3 +1,4 @@
+using Sketch.Achievement;
 using Sketch.Common;
 using System;
 using System.Collections;
@@ -199,6 +200,11 @@ namespace Sketch.Generation
             {
                 _highlightedRoom = room;
                 room.Highlight();
+
+                if (!room.HasDoors)
+                {
+                    AchievementManager.Instance.Unlock(AchievementID.GEN_noDoor);
+                }
             }
         }
 
