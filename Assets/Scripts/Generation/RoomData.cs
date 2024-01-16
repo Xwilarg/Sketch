@@ -9,9 +9,6 @@ namespace Sketch.Generation
         // GameObject that contains all the instanciated data
         public Transform Container;
 
-        // Data about the room
-        public RoomData Data;
-
         // Size of a tile
         public float PixelSize;
 
@@ -27,8 +24,13 @@ namespace Sketch.Generation
         public List<Vector2Int> Doors = new();
         public List<Vector2Int> Floors = new();
 
+        public void LateInit()
+        {
+            _center = new(Floors.Sum(p => p.x) / Floors.Count, Floors.Sum(p => p.y) / Floors.Count);
+        }
+
         // Line renderers that link rooms
-        public readonly Dictionary<Vector2, (LineRenderer LR, RuntimeRoom RR)> LRs = new();
+        private readonly Dictionary<Vector2, (LineRenderer LR, RuntimeRoom RR)> LRs = new();
 
         // Rooms that have a door that lead to this one
         private readonly List<RuntimeRoom> _adjacentRooms = new();
@@ -46,9 +48,9 @@ namespace Sketch.Generation
             var lr = go.GetComponent<LineRenderer>();
             lr.SetPositions(new[]
             {
-                (Vector3)Center * PixelSize, (Vector3)room.Center * PixelSize
+                (Vector3)_center * PixelSize, (Vector3)room._center * PixelSize
             });
-            LRs.Add(room.Center, (lr, room));
+            LRs.Add(room._center, (lr, room));
         }
 
         public void Highlight()
@@ -56,7 +58,7 @@ namespace Sketch.Generation
             foreach (var lr in LRs)
             {
                 lr.Value.LR.material = ImportantMat;// Highlight our line renderers...
-                lr.Value.RR.LRs.First(x => x.Key == Center).Value.LR.material = ImportantMat; // ...and the ones going to us
+                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = ImportantMat; // ...and the ones going to us
             }
             foreach (var pos in Floors) // Highlights tiles in the room
             {
@@ -72,7 +74,7 @@ namespace Sketch.Generation
             foreach (var lr in LRs)
             {
                 lr.Value.LR.material = NormalMat;
-                lr.Value.RR.LRs.First(x => x.Key == Center).Value.LR.material = NormalMat;
+                lr.Value.RR.LRs.First(x => x.Key == _center).Value.LR.material = NormalMat;
             }
             foreach (var t in _instanciatedHints)
             {
@@ -81,7 +83,7 @@ namespace Sketch.Generation
             _instanciatedHints.Clear();
         }
 
-        public Vector2 Center;
+        private Vector2 _center;
     }
 
     public record RoomData

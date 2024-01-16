@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Sketch.Generation
@@ -283,15 +284,31 @@ namespace Sketch.Generation
                         continue;
                     }
 
+                    RuntimeRoom rr = new()
+                    {
+                        LRPrefab = _lrPrefab,
+                        NormalMat = _normalMat,
+                        ImportantMat = _importantMat,
+                        FilterTile = _filterTile,
+                        PixelSize = _tilePixelSize / 100f,
+                        Container = new GameObject($"Room {_runtimeRooms.Count + 1}").transform,
+                        Doors = new(),
+                        Walls = new(),
+                        Floors = new(group)
+                    };
+                    rr.LateInit();
                     foreach (var t in group)
                     {
-                        var go = Instantiate(_filterTile);
-                        go.transform.position = (Vector2)t * _tilePixelSize / 100f;
-                        go.GetComponent<SpriteRenderer>().color = new(0F, 1f, 1f, .5f);
+                        _tiles.Add(t, new()
+                        {
+                            GameObject = null,
+                            RR = rr,
+                            Tile = TileType.FLOOR
+                        });
                     }
+                    _runtimeRooms.Add(rr);
                 }
 
-                Debug.Break();
                 yield return new WaitForEndOfFrame();
             }
         }
@@ -376,7 +393,6 @@ namespace Sketch.Generation
             rr.FilterTile = _filterTile;
             rr.PixelSize = _tilePixelSize / 100f;
             rr.Container = new GameObject($"Room {_runtimeRooms.Count + 1} ({c.x} ; {c.y})").transform;
-            rr.Data = room;
             rr.Container.transform.parent = _roomsParent;
 
             for (var dy = 0; dy < room.Height; dy++)
@@ -417,7 +433,7 @@ namespace Sketch.Generation
                 }
             }
 
-            rr.Center = new(rr.Floors.Sum(p => p.x) / rr.Floors.Count, rr.Floors.Sum(p => p.y) / rr.Floors.Count);
+            rr.LateInit();
             _runtimeRooms.Add(rr);
         }
     }
