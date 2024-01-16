@@ -46,7 +46,7 @@ namespace Sketch.TRPG
         // Size of the grid
         private const int _maxSize = 20;
         // Max movement range
-        private const int _range = 15;
+        private const int _range = 10;
         // LOS range
         private const float _visionRange = 20f;
 
