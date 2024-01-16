@@ -18,6 +18,8 @@ namespace Sketch.Generation
         [SerializeField]
         [Tooltip("Prefab to use as a wall")]
         private GameObject _wallPrefab;
+        [SerializeField]
+        private GameObject _floorPrefab;
 
         [SerializeField]
         [Tooltip("Size in pixel of _wallPrefab")]
@@ -253,6 +255,7 @@ namespace Sketch.Generation
 
                             Destroy(door.Value.GameObject);
                             door.Value.GameObject = null;
+
                             door.Value.Tile = TileType.FLOOR;
                         }
                     }
@@ -311,6 +314,12 @@ namespace Sketch.Generation
                         if (rr == null || !rr.IsEmpty)
                         {
                             rr = MakeRR();
+                        }
+                        foreach (var f in group)
+                        {
+                            var floor = Instantiate(_floorPrefab, rr.Container);
+                            floor.transform.position = (Vector2)f * _tilePixelSize / 100f;
+                            floor.name = $"Floor ({f.x};{f.y})";
                         }
                         rr.Floors.AddRange(group);
                         rr.LateInit();
@@ -425,7 +434,7 @@ namespace Sketch.Generation
                     var xPos = x + dx;
                     var yPos = y + dy;
                     var p = new Vector2Int(xPos, yPos);
-                    GameObject instance = null;
+                    GameObject instance;
                     if (!_tiles.ContainsKey(p)) // We didn't already place the tile and it's a wall
                     {
                         if (room.Data[dx, dy] == TileType.WALL)
@@ -445,6 +454,9 @@ namespace Sketch.Generation
                         }
                         else
                         {
+                            instance = Instantiate(_floorPrefab, rr.Container);
+                            instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                            instance.name = $"Floor ({p.x};{p.y})";
                             rr.Floors.Add(p);
                         }
                         _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy], RR = rr });

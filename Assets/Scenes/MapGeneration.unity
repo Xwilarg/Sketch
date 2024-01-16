@@ -310,6 +310,7 @@ MonoBehaviour:
   - {fileID: 4900000, guid: c5b24268f7f77f341a6572d2aeaa26ef, type: 3}
   - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
   _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
+  _floorPrefab: {fileID: 4738975240478743032, guid: de090d7828e3d8f42ad565ed0cfd3c0c, type: 3}
   _tilePixelSize: 32
   _lrPrefab: {fileID: 4897434291111433263, guid: 61cb39de8b8a02640b976889c8f98e12, type: 3}
   _normalMat: {fileID: 2100000, guid: 196661d8d03fc07459c8ddcbb7c0674e, type: 2}
@@ -564,7 +565,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.10980392, g: 0.25490198, b: 0.18431373, a: 0}
+  m_BackGroundColor: {r: 0.8784314, g: 0.8784314, b: 0.8784314, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
