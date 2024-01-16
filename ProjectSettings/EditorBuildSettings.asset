@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Credits.unity
     guid: e4fe5af269641ba4da5109f4fb23045a
   - enabled: 1
+    path: Assets/Scenes/Achievements.unity
+    guid: 1a2809ff969b48b4ba4985aa6126562a
+  - enabled: 1
     path: Assets/Scenes/Additive/AchievementManager.unity
     guid: 7cdb9aecb49dbe64dba2c375617a0910
   m_configObjects: {}

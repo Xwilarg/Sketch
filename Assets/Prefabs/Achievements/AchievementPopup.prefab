@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3748695453509173786}
   - component: {fileID: 1836796731037997895}
   m_Layer: 5
-  m_Name: Achievement
+  m_Name: AchievementPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
