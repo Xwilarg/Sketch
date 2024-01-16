@@ -6,6 +6,9 @@ namespace Sketch.Loader
 {
     public class LevelLoader : MonoBehaviour
     {
+        [SerializeField]
+        private GameObject _frenchDisclaimer;
+
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -20,6 +23,8 @@ namespace Sketch.Loader
         {
             if (Translate.Instance.CurrentLanguage == "english") Translate.Instance.CurrentLanguage = "french";
             else Translate.Instance.CurrentLanguage = "english";
+
+            _frenchDisclaimer.SetActive(Translate.Instance.CurrentLanguage == "french");
         }
     }
 }
