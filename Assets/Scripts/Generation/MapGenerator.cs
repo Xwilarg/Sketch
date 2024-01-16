@@ -67,6 +67,14 @@ namespace Sketch.Generation
             }
         }
 
+        public void ToggleDistance(bool value)
+        {
+            foreach (var rr in _runtimeRooms)
+            {
+                rr.ToggleDistances(value);
+            }
+        }
+
         private void Awake()
         {
             Instance = this;

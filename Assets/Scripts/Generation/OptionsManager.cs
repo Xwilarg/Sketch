@@ -13,6 +13,7 @@ namespace Sketch.Generation
         private GameObject _optionsContainer;
 
         public bool ShowLinks { private set; get; } = true;
+        public bool ShowDistances { private set; get; } = true;
         public bool CalculateNewRooms { private set; get; } = true;
 
         private void Awake()
@@ -29,6 +30,12 @@ namespace Sketch.Generation
         {
             ShowLinks = !ShowLinks;
             MapGenerator.Instance.ToggleAllLinks(ShowLinks);
+        }
+
+        public void ToggleShowDistances()
+        {
+            ShowDistances = !ShowDistances;
+            MapGenerator.Instance.ToggleDistance(ShowDistances);
         }
 
         public void ToggleCalculateNewRooms()
