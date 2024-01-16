@@ -259,7 +259,7 @@ namespace Sketch.Generation
                 }
                 _currentlyCheckedRoom = 0;
 
-                if (roomMade == 0)
+                if (roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
                 {
                     var camBounds = CameraUtils.CalculateBounds(_cam);
                     var min = camBounds.min * _tilePixelSize / 10f;
@@ -294,22 +294,8 @@ namespace Sketch.Generation
                             {
                                 group.Add(empty[i]);
                                 empty.RemoveAt(i);
-
-                                if (group.Count == 300) break;
-                                else i = -1;
+                                i = -1;
                             }
-                        }
-
-                        if (group.Count == 300) // Room is too big and will eat all our CPU so we just fill it
-                        {
-                            Debug.Log($"Filling room of size {group.Count}");
-                            foreach (var t in group)
-                            {
-                                var wall = Instantiate(_wallPrefab, (Vector2)t * (_tilePixelSize / 100f), Quaternion.identity);
-                                wall.name = $"Wall ({t.x};{t.y})";
-                                _tiles.Add(t, new() { GameObject = wall, RR = null, Tile = TileType.WALL });
-                            }
-                            continue;
                         }
 
                         if (group.Any(x => directions.Any(d =>
