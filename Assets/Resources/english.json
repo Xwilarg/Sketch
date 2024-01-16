@@ -23,6 +23,10 @@
     "toggleLos": "Toggle LOS",
     "togglePath": "Toggle Path",
 
+    "auto": "Auto",
+    "hide": "Hide",
+    "skip": "Skip",
+
     "credits1": "Programming was done by me (Zirk)",
     "credits2": "However some of the assets were taken from other source:",
     "creditsYuzu": "Yuzu image from the Visual Novel part was kindly made by FractalStella",

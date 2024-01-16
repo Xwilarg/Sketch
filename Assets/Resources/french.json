@@ -23,6 +23,10 @@
     "toggleLos": "(Dé)activer visée",
     "togglePath": "(Dé)activer le chemin",
 
+    "auto": "Auto",
+    "hide": "Cacher",
+    "skip": "Passer",
+
     "credits1": "La programmation a été faites par moi (Zirk)",
     "credits2": "Cependant certains des assets ont été pris depuis d'autres sources :",
     "creditsYuzu": "L'image de Yuzu pour le Visual Novel par FractalStella",
