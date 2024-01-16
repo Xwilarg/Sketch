@@ -55,10 +55,10 @@ namespace Sketch.Generation
         {
             foreach (var lr in LRs)
             {
-                lr.Value.LR.material = ImportantMat;
-                lr.Value.RR.LRs.First(x => x.Key == Center).Value.LR.material = ImportantMat;
+                lr.Value.LR.material = ImportantMat;// Highlight our line renderers...
+                lr.Value.RR.LRs.First(x => x.Key == Center).Value.LR.material = ImportantMat; // ...and the ones going to us
             }
-            foreach (var pos in Floors)
+            foreach (var pos in Floors) // Highlights tiles in the room
             {
                 var go = Object.Instantiate(FilterTile, Container);
                 go.transform.position = (Vector2)pos * PixelSize;

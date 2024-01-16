@@ -355,7 +355,7 @@ namespace Sketch.Generation
                         {
                             rr.Floors.Add(p);
                         }
-                        _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy] });
+                        _tiles.Add(p, new() { GameObject = instance, Tile = room.Data[dx, dy], RR = rr });
                     }
                 }
             }

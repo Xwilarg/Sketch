@@ -7,5 +7,6 @@ namespace Sketch.Generation
     {
         public GameObject GameObject;
         public TileType Tile;
+        public RuntimeRoom RR;
     }
 }
