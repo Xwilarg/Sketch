@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 namespace Sketch.Generation
 {
     public class RuntimeRoom
     {
-        public RuntimeRoom(int id, Transform parent, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile)
+        public RuntimeRoom(int id, Transform parent, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile, GameObject textHintPrefab)
         {
             ID = id;
 
@@ -18,6 +19,7 @@ namespace Sketch.Generation
             _normalMat = normalMat;
             _importantMat = importantMat;
             _filterTile = filterTile;
+            _textHintPrefab = textHintPrefab;
         }
 
         public int ID { get; }
@@ -29,6 +31,7 @@ namespace Sketch.Generation
         private float _pixelSize;
 
         // Prefabs to render stuff
+        private GameObject _textHintPrefab;
         private GameObject _lrPrefab;
         private Material _normalMat, _importantMat;
         private GameObject _filterTile;
@@ -39,6 +42,10 @@ namespace Sketch.Generation
         public List<GameObject> Walls = new();
         public List<Vector2Int> Doors = new();
         public List<Vector2Int> Floors = new();
+
+        // Distance with m
+        public int Distance { private set; get; }
+        private TMP_Text _hintDistanceInstance;
 
         private Vector2 _center;
 
@@ -55,12 +62,41 @@ namespace Sketch.Generation
 
         // Rooms that have a door that lead to this one
         private readonly List<RuntimeRoom> _adjacentRooms = new();
+
+        private void UpdateDistance(RuntimeRoom rr)
+        {
+            Distance = rr.Distance + 1;
+            _hintDistanceInstance.text = Distance.ToString();
+            foreach (var r in _adjacentRooms)
+            {
+                if (r.Distance > Distance)
+                {
+                    r.UpdateDistance(r);
+                }
+            }
+        }
+
         public void AddAdjacentRoom(RuntimeRoom room)
         {
             if (_adjacentRooms.Contains(room))
             {
                 Debug.LogWarning("Trying to add an adjacent room when it was already added");
                 return;
+            }
+
+            if (_hintDistanceInstance == null)
+            {
+                _hintDistanceInstance = Object.Instantiate(_textHintPrefab, Container).GetComponent<TMP_Text>();
+                Distance = room.Distance + 1;
+                _hintDistanceInstance.text = Distance.ToString();
+                _hintDistanceInstance.transform.position = _center * _pixelSize;
+            }
+            else
+            {
+                if (room.Distance + 1 < Distance)
+                {
+                    UpdateDistance(room);
+                }
             }
 
             _adjacentRooms.Add(room);

@@ -36,6 +36,9 @@ namespace Sketch.Generation
         [SerializeField]
         private GameObject _filterTile;
 
+        [SerializeField]
+        private GameObject _textHintPrefab;
+
         // Parent object so everything isn't thrown up at the root
         private Transform _roomsParent;
 
@@ -166,7 +169,7 @@ namespace Sketch.Generation
                 return rooms;
             }).ToArray();
             var startingRoom = _availableRooms[0];
-            RuntimeRoom rr = new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
+            RuntimeRoom rr = MakeRR();
             DrawRoom(startingRoom, 0, 0, rr);
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
@@ -192,7 +195,7 @@ namespace Sketch.Generation
         }
 
         public RuntimeRoom MakeRR()
-            => new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile);
+            => new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
 
         // https://stackoverflow.com/a/42535
         private TileType[,] Rotate(TileType[,] array, int width, int height)
