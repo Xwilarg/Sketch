@@ -7,6 +7,8 @@ namespace Sketch.Loader
     {
         public static LevelLoader Instance { private set; get; }
 
+        private bool _isInit;
+
         private void Awake()
         {
             if (Instance == null)
@@ -23,12 +25,16 @@ namespace Sketch.Loader
             {
                 SceneManager.LoadScene("AchievementManager", LoadSceneMode.Additive);
             };
-
+            
             DontDestroyOnLoad(gameObject);
         }
 
         public void LoadScene(string s)
         {
+            if (!_isInit)
+            {
+                Awake();
+            }
             SceneManager.LoadScene(s);
         }
     }
