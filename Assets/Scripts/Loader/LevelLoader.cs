@@ -25,7 +25,7 @@ namespace Sketch.Loader
             {
                 SceneManager.LoadScene("AchievementManager", LoadSceneMode.Additive);
             };
-            
+
             DontDestroyOnLoad(gameObject);
         }
 

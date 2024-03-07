@@ -1,7 +1,6 @@
 ﻿using Sketch.Common;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Sketch.Fishing
 {
