@@ -371,6 +371,7 @@ namespace Sketch.Generation
                             }
                         }
                         _runtimeRooms.Add(rr);
+                        yield return new WaitForEndOfFrame();
 
                     }
                 }
