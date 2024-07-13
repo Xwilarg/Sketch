@@ -29,5 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Additive/AchievementManager.unity
     guid: 7cdb9aecb49dbe64dba2c375617a0910
+  - enabled: 1
+    path: Assets/Scenes/Circle.unity
+    guid: 4258a3c25a721554f82c42d5c1021d10
   m_configObjects: {}
-  m_UseUCBPForAssetBundles: 0
