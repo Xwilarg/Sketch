@@ -173,6 +173,7 @@ namespace Sketch.Circle
                                 var pointC = _positions.Last();
                                 for (int i = 1; i < _positions.Count - 1; i++)
                                 {
+                                    int catchCount = 0;
                                     if (Intersect(_positions[i - 1], _positions[i], pointC, pos)) // We made a closed shape...
                                     {
                                         // Is a Katsis inside the circle
@@ -188,6 +189,7 @@ namespace Sketch.Circle
                                                 if (PointInTriangle(enn.transform.position, a, b, c)) // ...and check if the enemy is inside
                                                 {
                                                     EnemyManager.Instance.Remove(it);
+                                                    catchCount++;
                                                     break;
                                                 }
                                             }
@@ -202,6 +204,11 @@ namespace Sketch.Circle
                                         _bufferLr.SetPositions(_positionBuffer.ToArray());
                                         _positions.Clear();
                                         CurrLength = 0;
+
+                                        if (catchCount >= 3)
+                                        {
+                                            AchievementManager.Instance.Unlock(AchievementID.CIR_CircleN);
+                                        }
                                         break;
                                     }
                                 }
