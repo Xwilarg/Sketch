@@ -79,7 +79,7 @@ namespace Sketch.Fishing
             var pos = CursorUtils.Position.y;
             _cursor.position = new(_cursor.position.x, pos + _cursor.rect.height / 2f);
 
-            _timer += (_fish.anchoredPosition.y > _cursor.anchoredPosition.y || _fish.anchoredPosition.y + _cursor.rect.height - _fish.rect.height < _cursor.anchoredPosition.y ? -1f : 1f) * Time.deltaTime;
+            _timer += (_fish.anchoredPosition.y - _fish.rect.height > _cursor.anchoredPosition.y || _fish.anchoredPosition.y + _cursor.rect.height < _cursor.anchoredPosition.y ? -1f : 1f) * Time.deltaTime;
             _maxTimer -= Time.deltaTime * .5f;
             if (_timer >= _maxTimer)
             {
