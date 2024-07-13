@@ -40,5 +40,8 @@
     "ACH_150cmHint": "The hardest they bite, the tastier they are",
     "ACH_noSkipName": "Attentive listener",
     "ACH_noSkipDesc": "Read Yuzu rambling without skipping it",
-    "ACH_noSkipHint": "Skipping it is okay but reading it is appreciated too"
+    "ACH_noSkipHint": "Skipping it is okay but reading it is appreciated too",
+    "ACH_circleNName": "Real Ranger",
+    "ACH_circleNDesc": "Catch 3 shapes at once",
+    "ACH_circleNHint": "Show your ability to catch many at once"
 }

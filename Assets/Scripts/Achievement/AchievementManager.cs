@@ -43,6 +43,7 @@ namespace Sketch.Achievement
             { AchievementID.GEN_noDoor, new("landlocked") },
             { AchievementID.FIS_150cm, new("150cm") },
             { AchievementID.VIS_NoSkip, new("noSkip") },
+            { AchievementID.CIR_CircleN, new("circleN") }
         };
     }
 
@@ -50,7 +51,8 @@ namespace Sketch.Achievement
     {
         GEN_noDoor,
         FIS_150cm,
-        VIS_NoSkip
+        VIS_NoSkip,
+        CIR_CircleN
     }
 
     public record Achievement

@@ -40,5 +40,8 @@
     "ACH_150cmHint": "Le plus fort ils mordent, le plus délicieux ils sont",
     "ACH_noSkipName": "Auditeur attentif",
     "ACH_noSkipDesc": "Lire les divaguations de Yuzu sans les passer",
-    "ACH_noSkipHint": "C'est pas grave de le passer mais le lire est tout de même apprecié"
+    "ACH_noSkipHint": "C'est pas grave de le passer mais le lire est tout de même apprecié",
+    "ACH_circleNName": "Vrai ranger",
+    "ACH_circleNDesc": "Capture 3 formes en même temps",
+    "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps"
 }
