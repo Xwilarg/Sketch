@@ -120,7 +120,10 @@ namespace Sketch.VN
             if (resetUI)
             {
                 _container.SetActive(true);
-                _characterImage.gameObject.SetActive(true);
+                if (_currentCharacter != null)
+                {
+                    _characterImage.gameObject.SetActive(true);
+                }
                 _choiceContainer.gameObject.SetActive(true);
             }
         }

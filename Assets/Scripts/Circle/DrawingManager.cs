@@ -10,6 +10,7 @@ namespace Sketch.Circle
     {
         [SerializeField]
         private LineRenderer _lr, _bufferLr;
+        private LineShineAnim _bufferAnim;
 
         private Camera _cam;
         private readonly List<Vector3> _positions = new();
@@ -22,6 +23,7 @@ namespace Sketch.Circle
         private void Awake()
         {
             _cam = Camera.main;
+            _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
         }
         // Check if 2 segments intersect
         // https://stackoverflow.com/a/9997374
@@ -202,6 +204,7 @@ namespace Sketch.Circle
                                         };
                                         _bufferLr.positionCount = _positionBuffer.Count;
                                         _bufferLr.SetPositions(_positionBuffer.ToArray());
+                                        _bufferAnim.StartTimer();
                                         _positions.Clear();
                                         CurrLength = 0;
 
