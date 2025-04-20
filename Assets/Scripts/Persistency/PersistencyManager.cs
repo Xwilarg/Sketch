@@ -55,6 +55,8 @@ namespace Sketch.Persistency
             }
         }
 
+        public int PersistencySize => File.Exists(SaveFilePath) ? File.ReadAllBytes(SaveFilePath).Length : 0;
+
         private SaveData _saveData;
         public SaveData SaveData
         {
@@ -83,6 +85,12 @@ namespace Sketch.Persistency
         public void Save()
         {
             File.WriteAllBytes(SaveFilePath, Encrypt(JsonConvert.SerializeObject(_saveData)));
+        }
+
+        public void DeleteSave()
+        {
+            if (File.Exists(SaveFilePath)) File.Delete(SaveFilePath);
+            _saveData = new();
         }
     }
 }

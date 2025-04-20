@@ -32,4 +32,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Circle.unity
     guid: 4258a3c25a721554f82c42d5c1021d10
+  - enabled: 1
+    path: Assets/Scenes/Persistency.unity
+    guid: 7ea1d5a7ef4aa964c8555dc3a496cc14
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

@@ -32,6 +32,9 @@
     "creditsYuzu": "Yuzu image from the Visual Novel part was kindly made by FractalStella",
     "creditsFont": "The font used is Sweetie Bubble Gum by Galdino Otten Fonts",
 
+    "persistency": "Save file size: {0}",
+    "persistencyDelete": "Delete saves",
+
     "ACH_landlockedName": "Landlocked",
     "ACH_landlockedDesc": "Click on a room that doesn't have any door",
     "ACH_landlockedHint": "There is no way in or out",
