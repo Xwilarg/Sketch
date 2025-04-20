@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
@@ -7,17 +8,38 @@ namespace Sketch.Persistency
 {
     public class PersistencyManager
     {
-        private readonly string _key = "この姿、言葉、酸素これは誰が作った脳だ？レッテルを貼られてるこれもそうだ、きっと能だ張り詰めた意志を蹴って割いて舞い踊るフェイクダンサー心で泣いてもピエロに興じる";
+        // Exactly 16 bytes
+        private const string _key = "Yuzu we love you";
 
-        private string Encrypt(string s)
+        private Aes CreateAes()
         {
-            StringBuilder str = new();
-            for (var i = 0; i < s.Length; i++)
-            {
-                str.Append((char)(s[i] ^ _key[i % _key.Length]));
-            }
-            return str.ToString();
+            var aes = Aes.Create();
+
+            aes.Key = Encoding.UTF8.GetBytes(_key);
+            aes.Mode = CipherMode.ECB;
+
+            return aes;
         }
+
+        private byte[] Encrypt(string s)
+        {
+            var aes = CreateAes();
+            var encryptor = aes.CreateEncryptor();
+
+            var data = Encoding.UTF8.GetBytes(s);
+            return encryptor.TransformFinalBlock(data, 0, data.Length);
+        }
+
+        private string Decrypt(byte[] d)
+        {
+            var aes = CreateAes();
+            var encryptor = aes.CreateDecryptor();
+
+            var data = encryptor.TransformFinalBlock(d, 0, d.Length);
+            return Encoding.UTF8.GetString(data);
+        }
+
+        private static string SaveFilePath => Path.Combine(Application.persistentDataPath, "save.sav");
 
         private static PersistencyManager _instance;
         public static PersistencyManager Instance
@@ -26,7 +48,7 @@ namespace Sketch.Persistency
             {
                 if (_instance == null)
                 {
-                    Debug.Log($"[PER] Persistency Manager created, data will be saved at {Application.persistentDataPath}/save.bin");
+                    Debug.Log($"[PER] Persistency Manager created, data will be saved at {SaveFilePath}");
                     _instance = new();
                 }
                 return _instance;
@@ -40,9 +62,14 @@ namespace Sketch.Persistency
             {
                 if (_saveData == null)
                 {
-                    if (File.Exists($"{Application.persistentDataPath}/save.bin"))
+                    if (File.Exists(SaveFilePath))
                     {
-                        _saveData = JsonConvert.DeserializeObject<SaveData>(Encrypt(File.ReadAllText($"{Application.persistentDataPath}/save.bin")));
+                        _saveData = JsonConvert.DeserializeObject<SaveData>(Decrypt(File.ReadAllBytes(SaveFilePath)));
+                        if (_saveData == null)
+                        {
+                            Debug.LogError("Save file couldn't be parsed, creating a new one...");
+                            _saveData = new SaveData();
+                        }
                     }
                     else
                     {
@@ -55,13 +82,7 @@ namespace Sketch.Persistency
 
         public void Save()
         {
-            File.WriteAllText($"{Application.persistentDataPath}/save.bin", Encrypt(JsonConvert.SerializeObject(_saveData)));
-        }
-
-        public void DeleteSaveFolder()
-        {
-            _saveData = new();
-            File.Delete($"{Application.persistentDataPath}/save.bin");
+            File.WriteAllBytes(SaveFilePath, Encrypt(JsonConvert.SerializeObject(_saveData)));
         }
     }
 }

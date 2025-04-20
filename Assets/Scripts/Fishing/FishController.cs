@@ -27,14 +27,14 @@ namespace Sketch.Fishing
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
-            _rb.velocity = transform.right * .4f;
+            _rb.linearVelocity = transform.right * .4f;
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.CompareTag("FISHING_Float") && FishSpawner.Instance.IsReady)
             {
-                _rb.velocity = Vector2.zero;
+                _rb.linearVelocity = Vector2.zero;
                 var dir = collision.transform.position - transform.position;
                 var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -57,7 +57,7 @@ namespace Sketch.Fishing
                 if (_target.Hooked != null && _target.Hooked != this)
                 {
                     _target = null;
-                    _rb.velocity = transform.right * .6f;
+                    _rb.linearVelocity = transform.right * .6f;
                 }
                 else if (_moveBackTimer > 0f) // Going back from bait to initial position
                 {
@@ -98,7 +98,7 @@ namespace Sketch.Fishing
                                 else
                                 {
                                     _target = null;
-                                    _rb.velocity = transform.right * .6f;
+                                    _rb.linearVelocity = transform.right * .6f;
                                 }
 
                             };
