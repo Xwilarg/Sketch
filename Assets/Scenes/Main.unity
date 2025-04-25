@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -376,7 +376,7 @@ MonoBehaviour:
   m_text: '{intro}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
-  m_sharedMaterial: {fileID: -6037156094204709040, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
+  m_sharedMaterial: {fileID: 8551700101290166140, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -702,7 +702,7 @@ MonoBehaviour:
   m_text: '{lang}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
-  m_sharedMaterial: {fileID: -6037156094204709040, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
+  m_sharedMaterial: {fileID: 8551700101290166140, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -868,6 +868,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &1803303706
 GameObject:
   m_ObjectHideFlags: 0
@@ -878,6 +879,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1803303707}
   - component: {fileID: 1803303708}
+  - component: {fileID: 1803303709}
   m_Layer: 0
   m_Name: MenuManager
   m_TagString: Untagged
@@ -913,6 +915,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _frenchDisclaimer: {fileID: 2073475303}
+--- !u!114 &1803303709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803303706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 195fcdcb325dc654487d6178c6db1f06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2073475303
 GameObject:
   m_ObjectHideFlags: 0
