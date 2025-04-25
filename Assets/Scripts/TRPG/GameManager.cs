@@ -422,6 +422,7 @@ namespace Sketch.TRPG
             if (value.phase == InputActionPhase.Started && !_isMoving)
             {
                 var posI = GetMousePosI();
+                DisplayPath();
 
                 if (_availableMoves.Contains(posI))
                 {
