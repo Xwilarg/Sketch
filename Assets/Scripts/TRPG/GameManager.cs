@@ -293,8 +293,10 @@ namespace Sketch.TRPG
                     GL.Begin(GL.TRIANGLES); // Performances :thinking:
                     Vector2 pos;
 
-                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? _lastMousePosCam);
-                    _lastMousePosCam = mousePos;
+                    var screenPos = CursorUtils.GetPosition(_pInput) ?? _lastMousePosCam;
+                    _lastMousePosCam = screenPos;
+
+                    var mousePos = _cam.ScreenToWorldPoint(screenPos);
                     var angleRad = Mathf.Atan2(mousePos.y - from.y, mousePos.x - from.x);
 
                     var angle = angleRad + i - Mathf.PI / 2;
