@@ -1,4 +1,5 @@
 using Sketch.Achievement;
+using Sketch.Common;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,10 +21,14 @@ namespace Sketch.Circle
         public float CurrLength { private set; get; }
         private const float MaxLength = 20f;
 
+        private bool _isMousePressed;
+        private PlayerInput _pInput;
+
         private void Awake()
         {
             _cam = Camera.main;
             _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
+            _pInput = GetComponent<PlayerInput>();
         }
         // Check if 2 segments intersect
         // https://stackoverflow.com/a/9997374
@@ -142,11 +147,10 @@ namespace Sketch.Circle
 
         private void Update()
         {
-            var pressed = Mouse.current.leftButton.isPressed;
-            if (pressed)
+            if (_isMousePressed)
             {
                 // Mouse position
-                var mousePos = Mouse.current.position.ReadValue();
+                var mousePos = CursorUtils.GetPosition(_pInput).Value;
                 var pos = _cam.ScreenToWorldPoint(mousePos);
                 pos.z = 0;
 
@@ -240,6 +244,12 @@ namespace Sketch.Circle
 
             _lr.positionCount = _positions.Count;
             _lr.SetPositions(_positions.ToArray());
+        }
+
+        public void OnClick(InputAction.CallbackContext value)
+        {
+            if (value.phase == InputActionPhase.Started) _isMousePressed = true;
+            else if (value.phase == InputActionPhase.Canceled) _isMousePressed = false;
         }
     }
 }

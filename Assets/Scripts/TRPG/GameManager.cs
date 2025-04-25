@@ -80,7 +80,11 @@ namespace Sketch.TRPG
         /// <summary>
         /// Last mouse position, used to generate path
         /// </summary>
-        private Vector2Int? _lastMousePos;
+        private Vector2Int? _lastMousePosHints;
+        /// <summary>
+        /// Last mouse position for input management
+        /// </summary>
+        private Vector2 _lastMousePosCam;
 
         private void Awake()
         {
@@ -186,7 +190,7 @@ namespace Sketch.TRPG
         private void DisplayPath()
         {
             var mousePos = GetMousePosI();
-            if (_lastMousePos == null || mousePos != _lastMousePos)
+            if (_lastMousePosHints == null || mousePos != _lastMousePosHints)
             {
                 // Clear path tiles
                 foreach (var go in _dirInstances) Destroy(go);
@@ -194,14 +198,14 @@ namespace Sketch.TRPG
                 _pathToMouse.Clear();
                 Destroy(_playerGhost);
 
-                _lastMousePos = mousePos;
+                _lastMousePosHints = mousePos;
 
                 // Display path
-                var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePos);
+                var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePosHints);
                 if (nextPos != null) // Mouse is a valid position we can move to
                 {
-                    _pathToMouse.Add(_lastMousePos.Value);
-                    _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePos, Quaternion.identity);
+                    _pathToMouse.Add(_lastMousePosHints.Value);
+                    _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePosHints, Quaternion.identity);
 
                     // Don't display path over the ghost so we directy go to the next one
                     Vector2 lastDir = nextPos.Position - nextPos.From;
@@ -266,7 +270,7 @@ namespace Sketch.TRPG
         /// <returns>Mouse position, rounded to the closest tile</returns>
         private Vector2Int GetMousePosI()
         {
-            var pos = Camera.main.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? (Vector3)(_lastMousePos.HasValue ? _lastMousePos.Value : Vector2.zero));
+            var pos = Camera.main.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? _lastMousePosCam);
             return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
         }
 
@@ -289,7 +293,8 @@ namespace Sketch.TRPG
                     GL.Begin(GL.TRIANGLES); // Performances :thinking:
                     Vector2 pos;
 
-                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? (Vector3)(_lastMousePos.HasValue ? _lastMousePos.Value : Vector2.zero));
+                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? _lastMousePosCam);
+                    _lastMousePosCam = mousePos;
                     var angleRad = Mathf.Atan2(mousePos.y - from.y, mousePos.x - from.x);
 
                     var angle = angleRad + i - Mathf.PI / 2;
@@ -334,7 +339,7 @@ namespace Sketch.TRPG
             tile.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
             _helpTiles.Add(tile);
 
-            _lastMousePos = null;
+            _lastMousePosHints = null;
 
             _dirInfo = new()
             {
@@ -412,7 +417,7 @@ namespace Sketch.TRPG
 
         public void OnClick(InputAction.CallbackContext value)
         {
-            if (value.performed && !_isMoving)
+            if (value.phase == InputActionPhase.Started && !_isMoving)
             {
                 var posI = GetMousePosI();
 
