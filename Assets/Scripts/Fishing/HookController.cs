@@ -1,11 +1,15 @@
 ﻿using Sketch.Common;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Sketch.Fishing
 {
     public class HookController : MonoBehaviour
     {
+        [SerializeField]
+        private PlayerInput _pInput;
+
         private int _hp;
         private SpriteRenderer _sr;
 
@@ -46,7 +50,10 @@ namespace Sketch.Fishing
             {
                 var camBounds = CameraUtils.CalculateBounds(_cam);
 
-                var pos = _cam.ScreenToWorldPoint(CursorUtils.Position);
+                var mousePos = CursorUtils.GetPosition(_pInput);
+                if (!mousePos.HasValue) return;
+
+                var pos = _cam.ScreenToWorldPoint(mousePos.Value);
                 pos.z = 0f;
 
                 // We keep the float inside the camera bounds

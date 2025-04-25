@@ -6,6 +6,8 @@ namespace Sketch.Generation
 {
     public class DragInput : MonoBehaviour
     {
+        private PlayerInput _pInput;
+
         private MapGenerator _generator;
         private Camera _cam;
 
@@ -14,6 +16,7 @@ namespace Sketch.Generation
         private void Awake()
         {
             _generator = GetComponent<MapGenerator>();
+            _pInput = GetComponent<PlayerInput>();
             _cam = Camera.main;
         }
 
@@ -21,13 +24,14 @@ namespace Sketch.Generation
         {
             if (value.phase == InputActionPhase.Started)
             {
-                _clickPos = CursorUtils.Position;
+                _clickPos = CursorUtils.GetPosition(_pInput);
             }
             else if (value.phase == InputActionPhase.Canceled)
             {
-                if (_clickPos == CursorUtils.Position) // Click and not drag
+                var pos = CursorUtils.GetPosition(_pInput);
+                if (_clickPos == pos) // Click and not drag
                 {
-                    _generator.HandleClick(CursorUtils.Position);
+                    _generator.HandleClick(pos.Value);
                 }
 
                 _clickPos = null;

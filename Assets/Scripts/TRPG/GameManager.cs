@@ -33,6 +33,8 @@ namespace Sketch.TRPG
         [SerializeField]
         private GameObject _ghostPrefab;
 
+        private PlayerInput _pInput;
+
         // Instance
         private GameObject _player;
         private Vector2Int _playerPos;
@@ -83,6 +85,7 @@ namespace Sketch.TRPG
         private void Awake()
         {
             _cam = Camera.main;
+            _pInput = GetComponent<PlayerInput>();
 
             _wallContainer = new GameObject("Walls").transform;
             _enemyContainer = new GameObject("Enemies").transform;
@@ -263,7 +266,7 @@ namespace Sketch.TRPG
         /// <returns>Mouse position, rounded to the closest tile</returns>
         private Vector2Int GetMousePosI()
         {
-            var pos = Camera.main.ScreenToWorldPoint(CursorUtils.Position);
+            var pos = Camera.main.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? (Vector3)(_lastMousePos.HasValue ? _lastMousePos.Value : Vector2.zero));
             return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
         }
 
@@ -286,7 +289,7 @@ namespace Sketch.TRPG
                     GL.Begin(GL.TRIANGLES); // Performances :thinking:
                     Vector2 pos;
 
-                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.Position);
+                    var mousePos = _cam.ScreenToWorldPoint(CursorUtils.GetPosition(_pInput) ?? (Vector3)(_lastMousePos.HasValue ? _lastMousePos.Value : Vector2.zero));
                     var angleRad = Mathf.Atan2(mousePos.y - from.y, mousePos.x - from.x);
 
                     var angle = angleRad + i - Mathf.PI / 2;
