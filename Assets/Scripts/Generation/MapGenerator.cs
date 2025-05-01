@@ -29,7 +29,7 @@ namespace Sketch.Generation
         // Prefab to display various info
 
         [SerializeField]
-        private GameObject _lrPrefab;
+        private GameObject _lrPrefab, _lrAreaPrefab;
 
         [SerializeField]
         private Material _normalMat, _importantMat;
@@ -39,9 +39,6 @@ namespace Sketch.Generation
 
         [SerializeField]
         private GameObject _textHintPrefab;
-
-        // Parent object so everything isn't thrown up at the root
-        private Transform _roomsParent;
 
         // Rooms we can instanciate
         private RoomData[] _availableRooms;
@@ -58,7 +55,11 @@ namespace Sketch.Generation
         // This is used if we need to do stuff between rooms
         private readonly List<RuntimeRoom> _runtimeRooms = new();
 
+        // The room we clicked on
         private RuntimeRoom _highlightedRoom;
+
+        // We split the world into areas for optimization purposes
+        private Dictionary<Vector2Int, MapArea> _areas = new();
 
         public void ToggleAllLinks(bool value)
         {
@@ -81,7 +82,6 @@ namespace Sketch.Generation
             Instance = this;
 
             _cam = Camera.main;
-            _roomsParent = new GameObject("Rooms").transform;
             _availableRooms = _rooms.SelectMany(r => // Convert all room text assets to RoomData
             {
                 var txt = r.text.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
@@ -178,7 +178,7 @@ namespace Sketch.Generation
                 return rooms;
             }).ToArray();
             var startingRoom = _availableRooms[0];
-            RuntimeRoom rr = MakeRR();
+            RuntimeRoom rr = MakeRR(0, 0);
             DrawRoom(startingRoom, 0, 0, rr);
             _nextDoors.AddRange(startingRoom.Doors);
             StartCoroutine(Generate());
@@ -208,8 +208,28 @@ namespace Sketch.Generation
             }
         }
 
-        public RuntimeRoom MakeRR()
-            => new(_runtimeRooms.Count + 1, _roomsParent, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
+        private MapArea GetOrCreateMapArea(int x, int y)
+        {
+            const int size = 10;
+
+            int gx = x / size;
+            int gy = y / size;
+            var p = new Vector2Int(gx, gy);
+
+            if (_areas.ContainsKey(p))
+            {
+                return _areas[p];
+            }
+            var area = new MapArea($"({gx} ; {gy})", _lrAreaPrefab, p * size, new Vector2Int(gx + 1, gy + 1) * size);
+            _areas.Add(p, area);
+            return area;
+        }
+
+        /// <summary>
+        /// Create a new room to be instantiated on the world
+        /// </summary>
+        public RuntimeRoom MakeRR(int x, int y)
+            => new(_runtimeRooms.Count + 1, GetOrCreateMapArea(x, y), _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
 
         // https://stackoverflow.com/a/42535
         private TileType[,] Rotate(TileType[,] array, int width, int height)
@@ -250,14 +270,14 @@ namespace Sketch.Generation
                 int roomMade = 0;
                 while (_currentlyCheckedRoom < _nextDoors.Count)
                 {
-                    if (rr == null || !rr.IsEmpty)
-                    {
-                        rr = MakeRR();
-                        roomMade++;
-                    }
-
                     // Attempt to place a room
                     var target = _nextDoors[_currentlyCheckedRoom];
+
+                    if (rr == null || !rr.IsEmpty)
+                    {
+                        rr = MakeRR(target.x, target.y);
+                        roomMade++;
+                    }
 
                     yield return GenerateRoom(target.x, target.y, rr);
 
@@ -343,7 +363,7 @@ namespace Sketch.Generation
 
                         if (rr == null || !rr.IsEmpty)
                         {
-                            rr = MakeRR();
+                            rr = MakeRR(group.Sum(x => x.x) / group.Count, group.Sum(x => x.y) / group.Count);
                         }
                         foreach (var f in group)
                         {

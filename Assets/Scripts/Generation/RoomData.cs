@@ -1,19 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Sketch.Generation
 {
     public class RuntimeRoom
     {
-        public RuntimeRoom(int id, Transform parent, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile, GameObject textHintPrefab)
+        public RuntimeRoom(int id, MapArea area, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile, GameObject textHintPrefab)
         {
             ID = id;
 
             Container = new GameObject($"Room {id}").transform;
-            Container.transform.parent = parent;
+            Container.transform.parent = area.RoomRoot;
 
             _pixelSize = pixelSize;
             _lrPrefab = lrPrefab;
