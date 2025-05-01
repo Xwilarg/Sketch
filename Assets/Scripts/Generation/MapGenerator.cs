@@ -276,24 +276,29 @@ namespace Sketch.Generation
                 Vector2Int.left, Vector2Int.right
             };
             RuntimeRoom rr = null;
-
-            // Only parse areas near the mouse
-            var pos = _dInput.LastMousePos;
+            Vector2 oldPos = Vector2.one * 100f; // Trigger change at start
             var areas = new List<MapArea>();
-            for (int y = -1; y <= 1; y++)
-            {
-                for (int x = -1; x <= 1; x++)
-                {
-                    var area = GetOrCreateMapArea((int)(pos.x + (x * _areaSize)), (int)(pos.y + (y * _areaSize)));
-                    if (area.NextDoors.Count > 0)
-                    {
-                        areas.Add(area);
-                    }
-                }
-            }
 
             while (true) // Even if we are out of room, we keep that loop alive
             {
+                // Only parse areas near the mouse
+                var pos = _dInput.LastCameraPos;
+                if (pos != oldPos)
+                {
+                    areas.Clear();
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        for (int x = -1; x <= 1; x++)
+                        {
+                            var area = GetOrCreateMapArea((int)(pos.x + (x * _areaSize)), (int)(pos.y + (y * _areaSize)));
+                            if (area.NextDoors.Count > 0)
+                            {
+                                areas.Add(area);
+                            }
+                        }
+                    }
+                }
+
                 // Check doors to create new rooms
                 int roomMade = 0;
                 while (_currentlyCheckedArea < areas.Count && _currentlyCheckedRoom < areas[_currentlyCheckedArea].NextDoors.Count)
@@ -308,7 +313,7 @@ namespace Sketch.Generation
                         roomMade++;
                     }
 
-                    yield return GenerateRoom(target.x, target.y, rr, area);
+                    yield return GenerateRoom(target.x, target.y, rr, GetOrCreateMapArea(target.x, target.y), area);
 
                     // Fill doors
                     foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
@@ -343,7 +348,7 @@ namespace Sketch.Generation
                 _currentlyCheckedRoom = 0;
 
                 // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
-                if (roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
+                if (false && roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
                 {
                     var camBounds = CameraUtils.CalculateBounds(_cam);
                     var min = camBounds.min * _tilePixelSize / 10f;
@@ -432,7 +437,16 @@ namespace Sketch.Generation
             }
         }
 
-        private IEnumerator GenerateRoom(int x, int y, RuntimeRoom rr, MapArea mapArea)
+        /// <summary>
+        /// Create a new room
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="rr"></param>
+        /// <param name="newArea">New area that contains this room</param>
+        /// <param name="fromArea">Area that contains the door from which this room was generated</param>
+        /// <returns></returns>
+        private IEnumerator GenerateRoom(int x, int y, RuntimeRoom rr, MapArea newArea, MapArea fromArea)
         {
             var pxlSize = _tilePixelSize / 100f;
             var realPos = new Vector2(x, y) * pxlSize;
@@ -441,7 +455,7 @@ namespace Sketch.Generation
             {
                 // We are outside of the bounds so no need to continue further in this direction
                 _currentlyCheckedRoom++;
-                if (_currentlyCheckedRoom > mapArea.NextDoors.Count)
+                if (_currentlyCheckedRoom > fromArea.NextDoors.Count)
                 {
                     _currentlyCheckedArea++;
                     _currentlyCheckedRoom = 0;
@@ -483,8 +497,8 @@ namespace Sketch.Generation
                         // Place the room
                         yield return new WaitForEndOfFrame();
                         DrawRoom(room, x - door.x, y - door.y, rr);
-                        mapArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
-                        mapArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
+                        newArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
+                        fromArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
                         yield break;
                     }
                 }
@@ -500,7 +514,7 @@ namespace Sketch.Generation
             floor.name = $"Floor ({x};{y})";
             target.GameObject = floor;
 
-            mapArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
+            fromArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
         }
 
         /// <summary>

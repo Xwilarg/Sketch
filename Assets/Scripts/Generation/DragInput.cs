@@ -12,7 +12,7 @@ namespace Sketch.Generation
         private Camera _cam;
 
         private Vector2? _clickPos;
-        public Vector2 LastMousePos { private set; get; }
+        public Vector2 LastCameraPos { private set; get; }
 
         private void Awake()
         {
@@ -26,7 +26,6 @@ namespace Sketch.Generation
             if (value.phase == InputActionPhase.Started)
             {
                 _clickPos = CursorUtils.GetPosition(PInput);
-                LastMousePos = _clickPos.Value;
             }
             else if (value.phase == InputActionPhase.Canceled)
             {
@@ -45,6 +44,7 @@ namespace Sketch.Generation
             if (_clickPos != null)
             {
                 _cam.transform.Translate(-value.ReadValue<Vector2>() / 100f);
+                LastCameraPos = _cam.transform.position;
             }
         }
     }
