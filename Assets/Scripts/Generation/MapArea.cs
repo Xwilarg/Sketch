@@ -8,6 +8,7 @@ namespace Sketch.Generation
         public MapArea(string name, GameObject lrPrefab, Vector2Int minBound, Vector2Int maxBound)
         {
             RoomRoot = new GameObject($"Rooms {name}").transform;
+            RoomRoot.transform.position = (Vector2)(maxBound - minBound) / 2f;
 
             // Add lines debug to show areas
             Object.Instantiate(lrPrefab, RoomRoot).GetComponent<LineRenderer>().SetPositions(new Vector3[] { (Vector2)minBound, new Vector2(maxBound.x, minBound.y) });
