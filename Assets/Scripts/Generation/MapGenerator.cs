@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Sketch.Generation
 {
@@ -40,12 +41,11 @@ namespace Sketch.Generation
         [SerializeField]
         private GameObject _textHintPrefab;
 
-        // Rooms we can instanciate
+        // Rooms we can instantiate
         private RoomData[] _availableRooms;
 
         private Camera _cam;
-
-        private readonly List<Vector2Int> _nextDoors = new();
+        private DragInput _dInput;
 
         // All tiles instanciated
         // This is used as a grid to check if some tile is at a specific position
@@ -59,7 +59,10 @@ namespace Sketch.Generation
         private RuntimeRoom _highlightedRoom;
 
         // We split the world into areas for optimization purposes
-        private Dictionary<Vector2Int, MapArea> _areas = new();
+        private readonly Dictionary<Vector2Int, MapArea> _areas = new();
+
+        // Size used for MapArea
+        const int _areaSize = 10;
 
         public void ToggleAllLinks(bool value)
         {
@@ -80,6 +83,7 @@ namespace Sketch.Generation
         private void Awake()
         {
             Instance = this;
+            _dInput = GetComponent<DragInput>();
 
             _cam = Camera.main;
             _availableRooms = _rooms.SelectMany(r => // Convert all room text assets to RoomData
@@ -177,10 +181,17 @@ namespace Sketch.Generation
                 }
                 return rooms;
             }).ToArray();
+
+            // Create first room
             var startingRoom = _availableRooms[0];
-            RuntimeRoom rr = MakeRR(0, 0);
+            var mapArea = GetOrCreateMapArea(0, 0);
+            RuntimeRoom rr = MakeRR(mapArea);
             DrawRoom(startingRoom, 0, 0, rr);
-            _nextDoors.AddRange(startingRoom.Doors);
+            mapArea.NextDoors.AddRange(startingRoom.Doors);
+        }
+
+        private void Start()
+        {
             StartCoroutine(Generate());
         }
 
@@ -210,17 +221,15 @@ namespace Sketch.Generation
 
         private MapArea GetOrCreateMapArea(int x, int y)
         {
-            const int size = 10;
-
-            int gx = x / size;
-            int gy = y / size;
+            int gx = x / _areaSize;
+            int gy = y / _areaSize;
             var p = new Vector2Int(gx, gy);
 
             if (_areas.ContainsKey(p))
             {
                 return _areas[p];
             }
-            var area = new MapArea($"({gx} ; {gy})", _lrAreaPrefab, p * size, new Vector2Int(gx + 1, gy + 1) * size);
+            var area = new MapArea($"({gx} ; {gy})", _lrAreaPrefab, p * _areaSize, new Vector2Int(gx + 1, gy + 1) * _areaSize);
             _areas.Add(p, area);
             return area;
         }
@@ -228,8 +237,8 @@ namespace Sketch.Generation
         /// <summary>
         /// Create a new room to be instantiated on the world
         /// </summary>
-        public RuntimeRoom MakeRR(int x, int y)
-            => new(_runtimeRooms.Count + 1, GetOrCreateMapArea(x, y), _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
+        public RuntimeRoom MakeRR(MapArea ma)
+            => new(_runtimeRooms.Count + 1, ma, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
 
         // https://stackoverflow.com/a/42535
         private TileType[,] Rotate(TileType[,] array, int width, int height)
@@ -256,6 +265,8 @@ namespace Sketch.Generation
             { }
         }
 
+        // Keep track of the doors we area checking by areas
+        private int _currentlyCheckedArea;
         private int _currentlyCheckedRoom;
         private IEnumerator Generate()
         {
@@ -265,21 +276,39 @@ namespace Sketch.Generation
                 Vector2Int.left, Vector2Int.right
             };
             RuntimeRoom rr = null;
+
+            // Only parse areas near the mouse
+            var pos = _dInput.LastMousePos;
+            var areas = new List<MapArea>();
+            for (int y = -1; y <= 1; y++)
+            {
+                for (int x = -1; x <= 1; x++)
+                {
+                    var area = GetOrCreateMapArea((int)(pos.x + (x * _areaSize)), (int)(pos.y + (y * _areaSize)));
+                    if (area.NextDoors.Count > 0)
+                    {
+                        areas.Add(area);
+                    }
+                }
+            }
+
             while (true) // Even if we are out of room, we keep that loop alive
             {
+                // Check doors to create new rooms
                 int roomMade = 0;
-                while (_currentlyCheckedRoom < _nextDoors.Count)
+                while (_currentlyCheckedArea < areas.Count && _currentlyCheckedRoom < areas[_currentlyCheckedArea].NextDoors.Count)
                 {
                     // Attempt to place a room
-                    var target = _nextDoors[_currentlyCheckedRoom];
+                    var target = areas[_currentlyCheckedArea].NextDoors[_currentlyCheckedRoom];
+                    var area = areas[_currentlyCheckedArea];
 
                     if (rr == null || !rr.IsEmpty)
                     {
-                        rr = MakeRR(target.x, target.y);
+                        rr = MakeRR(area);
                         roomMade++;
                     }
 
-                    yield return GenerateRoom(target.x, target.y, rr);
+                    yield return GenerateRoom(target.x, target.y, rr, area);
 
                     // Fill doors
                     foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
@@ -310,8 +339,10 @@ namespace Sketch.Generation
                         }
                     }
                 }
+                _currentlyCheckedArea = 0;
                 _currentlyCheckedRoom = 0;
 
+                // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
                 if (roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
                 {
                     var camBounds = CameraUtils.CalculateBounds(_cam);
@@ -363,7 +394,8 @@ namespace Sketch.Generation
 
                         if (rr == null || !rr.IsEmpty)
                         {
-                            rr = MakeRR(group.Sum(x => x.x) / group.Count, group.Sum(x => x.y) / group.Count);
+                            var area = GetOrCreateMapArea(first.x, first.y);
+                            rr = MakeRR(area);
                         }
                         foreach (var f in group)
                         {
@@ -400,7 +432,7 @@ namespace Sketch.Generation
             }
         }
 
-        private IEnumerator GenerateRoom(int x, int y, RuntimeRoom rr)
+        private IEnumerator GenerateRoom(int x, int y, RuntimeRoom rr, MapArea mapArea)
         {
             var pxlSize = _tilePixelSize / 100f;
             var realPos = new Vector2(x, y) * pxlSize;
@@ -409,6 +441,11 @@ namespace Sketch.Generation
             {
                 // We are outside of the bounds so no need to continue further in this direction
                 _currentlyCheckedRoom++;
+                if (_currentlyCheckedRoom > mapArea.NextDoors.Count)
+                {
+                    _currentlyCheckedArea++;
+                    _currentlyCheckedRoom = 0;
+                }
                 yield break;
             }
 
@@ -446,8 +483,8 @@ namespace Sketch.Generation
                         // Place the room
                         yield return new WaitForEndOfFrame();
                         DrawRoom(room, x - door.x, y - door.y, rr);
-                        _nextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
-                        _nextDoors.RemoveAt(_currentlyCheckedRoom);
+                        mapArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
+                        mapArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
                         yield break;
                     }
                 }
@@ -463,7 +500,7 @@ namespace Sketch.Generation
             floor.name = $"Floor ({x};{y})";
             target.GameObject = floor;
 
-            _nextDoors.RemoveAt(_currentlyCheckedRoom);
+            mapArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
         }
 
         /// <summary>

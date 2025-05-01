@@ -19,5 +19,7 @@ namespace Sketch.Generation
         // Parent object so everything isn't thrown up at the root
         public Transform RoomRoot;
         public List<RuntimeRoom> Rooms = new();
+
+        public List<Vector2Int> NextDoors = new();
     }
 }
