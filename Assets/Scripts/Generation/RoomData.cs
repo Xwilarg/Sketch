@@ -10,6 +10,7 @@ namespace Sketch.Generation
         public RuntimeRoom(int id, MapArea area, float pixelSize, GameObject lrPrefab, Material normalMat, Material importantMat, GameObject filterTile, GameObject textHintPrefab)
         {
             ID = id;
+            LinkedArea = area;
 
             Container = new GameObject($"Room {id}").transform;
             Container.transform.parent = area.RoomRoot;
@@ -23,6 +24,7 @@ namespace Sketch.Generation
         }
 
         public int ID { get; }
+        public MapArea LinkedArea { get; }
 
         // GameObject that contains all the instanciated data
         public Transform Container { get; }

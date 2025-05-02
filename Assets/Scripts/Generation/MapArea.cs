@@ -35,12 +35,8 @@ namespace Sketch.Generation
         public Transform RoomRoot { private set; get; }
         public List<RuntimeRoom> Rooms { get; } = new();
 
-        // All tiles instanciated
-        // This is used as a grid to check if some tile is at a specific position
-        private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
-
         public List<Vector2Int> NextDoors { get; } = new();
 
-        private LineRenderer[] _lrs;
+        private readonly LineRenderer[] _lrs;
     }
 }

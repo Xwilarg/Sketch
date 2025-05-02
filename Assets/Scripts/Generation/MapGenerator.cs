@@ -53,8 +53,16 @@ namespace Sketch.Generation
         // We split the world into areas for optimization purposes
         private readonly Dictionary<Vector2Int, MapArea> _areas = new();
 
-        // Size used for MapArea
-        const int _areaSize = 10;
+        // All tiles instanciated
+        // This is used as a grid to check if some tile is at a specific position
+        private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
+
+        /// <summary>
+        /// Size used for MapArea
+        /// </summary>
+        private const int AreaSize = 10;
+
+        private int _runtimeRoomId;
 
         public void ToggleAllLinks(bool value)
         {
@@ -176,7 +184,7 @@ namespace Sketch.Generation
 
             // Create first room
             var startingRoom = _availableRooms[0];
-            var mapArea = GetOrCreateMapArea(0, 0);
+            var mapArea = GetOrCreateMapArea(Vector2Int.zero);
             RuntimeRoom rr = MakeRR(mapArea);
             DrawRoom(startingRoom, 0, 0, rr);
             mapArea.NextDoors.AddRange(startingRoom.Doors);
@@ -198,7 +206,7 @@ namespace Sketch.Generation
             }
 
             var rounded = new Vector2Int(Mathf.RoundToInt(pos.x / (_tilePixelSize / 100f)), Mathf.RoundToInt(pos.y / (_tilePixelSize / 100f)));
-            var room = _runtimeRooms.FirstOrDefault(x => x.Floors.Contains(rounded));
+            var room = _areas.SelectMany(x => x.Value.Rooms).FirstOrDefault(x => x.Floors.Contains(rounded));
             if (room != null)
             {
                 _highlightedRoom = room;
@@ -211,15 +219,20 @@ namespace Sketch.Generation
             }
         }
 
-        private MapArea GetOrCreateMapArea(int x, int y)
+        /// <summary>
+        /// Convert a coordinate in the world by one that can be used by <see cref="GetOrCreateMapArea(Vector2Int)"/>
+        /// </summary>
+        private Vector2Int GlobalToMapAreaCoordinate(Vector2 v)
         {
-            var p = new Vector2Int(x, y);
-
+            return new Vector2Int(Mathf.RoundToInt(v.x / AreaSize), Mathf.RoundToInt(v.y / AreaSize));
+        }
+        private MapArea GetOrCreateMapArea(Vector2Int p)
+        {
             if (_areas.ContainsKey(p))
             {
                 return _areas[p];
             }
-            var area = new MapArea($"({x} ; {y})", _lrAreaPrefab, p * _areaSize, new Vector2Int(x + 1, y + 1) * _areaSize);
+            var area = new MapArea($"({p.x} ; {p.y})", _lrAreaPrefab, p * AreaSize, new Vector2Int(p.x + 1, p.y + 1) * AreaSize);
             _areas.Add(p, area);
             return area;
         }
@@ -229,7 +242,7 @@ namespace Sketch.Generation
         /// </summary>
         public RuntimeRoom MakeRR(MapArea ma)
         {
-            var rr = new RuntimeRoom(_runtimeRooms.Count + 1, ma, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
+            var rr = new RuntimeRoom(_runtimeRoomId++, ma, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
             ma.Rooms.Add(rr);
             return rr;
 
@@ -256,7 +269,8 @@ namespace Sketch.Generation
             r1.AddAdjacentRoom(r2);
             r2.AddAdjacentRoom(r1);
 
-            while (_runtimeRooms.Any(x => x.UpdateDistances()))
+            var allRuntimes = _areas.SelectMany(x => x.Value.Rooms); // TODO: Don't do on all?
+            while (allRuntimes.Any(x => x.UpdateDistances()))
             { }
         }
 
@@ -286,7 +300,7 @@ namespace Sketch.Generation
                     {
                         for (int x = -1; x <= 1; x++)
                         {
-                            var area = GetOrCreateMapArea(Mathf.RoundToInt(pos.x / _areaSize + x), Mathf.RoundToInt(pos.y  / _areaSize) + y);
+                            var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate(pos) + new Vector2Int(x, y));
                             if (true)//area.NextDoors.Count > 0 || area.Rooms.Count > 0)
                             {
                                 areas.Add(area);
@@ -311,7 +325,7 @@ namespace Sketch.Generation
                         roomMade++;
                     }
 
-                    yield return GenerateRoom(target.x, target.y, rr, GetOrCreateMapArea(Mathf.RoundToInt((float)target.x / _areaSize), Mathf.RoundToInt((float)target.y / _areaSize)), area);
+                    yield return GenerateRoom(target.x, target.y, rr, GetOrCreateMapArea(GlobalToMapAreaCoordinate(target)), area);
 
                     // Fill doors
                     foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
@@ -326,7 +340,7 @@ namespace Sketch.Generation
                         // Same for inside doors
                         else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
                         {
-                            var adjacentRoom = _runtimeRooms.First(x => x.Doors.Contains(door.Key));
+                            var adjacentRoom = _areas.SelectMany(x => x.Value.Rooms).First(x => x.Doors.Contains(door.Key));
 
                             AddRoomLinks(rr, adjacentRoom);
 
@@ -346,7 +360,7 @@ namespace Sketch.Generation
                 _currentlyCheckedRoom = 0;
 
                 // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
-                if (false && roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
+                if (false && roomMade == 0 && OptionsManager.Instance.CalculateNewRooms) // TODO: Remove false
                 {
                     var camBounds = CameraUtils.CalculateBounds(_cam);
                     var min = camBounds.min * _tilePixelSize / 10f;
@@ -397,7 +411,7 @@ namespace Sketch.Generation
 
                         if (rr == null || !rr.IsEmpty)
                         {
-                            var area = GetOrCreateMapArea(first.x / _areaSize, first.y / _areaSize);
+                            var area = GetOrCreateMapArea(first);
                             rr = MakeRR(area);
                         }
                         foreach (var f in group)
@@ -425,7 +439,6 @@ namespace Sketch.Generation
                                 }
                             }
                         }
-                        _runtimeRooms.Add(rr);
                         yield return new WaitForEndOfFrame();
 
                     }
@@ -570,7 +583,6 @@ namespace Sketch.Generation
             }
 
             rr.LateInit();
-            _runtimeRooms.Add(rr);
         }
     }
 }
