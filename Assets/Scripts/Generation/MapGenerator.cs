@@ -47,14 +47,6 @@ namespace Sketch.Generation
         private Camera _cam;
         private DragInput _dInput;
 
-        // All tiles instanciated
-        // This is used as a grid to check if some tile is at a specific position
-        private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
-
-        // All the rooms instanciated
-        // This is used if we need to do stuff between rooms
-        private readonly List<RuntimeRoom> _runtimeRooms = new();
-
         // The room we clicked on
         private RuntimeRoom _highlightedRoom;
 
@@ -66,7 +58,7 @@ namespace Sketch.Generation
 
         public void ToggleAllLinks(bool value)
         {
-            foreach (var rr in _runtimeRooms)
+            foreach (var rr in _areas.Values.SelectMany(x => x.Rooms))
             {
                 rr.ToggleLinks(value);
             }
@@ -74,7 +66,7 @@ namespace Sketch.Generation
 
         public void ToggleDistance(bool value)
         {
-            foreach (var rr in _runtimeRooms)
+            foreach (var rr in _areas.Values.SelectMany(x => x.Rooms))
             {
                 rr.ToggleDistances(value);
             }
@@ -221,15 +213,13 @@ namespace Sketch.Generation
 
         private MapArea GetOrCreateMapArea(int x, int y)
         {
-            int gx = x / _areaSize;
-            int gy = y / _areaSize;
-            var p = new Vector2Int(gx, gy);
+            var p = new Vector2Int(x, y);
 
             if (_areas.ContainsKey(p))
             {
                 return _areas[p];
             }
-            var area = new MapArea($"({gx} ; {gy})", _lrAreaPrefab, p * _areaSize, new Vector2Int(gx + 1, gy + 1) * _areaSize);
+            var area = new MapArea($"({x} ; {y})", _lrAreaPrefab, p * _areaSize, new Vector2Int(x + 1, y + 1) * _areaSize);
             _areas.Add(p, area);
             return area;
         }
@@ -238,7 +228,12 @@ namespace Sketch.Generation
         /// Create a new room to be instantiated on the world
         /// </summary>
         public RuntimeRoom MakeRR(MapArea ma)
-            => new(_runtimeRooms.Count + 1, ma, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
+        {
+            var rr = new RuntimeRoom(_runtimeRooms.Count + 1, ma, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
+            ma.Rooms.Add(rr);
+            return rr;
+
+        }
 
         // https://stackoverflow.com/a/42535
         private TileType[,] Rotate(TileType[,] array, int width, int height)
@@ -285,27 +280,30 @@ namespace Sketch.Generation
                 var pos = _dInput.LastCameraPos;
                 if (pos != oldPos)
                 {
+                    foreach (var a in areas) a.Toggle(false);
                     areas.Clear();
                     for (int y = -1; y <= 1; y++)
                     {
                         for (int x = -1; x <= 1; x++)
                         {
-                            var area = GetOrCreateMapArea((int)(pos.x + (x * _areaSize)), (int)(pos.y + (y * _areaSize)));
-                            if (area.NextDoors.Count > 0)
+                            var area = GetOrCreateMapArea(Mathf.RoundToInt(pos.x / _areaSize + x), Mathf.RoundToInt(pos.y  / _areaSize) + y);
+                            if (true)//area.NextDoors.Count > 0 || area.Rooms.Count > 0)
                             {
                                 areas.Add(area);
                             }
                         }
                     }
+                    foreach (var a in areas) a.Toggle(true);
                 }
 
                 // Check doors to create new rooms
                 int roomMade = 0;
-                while (_currentlyCheckedArea < areas.Count && _currentlyCheckedRoom < areas[_currentlyCheckedArea].NextDoors.Count)
+                var doorAreas = areas.Where(x => x.NextDoors.Count > 0).ToArray();
+                while (_currentlyCheckedArea < doorAreas.Length && _currentlyCheckedRoom < doorAreas[_currentlyCheckedArea].NextDoors.Count)
                 {
                     // Attempt to place a room
-                    var target = areas[_currentlyCheckedArea].NextDoors[_currentlyCheckedRoom];
-                    var area = areas[_currentlyCheckedArea];
+                    var target = doorAreas[_currentlyCheckedArea].NextDoors[_currentlyCheckedRoom];
+                    var area = doorAreas[_currentlyCheckedArea];
 
                     if (rr == null || !rr.IsEmpty)
                     {
@@ -313,7 +311,7 @@ namespace Sketch.Generation
                         roomMade++;
                     }
 
-                    yield return GenerateRoom(target.x, target.y, rr, GetOrCreateMapArea(target.x, target.y), area);
+                    yield return GenerateRoom(target.x, target.y, rr, GetOrCreateMapArea(Mathf.RoundToInt((float)target.x / _areaSize), Mathf.RoundToInt((float)target.y / _areaSize)), area);
 
                     // Fill doors
                     foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR))
@@ -399,7 +397,7 @@ namespace Sketch.Generation
 
                         if (rr == null || !rr.IsEmpty)
                         {
-                            var area = GetOrCreateMapArea(first.x, first.y);
+                            var area = GetOrCreateMapArea(first.x / _areaSize, first.y / _areaSize);
                             rr = MakeRR(area);
                         }
                         foreach (var f in group)
