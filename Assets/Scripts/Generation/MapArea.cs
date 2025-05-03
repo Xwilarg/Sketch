@@ -5,7 +5,7 @@ namespace Sketch.Generation
 {
     public class MapArea
     {
-        public MapArea(string name, GameObject lrPrefab, Vector2Int minBound, Vector2Int maxBound)
+        public MapArea(string name, GameObject lrPrefab, Vector2 minBound, Vector2 maxBound)
         {
             RoomRoot = new GameObject($"Rooms {name}").transform;
             RoomRoot.transform.position = (Vector2)(maxBound - minBound) / 2f;

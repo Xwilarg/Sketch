@@ -232,7 +232,7 @@ namespace Sketch.Generation
             {
                 return _areas[p];
             }
-            var area = new MapArea($"({p.x} ; {p.y})", _lrAreaPrefab, p * AreaSize, new Vector2Int(p.x + 1, p.y + 1) * AreaSize);
+            var area = new MapArea($"({p.x} ; {p.y})", _lrAreaPrefab, (p - Vector2.one / 2f) * AreaSize, (p + Vector2.one / 2f) * AreaSize);
             _areas.Add(p, area);
             return area;
         }
@@ -295,10 +295,11 @@ namespace Sketch.Generation
                 var pos = _dInput.LastCameraPos;
                 if (pos != oldPos)
                 {
+                    var b = new Color(0.1098039f, 0.254902f, 0.1843137f);
                     foreach (var a in areas)
                     {
                         a.Toggle(false);
-                        //foreach (var d in a.NextDoors) _tiles[d].SR.color = Color.red;
+                        foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = b;
                     }
                     areas.Clear();
                     for (int y = -1; y <= 1; y++)
@@ -315,7 +316,7 @@ namespace Sketch.Generation
                     foreach (var a in areas)
                     {
                         a.Toggle(true);
-                        //foreach (var d in a.NextDoors) _tiles[d].SR.color = Color.blue;
+                        foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = Color.blue;
                     }
                 }
 
@@ -476,7 +477,6 @@ namespace Sketch.Generation
             if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
             {
                 // We are outside of the bounds so no need to continue further in this direction
-                _generatedRr = null;
                 yield break;
             }
 
@@ -531,11 +531,12 @@ namespace Sketch.Generation
 
             _roomMade++;
             var p = (Vector2)new(x, y) * pxlSize;
-            _generatedRr = MakeRR(GetOrCreateMapArea(GlobalToMapAreaCoordinate(p)));
-            var floor = Instantiate(_floorPrefab, _generatedRr.Container);
+            var rr = MakeRR(GetOrCreateMapArea(GlobalToMapAreaCoordinate(p)));
+            var floor = Instantiate(_floorPrefab, rr.Container);
             floor.transform.position = p;
             floor.name = $"Floor ({x};{y})";
             target.SR = floor.GetComponent<SpriteRenderer>();
+            rr.Floors.Add(new(x, y));
 
             fromArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
         }
