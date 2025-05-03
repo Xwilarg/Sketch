@@ -611,6 +611,7 @@ MonoBehaviour:
   _lrAreaPrefab: {fileID: 4897434291111433263, guid: f6d2ddf5e6f656e43808a55b4e053d00, type: 3}
   _normalMat: {fileID: 2100000, guid: 196661d8d03fc07459c8ddcbb7c0674e, type: 2}
   _importantMat: {fileID: 2100000, guid: f0de2a3f621ecfd499416f5a8d0e10e9, type: 2}
+  _textAreaHint: {fileID: 7444206077765769309, guid: 029d249e9328c084aa4198ab96997385, type: 3}
   _filterTile: {fileID: 5675098872774511247, guid: b2e3c2a17857fe74991b01b2193a9edc, type: 3}
   _textHintPrefab: {fileID: 133175695142451242, guid: 0e45efee39221fd42bc08b9175a0136b, type: 3}
 --- !u!114 &399316019

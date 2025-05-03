@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Sketch.Generation
 {
@@ -34,6 +33,9 @@ namespace Sketch.Generation
 
         [SerializeField]
         private Material _normalMat, _importantMat;
+
+        [SerializeField]
+        private GameObject _textAreaHint;
 
         [SerializeField]
         private GameObject _filterTile;
@@ -232,7 +234,7 @@ namespace Sketch.Generation
             {
                 return _areas[p];
             }
-            var area = new MapArea($"({p.x} ; {p.y})", _lrAreaPrefab, (p - Vector2.one / 2f) * AreaSize, (p + Vector2.one / 2f) * AreaSize);
+            var area = new MapArea(p.x, p.y, _lrAreaPrefab, _textAreaHint, (p - Vector2.one / 2f) * AreaSize, (p + Vector2.one / 2f) * AreaSize);
             _areas.Add(p, area);
             return area;
         }
@@ -289,13 +291,14 @@ namespace Sketch.Generation
             Vector2 oldPos = Vector2.one * 100f; // Trigger change at start
             var areas = new List<MapArea>();
 
+            var b = new Color(0.1098039f, 0.254902f, 0.1843137f);
+            var n = new Color(0.2046154f, 0.475f, 0.3434615f);
             while (true) // Even if we are out of room, we keep that loop alive
             {
                 // Only parse areas near the mouse
                 var pos = _dInput.LastCameraPos;
                 if (pos != oldPos)
                 {
-                    var b = new Color(0.1098039f, 0.254902f, 0.1843137f);
                     foreach (var a in areas)
                     {
                         a.Toggle(false);
@@ -316,7 +319,7 @@ namespace Sketch.Generation
                     foreach (var a in areas)
                     {
                         a.Toggle(true);
-                        foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = Color.blue;
+                        foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = n;
                     }
                 }
 
@@ -531,7 +534,7 @@ namespace Sketch.Generation
 
             _roomMade++;
             var p = (Vector2)new(x, y) * pxlSize;
-            var rr = MakeRR(GetOrCreateMapArea(GlobalToMapAreaCoordinate(p)));
+            var rr = MakeRR(fromArea);
             var floor = Instantiate(_floorPrefab, rr.Container);
             floor.transform.position = p;
             floor.name = $"Floor ({x};{y})";
