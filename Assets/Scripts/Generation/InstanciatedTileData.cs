@@ -5,7 +5,7 @@ namespace Sketch.Generation
     // Information about a room that was instanciated in the world
     public record InstanciatedTileData
     {
-        public GameObject GameObject;
+        public SpriteRenderer SR;
         public TileType Tile;
         public RuntimeRoom RR;
     }
