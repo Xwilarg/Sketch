@@ -27,11 +27,14 @@ namespace Sketch.FPS
 
         private Vector2 _mov;
 
+        private Vector3 _baseSpawnPos;
+
         //private List<IInteractable> _interactions = new();
 
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
+            _baseSpawnPos = transform.position;
 
             Cursor.lockState = CursorLockMode.Locked;
 
@@ -81,8 +84,13 @@ namespace Sketch.FPS
                 moveDir.y += _verticalSpeed;
             }
 
-            var p = transform.position;
             _controller.Move(moveDir * _info.MovementSpeed * Time.deltaTime);
+
+            if (transform.position.y < -10f)
+            {
+                transform.position = _baseSpawnPos;
+                _verticalSpeed = 0f;
+            }
 
             /*
             if (_isSprinting && _staminaLeft > 0f && desiredMove.magnitude > 0f)
