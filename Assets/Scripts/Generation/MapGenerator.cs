@@ -534,12 +534,11 @@ namespace Sketch.Generation
 
             _roomMade++;
             var p = (Vector2)new(x, y) * pxlSize;
-            var rr = MakeRR(fromArea);
-            var floor = Instantiate(_floorPrefab, rr.Container);
+            var floor = Instantiate(_floorPrefab, target.RR.Container);
             floor.transform.position = p;
             floor.name = $"Floor ({x};{y})";
             target.SR = floor.GetComponent<SpriteRenderer>();
-            rr.Floors.Add(new(x, y));
+            target.RR.Floors.Add(new(x, y));
 
             fromArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
         }
