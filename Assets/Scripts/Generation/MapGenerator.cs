@@ -477,11 +477,11 @@ namespace Sketch.Generation
             var pxlSize = _tilePixelSize / 100f;
             var realPos = new Vector2(x, y) * pxlSize;
             var bounds = _cam.CalculateBounds();
-            if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
+            /*if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
             {
                 // We are outside of the bounds so no need to continue further in this direction
                 yield break;
-            }
+            }*/
 
             foreach (var room in _availableRooms.OrderBy(x => UnityEngine.Random.value)) // For all rooms...
             {
