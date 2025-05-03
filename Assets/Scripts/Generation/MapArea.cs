@@ -11,6 +11,9 @@ namespace Sketch.Generation
             RoomRoot = new GameObject($"Rooms ({x} ; {y})").transform;
             RoomRoot.transform.position = (maxBound - minBound) / 2f;
 
+            MinBound = minBound;
+            MaxBound = maxBound;
+
             // Add lines debug to show areas
             _lrs = new LineRenderer[]
             {
@@ -44,5 +47,8 @@ namespace Sketch.Generation
 
         private readonly LineRenderer[] _lrs;
         private GameObject _textHint;
+
+        public Vector2 MinBound { get; }
+        public Vector2 MaxBound { get; }
     }
 }

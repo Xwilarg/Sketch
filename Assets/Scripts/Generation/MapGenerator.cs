@@ -289,7 +289,7 @@ namespace Sketch.Generation
                 Vector2Int.left, Vector2Int.right
             };
             Vector2 oldPos = Vector2.one * 100f; // Trigger change at start
-            var areas = new List<MapArea>();
+            var areas = new Dictionary<Vector2Int, MapArea>();
 
             var b = new Color(0.1098039f, 0.254902f, 0.1843137f);
             var n = new Color(0.2046154f, 0.475f, 0.3434615f);
@@ -299,7 +299,7 @@ namespace Sketch.Generation
                 var pos = _dInput.LastCameraPos;
                 if (pos != oldPos)
                 {
-                    foreach (var a in areas)
+                    foreach (var a in areas.Values)
                     {
                         a.Toggle(false);
                         foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = b;
@@ -312,11 +312,11 @@ namespace Sketch.Generation
                             var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate(pos) + new Vector2Int(x, y));
                             if (true)//area.NextDoors.Count > 0 || area.Rooms.Count > 0)
                             {
-                                areas.Add(area);
+                                areas.Add(new(x, y), area);
                             }
                         }
                     }
-                    foreach (var a in areas)
+                    foreach (var a in areas.Values)
                     {
                         a.Toggle(true);
                         foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = n;
@@ -325,7 +325,7 @@ namespace Sketch.Generation
 
                 // Check doors to create new rooms
                 _roomMade = 0;
-                var doorAreas = areas.Where(x => x.NextDoors.Count > 0).ToArray();
+                var doorAreas = areas.Values.Where(x => x.NextDoors.Count > 0).ToArray();
                 _currentlyCheckedArea = 0;
                 _currentlyCheckedRoom = 0;
 
@@ -379,11 +379,10 @@ namespace Sketch.Generation
                 }
 
                 // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
-                if (false && _roomMade == 0 && OptionsManager.Instance.CalculateNewRooms) // TODO: Remove false
+                if (_roomMade == 0 && OptionsManager.Instance.CalculateNewRooms) // TODO: Remove false
                 {
-                    var camBounds = CameraUtils.CalculateBounds(_cam);
-                    var min = camBounds.min * _tilePixelSize / 10f;
-                    var max = camBounds.max * _tilePixelSize / 10f;
+                    var min = areas[-Vector2Int.one].MinBound * _tilePixelSize / 10f;
+                    var max = areas[Vector2Int.one].MaxBound * _tilePixelSize / 10f;
 
                     List<Vector2Int> empty = new();
 
@@ -401,6 +400,7 @@ namespace Sketch.Generation
                     List<Vector2Int> group = new();
                     while (empty.Any())
                     {
+                        yield return new WaitForEndOfFrame();
                         group.Clear();
 
                         var first = empty[0];
@@ -434,17 +434,17 @@ namespace Sketch.Generation
                             var floor = Instantiate(_floorPrefab, rr.Container);
                             floor.transform.position = (Vector2)f * _tilePixelSize / 100f;
                             floor.name = $"Floor ({f.x};{f.y})";
+                            _tiles[f] = new InstanciatedTileData()
+                            {
+                                RR = rr,
+                                SR = floor.GetComponent<SpriteRenderer>(),
+                                Tile = TileType.FLOOR
+                            };
                         }
                         rr.Floors.AddRange(group);
                         rr.LateInit();
                         foreach (var t in group)
                         {
-                            _tiles.Add(t, new()
-                            {
-                                SR = null,
-                                RR = rr,
-                                Tile = TileType.FLOOR
-                            });
                             foreach (var room in directions.Where(d => _tiles.ContainsKey(t + d)))
                             {
                                 var r = _tiles[t + room].RR;
