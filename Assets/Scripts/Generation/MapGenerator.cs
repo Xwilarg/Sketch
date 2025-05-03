@@ -278,6 +278,7 @@ namespace Sketch.Generation
         private int _currentlyCheckedArea;
         private int _currentlyCheckedRoom;
         private int _roomMade;
+        private RuntimeRoom _generatedRr;
         private IEnumerator Generate()
         {
             var directions = new[]
@@ -330,15 +331,14 @@ namespace Sketch.Generation
                     var target = doorAreas[_currentlyCheckedArea].NextDoors[_currentlyCheckedRoom];
                     var area = doorAreas[_currentlyCheckedArea];
 
+                    _generatedRr = null;
                     yield return GenerateRoom(target.x, target.y, area);
 
                     // Fill doors
-                    foreach (var rr in areas.SelectMany(x => x.Rooms))
+                    if (_generatedRr != null)
                     {
-                        foreach (var d in rr.Doors)
+                        foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR)) // TODO
                         {
-                            var door = _tiles.First(x => x.Value.Tile == TileType.DOOR);
-
                             // Remove doors that lead to a wall or another door
                             if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile != TileType.FLOOR && _tiles[door.Key + x].Tile != TileType.NONE) >= 3)
                             {
@@ -351,12 +351,12 @@ namespace Sketch.Generation
                             {
                                 var adjacentRoom = _areas.SelectMany(x => x.Value.Rooms).First(x => x.Doors.Contains(door.Key));
 
-                                AddRoomLinks(rr, adjacentRoom);
+                                AddRoomLinks(_generatedRr, adjacentRoom);
 
                                 Destroy(door.Value.SR.gameObject);
                                 door.Value.SR = null;
 
-                                var floor = Instantiate(_floorPrefab, rr.Container);
+                                var floor = Instantiate(_floorPrefab, _generatedRr.Container);
                                 floor.transform.position = (Vector2)door.Key * _tilePixelSize / 100f;
                                 floor.name = $"Floor ({door.Key.x};{door.Key.y})";
                                 door.Value.SR = floor.GetComponent<SpriteRenderer>();
@@ -476,6 +476,7 @@ namespace Sketch.Generation
             if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
             {
                 // We are outside of the bounds so no need to continue further in this direction
+                _generatedRr = null;
                 yield break;
             }
 
@@ -514,7 +515,8 @@ namespace Sketch.Generation
                         yield return new WaitForEndOfFrame();
                         _roomMade++;
                         var newArea = GetOrCreateMapArea(GlobalToMapAreaCoordinate(new Vector2(x - door.x, y - door.y) * pxlSize));
-                        DrawRoom(room, x - door.x, y - door.y, MakeRR(newArea));
+                        _generatedRr = MakeRR(newArea);
+                        DrawRoom(room, x - door.x, y - door.y, _generatedRr);
                         newArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
                         fromArea.NextDoors.RemoveAt(_currentlyCheckedRoom);
                         yield break;
@@ -529,8 +531,8 @@ namespace Sketch.Generation
 
             _roomMade++;
             var p = (Vector2)new(x, y) * pxlSize;
-            var rr = MakeRR(GetOrCreateMapArea(GlobalToMapAreaCoordinate(p)));
-            var floor = Instantiate(_floorPrefab, rr.Container);
+            _generatedRr = MakeRR(GetOrCreateMapArea(GlobalToMapAreaCoordinate(p)));
+            var floor = Instantiate(_floorPrefab, _generatedRr.Container);
             floor.transform.position = p;
             floor.name = $"Floor ({x};{y})";
             target.SR = floor.GetComponent<SpriteRenderer>();
