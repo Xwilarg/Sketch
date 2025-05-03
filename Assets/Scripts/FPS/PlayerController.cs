@@ -1,3 +1,4 @@
+using Sketch.Common;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +12,9 @@ namespace Sketch.FPS
         [SerializeField]
         private Transform _head;
         private float _headRotation;
+
+        [SerializeField]
+        private PlayerInput _pInput;
 
         /*[SerializeField]
         private RectTransform _stamina;
@@ -97,6 +101,17 @@ namespace Sketch.FPS
             _stamina.gameObject.SetActive(_staminaLeft < 1f);
             _stamina.localScale = new Vector3(_staminaLeft, 1f, 1f);
             */
+        }
+
+        public void OnMobileDrag(InputAction.CallbackContext value)
+        {
+            var mousePos = CursorUtils.GetPosition(_pInput);
+            if (mousePos.Value.x < Screen.width / 2f) OnMovement(value);
+            else
+            {
+                OnLook(value);
+                _mov = Vector2.zero;
+            }
         }
 
         public void OnMovement(InputAction.CallbackContext value)

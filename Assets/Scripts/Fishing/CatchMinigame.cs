@@ -39,7 +39,7 @@ namespace Sketch.Fishing
         private float _maxTimer;
 
         /// <summary>
-        /// Fish the cursor representing the fish is going by in the minigale
+        /// Fish the cursor representing the fish is going by in the minigame
         /// </summary>
         const float _fishBaseSpeed = 300f;
 

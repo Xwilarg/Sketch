@@ -694,6 +694,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "MobileDrag",
+                    "type": "Value",
+                    "id": "6d354aea-2061-434c-9508-3acea1b336f2",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "d81e7398-eba4-45ca-ae53-f20d49f7c1bf",
@@ -871,7 +880,7 @@
                     "path": "<Pointer>/delta",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse;Touch",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -884,6 +893,17 @@
                     "processors": "",
                     "groups": "Joystick",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6dd0f707-ac14-45d0-a8f9-7bc159bc9a02",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "MobileDrag",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
