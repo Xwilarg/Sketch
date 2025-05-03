@@ -1,6 +1,7 @@
 using Sketch.Common;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 namespace Sketch.FPS
 {
@@ -28,6 +29,7 @@ namespace Sketch.FPS
         private Vector2 _mov;
 
         private Vector3 _baseSpawnPos;
+        private bool? _mobileIsMoving;
 
         //private List<IInteractable> _interactions = new();
 
@@ -113,30 +115,36 @@ namespace Sketch.FPS
 
         public void OnMobileDrag(InputAction.CallbackContext value)
         {
-            var mousePos = CursorUtils.GetPosition(_pInput);
-            if (mousePos.Value.x < Screen.width / 2f) OnMovement(value);
-            else
+            if (_mobileIsMoving == null)
             {
-                OnLook(value);
-                _mov = Vector2.zero;
+                var mousePos = CursorUtils.GetPosition(_pInput);
+                _mobileIsMoving = mousePos.Value.x < Screen.width / 2f;
             }
+            var vector = value.ReadValue<Vector2>();
+            if (_mobileIsMoving == true) _mov = vector;
+            else OnLookInternal(vector);
+
+            if (vector.magnitude == 0f) _mobileIsMoving = null; // TODO: Improve for mobile
         }
 
         public void OnMovement(InputAction.CallbackContext value)
         {
-            _mov = value.ReadValue<Vector2>().normalized;
+            _mov = value.ReadValue<Vector2>();
         }
 
-        public void OnLook(InputAction.CallbackContext value)
+        private void OnLookInternal(Vector2 rot)
         {
-            var rot = value.ReadValue<Vector2>();
-
             transform.rotation *= Quaternion.AngleAxis(rot.x * _info.HorizontalLookMultiplier, Vector3.up);
 
             _headRotation -= rot.y * _info.VerticalLookMultiplier; // Vertical look is inverted by default, hence the -=
 
             _headRotation = Mathf.Clamp(_headRotation, -89, 89);
             _head.transform.localRotation = Quaternion.AngleAxis(_headRotation, Vector3.right);
+        }
+        public void OnLook(InputAction.CallbackContext value)
+        {
+            var rot = value.ReadValue<Vector2>();
+            OnLookInternal(rot);
         }
 
         public void OnJump(InputAction.CallbackContext value)
