@@ -1,7 +1,6 @@
 using Sketch.Common;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 namespace Sketch.FPS
 {
@@ -29,7 +28,11 @@ namespace Sketch.FPS
         private Vector2 _mov;
 
         private Vector3 _baseSpawnPos;
+
+        // Mobile interactions
         private bool? _mobileIsMoving;
+        private Vector2 _touchRef;
+        private Vector2 _touchPos;
 
         //private List<IInteractable> _interactions = new();
 
@@ -61,6 +64,25 @@ namespace Sketch.FPS
         {
             if (!_controller.enabled)
                 return;
+
+            // Mobile controls
+            if (_mobileIsMoving != null)
+            {
+                var mousePos = CursorUtils.GetPosition(_pInput);
+                if (mousePos != null)
+                {
+                    _touchPos = mousePos.Value;
+                    var dir = _touchPos - _touchRef;
+                    if (_mobileIsMoving.Value)
+                    {
+                        _mov = dir.normalized;
+                    }
+                    else
+                    {
+                        OnLookInternal(dir.normalized * 10f);
+                    }
+                }
+            }
 
             var pos = _mov;
             Vector3 desiredMove = transform.forward * pos.y + transform.right * pos.x;
@@ -115,16 +137,22 @@ namespace Sketch.FPS
 
         public void OnMobileDrag(InputAction.CallbackContext value)
         {
-            if (_mobileIsMoving == null)
+            if (value.phase == InputActionPhase.Started)
             {
                 var mousePos = CursorUtils.GetPosition(_pInput);
                 _mobileIsMoving = mousePos.Value.x < Screen.width / 2f;
+                _touchRef = mousePos.Value;
+                _touchPos = mousePos.Value;
             }
-            var vector = value.ReadValue<Vector2>();
-            if (_mobileIsMoving == true) _mov = vector;
-            else OnLookInternal(vector);
-
-            if (vector.magnitude == 0f) _mobileIsMoving = null; // TODO: Improve for mobile
+            else if (value.phase == InputActionPhase.Canceled)
+            {
+                if (_mobileIsMoving == true) _mov = Vector2.zero;
+                _mobileIsMoving = null;
+                if (_touchRef == _touchPos)
+                {
+                    OnInteractInternal();
+                }
+            }
         }
 
         public void OnMovement(InputAction.CallbackContext value)
@@ -160,6 +188,10 @@ namespace Sketch.FPS
             _isSprinting = value.ReadValueAsButton();
         }
 
+        private void OnInteractInternal()
+        {
+
+        }
         public void OnInteract(InputAction.CallbackContext value)
         {/*
             if (value.phase == InputActionPhase.Started && _interactions.Any() && _interactions[0].CanInteract(this) && GameManager.Instance.CanPlay)
