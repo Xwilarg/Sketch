@@ -1,7 +1,7 @@
 {
     "lang": "日本語",
 
-    "intro": "下のボタンを使うのはシーンへ",
+    "intro": "下のボタンを押しますのはシーンへ",
 
     "youCaught": "魚を釣った",
     "size": "すんぽう:",
@@ -29,12 +29,12 @@
 
     "credits1": "プログラミングのは私です",
     "credits2": "ですが他のアセットいくつかあります:",
-    "creditsYuzu": "ビジュアルノベルにユズの絵はFractalStellaは作りました",
-    "creditsFont": "Sweetie Bubble Gumのフォン Galdino Otten Fonts",
+    "creditsYuzu": "ビジュアルノベルにユズの絵はFractalStellaが作りました",
+    "creditsFont": "Sweetie Bubble GumのフォンはGaldino Otten Fontsが作りました",
 
-    "FPS_interactionText": "Appuyez sur 'E' (ou touchez l'écran) pour interagir",
+    "FPS_interactionText": "'E'かスクリーンを押します",
 
-    "ACH_landlockedName": "Enclavé",
+    "ACH_landlockedName": "りくふう",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
     "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir",
     "ACH_150cmName": "Il y a toujours un plus gros poisson",
@@ -47,5 +47,5 @@
     "ACH_circleNDesc": "Capture 3 formes en même temps",
     "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps",
 
-    "langWarning": "ビジュアルノベルのテキストはに英語だけ\n\n私の日本語はちょっと下手 (ごめん)"
+    "langWarning": "ビジュアルノベルのテキストは英語だけ\n\n私の日本語はちょっと下手 (ごめん)"
 }

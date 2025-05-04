@@ -1,6 +1,7 @@
 using Sketch.Common;
 using Sketch.Player;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,7 +21,7 @@ namespace Sketch.FPS
         private PlayerInput _pInput;
 
         [SerializeField]
-        private TMP_Text _interactionText;
+        private GameObject _interactionText;
 
         /*[SerializeField]
         private RectTransform _stamina;
@@ -46,6 +47,7 @@ namespace Sketch.FPS
         {
             _controller = GetComponent<CharacterController>();
             _baseSpawnPos = transform.position;
+            _interactionText.SetActive(false);
 
             Cursor.lockState = CursorLockMode.Locked;
 
@@ -55,6 +57,7 @@ namespace Sketch.FPS
                 if (c.TryGetComponent<IInteractable>(out var i))
                 {
                     _interactions.Add(i);
+                    _interactionText.SetActive(true);
                 }
             });
             tArea.OnTriggerExitEvent.AddListener((Collider c) =>
@@ -62,6 +65,7 @@ namespace Sketch.FPS
                 if (c.gameObject.TryGetComponent<IInteractable>(out var i))
                 {
                     _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
+                    if (!_interactions.Any(x => x.CanInteract(this))) _interactionText.SetActive(false);
                 }
             });
         }
@@ -204,6 +208,7 @@ namespace Sketch.FPS
             if (_interactions.Count > 0 && _interactions[0].CanInteract(this))
             {
                 _interactions[0].Interact(this);
+                if (!_interactions.Any(x => x.CanInteract(this))) _interactionText.SetActive(false);
             }
         }
         public void OnInteract(InputAction.CallbackContext value)
