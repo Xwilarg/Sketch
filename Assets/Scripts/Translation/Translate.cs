@@ -10,7 +10,8 @@ namespace Sketch.Translation
         public static readonly string[] Languages =
         {
             "english",
-            "french"
+            "french",
+            "japanese"
         };
 
         private Translate()

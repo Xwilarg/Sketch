@@ -1,0 +1,51 @@
+{
+    "lang": "日本語",
+
+    "intro": "下のボタンを使うのはシーンへ",
+
+    "youCaught": "魚を釣った",
+    "size": "すんぽう:",
+    "catchIt": "捕まえて!",
+
+    "carp": "こい",
+    "catfish": "なまず",
+    "mackerel": "さば",
+    "pilchard": "いわし",
+    "salmon": "さけ",
+    "seabass": "ニシウミスズキ",
+
+    "optionsAbbrv": "せってい",
+
+    "toggleLinks": "リンクスをトグルする",
+    "toggleDistances": "きょりをトグルする",
+    "toggleNewRooms": "新しい部屋のけいさんをトグルする",
+
+    "toggleLos": "ねらいをトグルする",
+    "togglePath": "道をトグルする",
+
+    "auto": "じどう",
+    "hide": "かくす",
+    "skip": "スキップ",
+
+    "credits1": "プログラミングのは私です",
+    "credits2": "ですが他のアセットいくつかあります:",
+    "creditsYuzu": "ビジュアルノベルにユズの絵はFractalStellaは作りました",
+    "creditsFont": "Sweetie Bubble Gumのフォン Galdino Otten Fonts",
+
+    "FPS_interactionText": "Appuyez sur 'E' (ou touchez l'écran) pour interagir",
+
+    "ACH_landlockedName": "Enclavé",
+    "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
+    "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir",
+    "ACH_150cmName": "Il y a toujours un plus gros poisson",
+    "ACH_150cmDesc": "Attrape un poisson d'au moins 150cm",
+    "ACH_150cmHint": "Le plus fort ils mordent, le plus délicieux ils sont",
+    "ACH_noSkipName": "Auditeur attentif",
+    "ACH_noSkipDesc": "Lire les divaguations de Yuzu sans les passer",
+    "ACH_noSkipHint": "C'est pas grave de le passer mais le lire est tout de même apprecié",
+    "ACH_circleNName": "Vrai ranger",
+    "ACH_circleNDesc": "Capture 3 formes en même temps",
+    "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps",
+
+    "langWarning": "ビジュアルノベルのテキストはに英語だけ\n\n私の日本語はちょっと下手 (ごめん)"
+}

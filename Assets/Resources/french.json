@@ -27,10 +27,12 @@
     "hide": "Cacher",
     "skip": "Passer",
 
-    "credits1": "La programmation a été faites par moi (Zirk)",
+    "credits1": "La programmation a été faites par moi",
     "credits2": "Cependant certains des assets ont été pris depuis d'autres sources :",
     "creditsYuzu": "L'image de Yuzu pour le Visual Novel par FractalStella",
     "creditsFont": "La police d'écriture Sweetie Bubble Gum par Galdino Otten Fonts",
+
+    "FPS_interactionText": "Appuyez sur 'E' (ou touchez l'écran) pour interagir",
 
     "ACH_landlockedName": "Enclavé",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
@@ -43,5 +45,7 @@
     "ACH_noSkipHint": "C'est pas grave de le passer mais le lire est tout de même apprecié",
     "ACH_circleNName": "Vrai ranger",
     "ACH_circleNDesc": "Capture 3 formes en même temps",
-    "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps"
+    "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps",
+
+    "langWarning": "Le text du Visual Novel est uniquement disponible en anglais"
 }

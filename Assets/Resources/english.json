@@ -27,13 +27,15 @@
     "hide": "Hide",
     "skip": "Skip",
 
-    "credits1": "Programming was done by me (Zirk)",
+    "credits1": "Programming was done by me",
     "credits2": "However some of the assets were taken from other source:",
     "creditsYuzu": "Yuzu image from the Visual Novel part was kindly made by FractalStella",
     "creditsFont": "The font used is Sweetie Bubble Gum by Galdino Otten Fonts",
 
     "persistency": "Save file size: {0}",
     "persistencyDelete": "Delete saves",
+
+    "FPS_interactionText": "Press 'E' (or touch screen) to interact",
 
     "ACH_landlockedName": "Landlocked",
     "ACH_landlockedDesc": "Click on a room that doesn't have any door",
@@ -46,5 +48,7 @@
     "ACH_noSkipHint": "Skipping it is okay but reading it is appreciated too",
     "ACH_circleNName": "Real Ranger",
     "ACH_circleNDesc": "Catch 3 shapes at once",
-    "ACH_circleNHint": "Show your ability to catch many at once"
+    "ACH_circleNHint": "Show your ability to catch many at once",
+
+    "langWarning": ""
 }

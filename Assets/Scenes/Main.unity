@@ -914,7 +914,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 558f8d318e528a74d9afe45a35805308, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _frenchDisclaimer: {fileID: 2073475303}
 --- !u!114 &1803303709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -938,13 +937,14 @@ GameObject:
   - component: {fileID: 2073475304}
   - component: {fileID: 2073475306}
   - component: {fileID: 2073475305}
+  - component: {fileID: 2073475307}
   m_Layer: 5
   m_Name: Disclaimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2073475304
 RectTransform:
   m_ObjectHideFlags: 0
@@ -961,8 +961,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -20, y: 0}
-  m_SizeDelta: {x: 200, y: 75}
+  m_AnchoredPosition: {x: -20, y: 10}
+  m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &2073475305
 MonoBehaviour:
@@ -984,10 +984,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Le text du Visual Novel est uniquement disponible en anglais
+  m_text: '{langWarning}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
-  m_sharedMaterial: {fileID: -6037156094204709040, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
+  m_sharedMaterial: {fileID: 8551700101290166140, guid: cb3ba2383dd4afb42b4908f71009b384, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1019,7 +1019,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 4
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1063,6 +1063,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073475303}
   m_CullTransparentMesh: 1
+--- !u!114 &2073475307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073475303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a85ea0ecfbcd4b498f34ad451185cc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,4 +1,7 @@
 using Sketch.Common;
+using Sketch.Player;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,6 +18,9 @@ namespace Sketch.FPS
 
         [SerializeField]
         private PlayerInput _pInput;
+
+        [SerializeField]
+        private TMP_Text _interactionText;
 
         /*[SerializeField]
         private RectTransform _stamina;
@@ -34,7 +40,7 @@ namespace Sketch.FPS
         private Vector2 _touchRef;
         private Vector2 _touchPos;
 
-        //private List<IInteractable> _interactions = new();
+        private List<IInteractable> _interactions = new();
 
         private void Awake()
         {
@@ -43,7 +49,7 @@ namespace Sketch.FPS
 
             Cursor.lockState = CursorLockMode.Locked;
 
-            /*var tArea = GetComponentInChildren<TriggerArea>();
+            var tArea = GetComponentInChildren<TriggerArea>();
             tArea.OnTriggerEnterEvent.AddListener((Collider c) =>
             {
                 if (c.TryGetComponent<IInteractable>(out var i))
@@ -57,7 +63,7 @@ namespace Sketch.FPS
                 {
                     _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
                 }
-            });*/
+            });
         }
 
         private void Update()
@@ -135,6 +141,11 @@ namespace Sketch.FPS
             */
         }
 
+        public void UpdateInteractUI()
+        {
+
+        }
+
         public void OnMobileDrag(InputAction.CallbackContext value)
         {
             if (value.phase == InputActionPhase.Started)
@@ -190,15 +201,18 @@ namespace Sketch.FPS
 
         private void OnInteractInternal()
         {
-
-        }
-        public void OnInteract(InputAction.CallbackContext value)
-        {/*
-            if (value.phase == InputActionPhase.Started && _interactions.Any() && _interactions[0].CanInteract(this) && GameManager.Instance.CanPlay)
+            if (_interactions.Count > 0 && _interactions[0].CanInteract(this))
             {
                 _interactions[0].Interact(this);
             }
-            */
+        }
+        public void OnInteract(InputAction.CallbackContext value)
+        {
+            if (value.phase == InputActionPhase.Started)
+            {
+                OnInteractInternal();
+            }
+            
         }
     }
 }
