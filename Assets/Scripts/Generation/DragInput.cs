@@ -43,7 +43,7 @@ namespace Sketch.Generation
         {
             if (_clickPos != null)
             {
-                _cam.transform.Translate(-value.ReadValue<Vector2>() / 100f);
+                _cam.transform.Translate(-value.ReadValue<Vector2>() / 50f);
                 LastCameraPos = _cam.transform.position;
             }
         }

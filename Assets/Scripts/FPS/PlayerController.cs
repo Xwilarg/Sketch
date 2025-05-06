@@ -49,8 +49,6 @@ namespace Sketch.FPS
             _baseSpawnPos = transform.position;
             _interactionText.SetActive(false);
 
-            Cursor.lockState = CursorLockMode.Locked;
-
             var tArea = GetComponentInChildren<TriggerArea>();
             tArea.OnTriggerEnterEvent.AddListener((Collider c) =>
             {
@@ -68,6 +66,11 @@ namespace Sketch.FPS
                     if (!_interactions.Any(x => x.CanInteract(this))) _interactionText.SetActive(false);
                 }
             });
+        }
+
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         private void Update()
