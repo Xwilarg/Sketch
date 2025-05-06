@@ -23,6 +23,7 @@ namespace Sketch.Loader
 
             SceneManager.activeSceneChanged += (sender, e) =>
             {
+                Cursor.lockState = CursorLockMode.None;
                 SceneManager.LoadScene("AchievementManager", LoadSceneMode.Additive);
             };
 

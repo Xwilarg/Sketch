@@ -291,8 +291,8 @@ namespace Sketch.Generation
             Vector2 oldPos = Vector2.one * 100f; // Trigger change at start
             var areas = new Dictionary<Vector2Int, MapArea>();
 
-            var b = new Color(0.1098039f, 0.254902f, 0.1843137f);
-            var n = new Color(0.2046154f, 0.475f, 0.3434615f);
+            /*var b = new Color(0.1098039f, 0.254902f, 0.1843137f);
+            var n = new Color(0.2046154f, 0.475f, 0.3434615f);*/
             while (true) // Even if we are out of room, we keep that loop alive
             {
                 // Only parse areas near the mouse
@@ -302,7 +302,7 @@ namespace Sketch.Generation
                     foreach (var a in areas.Values)
                     {
                         a.Toggle(false);
-                        foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = b;
+                        //foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = b;
                     }
                     areas.Clear();
                     for (int y = -1; y <= 1; y++)
@@ -319,7 +319,7 @@ namespace Sketch.Generation
                     foreach (var a in areas.Values)
                     {
                         a.Toggle(true);
-                        foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = n;
+                        //foreach (var d in a.Rooms.SelectMany(x => x.Floors)) _tiles[d].SR.color = n;
                     }
                 }
 
