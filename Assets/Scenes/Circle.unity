@@ -276,6 +276,30 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 38aa75ce-4a41-4f17-88df-c1611f5fbc02
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0f7324db-897f-482f-8783-ae55bf672f8e
+    m_ActionName: '3DController/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b281e709-87b4-4410-bd9d-c5df975a982e
+    m_ActionName: '3DController/Look[/Mouse/delta,/Pen/delta]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6d354aea-2061-434c-9508-3acea1b336f2
+    m_ActionName: 3DController/MobileDrag
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d81e7398-eba4-45ca-ae53-f20d49f7c1bf
+    m_ActionName: '3DController/Jump[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ecbb4aaf-f1b9-4ddb-b9e4-d58a5cf9841a
+    m_ActionName: '3DController/Interact[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 24a58f9e-ac58-40dc-91fb-01bc6a968c18
+    m_ActionName: '3DController/Sprint[/Keyboard/leftShift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

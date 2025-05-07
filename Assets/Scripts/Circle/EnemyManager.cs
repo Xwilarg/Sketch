@@ -40,7 +40,7 @@ namespace Sketch.Circle
         private void SpawnOne()
         {
             var bounds = _cam.CalculateBounds();
-            var p = new Vector2(Random.Range(bounds.min.x, bounds.max.x), Random.Range(bounds.min.y, bounds.max.y));
+            var p = new Vector2(Random.Range(bounds.min.x + 1f, bounds.max.x - 1f), Random.Range(bounds.min.y + 1f, bounds.max.y - 1f));
             var go = Instantiate(_spawnables[Random.Range(0, _spawnables.Length)], p, Quaternion.identity);
             _enemies.Add(go.GetComponent<PolygonCollider2D>());
         }

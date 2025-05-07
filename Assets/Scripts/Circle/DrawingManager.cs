@@ -202,7 +202,7 @@ namespace Sketch.Circle
                                         }
 
                                         // 2 lines interect, we bufferize them
-                                        _positionBuffer = new(_positions.Skip(i))
+                                        _positionBuffer = new(_positions)
                                         {
                                             pos
                                         };
