@@ -25,6 +25,9 @@ namespace Sketch.TRPG
         [SerializeField]
         private Sprite _straightPath, _cornerPath;
 
+        [SerializeField]
+        private LineRenderer _aimLr;
+
         [Header("Player")]
 
         [SerializeField]
@@ -43,6 +46,7 @@ namespace Sketch.TRPG
         // List of all tiles of the board
         private TileData[,] _tiles;
         private readonly List<Vector2Int> _availableMoves = new();
+        private readonly List<Vector2Int> _availableEnemies = new();
 
         // Size of the grid
         private const int _maxSize = 20;
@@ -145,6 +149,7 @@ namespace Sketch.TRPG
                     {
                         Obstacle = enemy
                     };
+                    _availableEnemies.Add(rand);
 
                     c--;
                 }
@@ -200,66 +205,78 @@ namespace Sketch.TRPG
 
                 _lastMousePosHints = mousePos;
 
-                // Display path
-                var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePosHints);
-                if (nextPos != null) // Mouse is a valid position we can move to
+                if (_availableEnemies.Contains(mousePos))
                 {
-                    _pathToMouse.Add(_lastMousePosHints.Value);
-                    _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePosHints, Quaternion.identity);
+                    _aimLr.gameObject.SetActive(true);
+                    var hit = Physics2D.Linecast((Vector2)_playerPos, (Vector2)mousePos);
+                    _aimLr.SetPosition(0, hit.collider == null ? (Vector2)mousePos : hit.point);
+                    _aimLr.SetPosition(1, (Vector2)_playerPos);
+                }
+                else
+                {
+                    _aimLr.gameObject.SetActive(false);
 
-                    // Don't display path over the ghost so we directy go to the next one
-                    Vector2 lastDir = nextPos.Position - nextPos.From;
-                    nextPos = _dirInfo.First(x => x.Position == nextPos.From);
-                    _pathToMouse.Add(nextPos.Position);
-
-                    while (nextPos.From != nextPos.Position) // While we have tiles to display
+                    // Display path
+                    var nextPos = _dirInfo.FirstOrDefault(x => x.Position == _lastMousePosHints);
+                    if (nextPos != null) // Mouse is a valid position we can move to
                     {
-                        if (OptionsManager.Instance.ShowPath) // If options say we don't show path we can skip all these calculations
-                        {
-                            // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
-                            var dir = nextPos.Position - nextPos.From;
-                            var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
+                        _pathToMouse.Add(_lastMousePosHints.Value);
+                        _playerGhost = Instantiate(_ghostPrefab, (Vector2)_lastMousePosHints, Quaternion.identity);
 
-                            Quaternion rot = Quaternion.identity;
-                            if (isStraight)
-                            {
-                                if (dir == Vector2.up || dir == Vector2.down)
-                                {
-                                    rot = Quaternion.Euler(0f, 0f, 90f);
-                                }
-                            }
-                            else
-                            {
-                                if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
-                                {
-                                    rot = Quaternion.Euler(0f, 0f, 90f);
-                                }
-                                else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
-                                {
-                                    rot = Quaternion.Euler(0f, 0f, 180f);
-                                }
-                                else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
-                                {
-                                    rot = Quaternion.Euler(0f, 0f, -90f);
-                                }
-                            }
-
-                            var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
-                            tile.transform.parent = _pathContainer;
-                            var sr = tile.GetComponent<SpriteRenderer>();
-                            sr.sprite = isStraight ? _straightPath : _cornerPath;
-                            sr.color = Color.black;
-
-                            _dirInstances.Add(tile);
-                            lastDir = dir;
-                        }
-
+                        // Don't display path over the ghost so we directy go to the next one
+                        Vector2 lastDir = nextPos.Position - nextPos.From;
                         nextPos = _dirInfo.First(x => x.Position == nextPos.From);
                         _pathToMouse.Add(nextPos.Position);
-                    }
 
-                    // Since the parsing above go from destination to player, we need to reverse the array to it contains path from the player to the mouse
-                    _pathToMouse.Reverse();
+                        while (nextPos.From != nextPos.Position) // While we have tiles to display
+                        {
+                            if (OptionsManager.Instance.ShowPath) // If options say we don't show path we can skip all these calculations
+                            {
+                                // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
+                                var dir = nextPos.Position - nextPos.From;
+                                var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
+
+                                Quaternion rot = Quaternion.identity;
+                                if (isStraight)
+                                {
+                                    if (dir == Vector2.up || dir == Vector2.down)
+                                    {
+                                        rot = Quaternion.Euler(0f, 0f, 90f);
+                                    }
+                                }
+                                else
+                                {
+                                    if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
+                                    {
+                                        rot = Quaternion.Euler(0f, 0f, 90f);
+                                    }
+                                    else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
+                                    {
+                                        rot = Quaternion.Euler(0f, 0f, 180f);
+                                    }
+                                    else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
+                                    {
+                                        rot = Quaternion.Euler(0f, 0f, -90f);
+                                    }
+                                }
+
+                                var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
+                                tile.transform.parent = _pathContainer;
+                                var sr = tile.GetComponent<SpriteRenderer>();
+                                sr.sprite = isStraight ? _straightPath : _cornerPath;
+                                sr.color = Color.black;
+
+                                _dirInstances.Add(tile);
+                                lastDir = dir;
+                            }
+
+                            nextPos = _dirInfo.First(x => x.Position == nextPos.From);
+                            _pathToMouse.Add(nextPos.Position);
+                        }
+
+                        // Since the parsing above go from destination to player, we need to reverse the array to it contains path from the player to the mouse
+                        _pathToMouse.Reverse();
+                    }
                 }
             }
         }
@@ -274,6 +291,7 @@ namespace Sketch.TRPG
             return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
         }
 
+        // Draw LoS
         private void OnPostRenderCallback(Camera c)
         {
             if (OptionsManager.Instance.ShowLos)
