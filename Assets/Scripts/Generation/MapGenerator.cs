@@ -397,53 +397,62 @@ namespace Sketch.Generation
                         }
                     }
 
-                    List<Vector2Int> group = new();
+                    Dictionary<Vector2Int, GameObject> group = new();
                     while (empty.Any())
                     {
                         yield return new WaitForEndOfFrame();
                         group.Clear();
 
+                        var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate((Vector2)empty[0] * _tilePixelSize / 100f));
+                        var rr = MakeRR(area);
+
                         var first = empty[0];
-                        group.Add(first);
+                        var floor = Instantiate(_floorPrefab, rr.Container);
+                        floor.transform.position = (Vector2)first * _tilePixelSize / 100f;
+                        floor.name = $"Floor ({first.x};{first.y})";
+                        group.Add(first, floor);
                         empty.RemoveAt(0);
+
+                        yield return new WaitForEndOfFrame();
 
                         // We get a group of all the adjacent tiles
                         for (int i = 0; i < empty.Count; i++) // Ugly but I'll optimize that later
                         {
-                            if (group.Any(x => directions.Any(d => d + empty[i] == x)))
+                            if (group.Keys.Any(x => directions.Any(d => d + empty[i] == x)))
                             {
-                                group.Add(empty[i]);
+                                floor = Instantiate(_floorPrefab, rr.Container);
+                                floor.transform.position = (Vector2)empty[i] * _tilePixelSize / 100f;
+                                floor.name = $"Floor ({empty[i].x};{empty[i].y})";
+                                group.Add(empty[i], floor);
                                 empty.RemoveAt(i);
                                 i = -1;
+                                yield return new WaitForEndOfFrame();
                             }
                         }
 
-                        if (group.Any(x => directions.Any(d =>
+                        if (group.Keys.Any(x => directions.Any(d =>
                         {
                             var p = d + x;
                             return p.x <= Mathf.RoundToInt(min.x) || p.x >= Mathf.RoundToInt(max.x) || p.y <= Mathf.RoundToInt(min.y) || p.y >= Mathf.RoundToInt(max.y);
                         })))
                         {
                             // Room is not finished and going oob
+                            area.Rooms.Remove(rr);
                             continue;
                         }
 
-                        var rr = MakeRR(GetOrCreateMapArea(GlobalToMapAreaCoordinate((Vector2)group[0] * _tilePixelSize / 100f)));
                         foreach (var f in group)
                         {
-                            var floor = Instantiate(_floorPrefab, rr.Container);
-                            floor.transform.position = (Vector2)f * _tilePixelSize / 100f;
-                            floor.name = $"Floor ({f.x};{f.y})";
-                            _tiles[f] = new InstanciatedTileData()
+                            _tiles[f.Key] = new InstanciatedTileData()
                             {
                                 RR = rr,
-                                SR = floor.GetComponent<SpriteRenderer>(),
+                                SR = f.Value.GetComponent<SpriteRenderer>(),
                                 Tile = TileType.FLOOR
                             };
                         }
-                        rr.Floors.AddRange(group);
+                        rr.Floors.AddRange(group.Keys);
                         rr.LateInit();
-                        foreach (var t in group)
+                        foreach (var t in group.Keys)
                         {
                             foreach (var room in directions.Where(d => _tiles.ContainsKey(t + d)))
                             {
