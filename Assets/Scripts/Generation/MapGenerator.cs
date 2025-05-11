@@ -66,6 +66,8 @@ namespace Sketch.Generation
 
         private int _runtimeRoomId;
 
+        private float LocalToGlobalScale => _tilePixelSize / 100f;
+
         public void ToggleAllLinks(bool value)
         {
             foreach (var rr in _areas.Values.SelectMany(x => x.Rooms))
@@ -207,7 +209,7 @@ namespace Sketch.Generation
                 _highlightedRoom = null;
             }
 
-            var rounded = new Vector2Int(Mathf.RoundToInt(pos.x / (_tilePixelSize / 100f)), Mathf.RoundToInt(pos.y / (_tilePixelSize / 100f)));
+            var rounded = new Vector2Int(Mathf.RoundToInt(pos.x / (LocalToGlobalScale)), Mathf.RoundToInt(pos.y / (LocalToGlobalScale)));
             var room = _areas.SelectMany(x => x.Value.Rooms).FirstOrDefault(x => x.Floors.Contains(rounded));
             if (room != null)
             {
@@ -244,7 +246,7 @@ namespace Sketch.Generation
         /// </summary>
         public RuntimeRoom MakeRR(MapArea ma)
         {
-            var rr = new RuntimeRoom(_runtimeRoomId++, ma, _tilePixelSize / 100f, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
+            var rr = new RuntimeRoom(_runtimeRoomId++, ma, LocalToGlobalScale, _lrPrefab, _normalMat, _importantMat, _filterTile, _textHintPrefab);
             ma.Rooms.Add(rr);
             return rr;
 
@@ -361,7 +363,7 @@ namespace Sketch.Generation
                                 door.Value.SR = null;
 
                                 var floor = Instantiate(_floorPrefab, _generatedRr.Container);
-                                floor.transform.position = (Vector2)door.Key * _tilePixelSize / 100f;
+                                floor.transform.position = (Vector2)door.Key * LocalToGlobalScale;
                                 floor.name = $"Floor ({door.Key.x};{door.Key.y})";
                                 door.Value.SR = floor.GetComponent<SpriteRenderer>();
 
@@ -381,8 +383,8 @@ namespace Sketch.Generation
                 // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
                 if (_roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
                 {
-                    var min = areas[-Vector2Int.one].MinBound * _tilePixelSize / 10f;
-                    var max = areas[Vector2Int.one].MaxBound * _tilePixelSize / 10f;
+                    var min = areas[-Vector2Int.one].MinBound / LocalToGlobalScale;
+                    var max = areas[Vector2Int.one].MaxBound / LocalToGlobalScale;
 
                     List<Vector2Int> empty = new();
 
@@ -403,12 +405,12 @@ namespace Sketch.Generation
                         yield return new WaitForEndOfFrame();
                         group.Clear();
 
-                        var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate((Vector2)empty[0] * _tilePixelSize / 100f));
+                        var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate((Vector2)empty[0] * LocalToGlobalScale));
                         var rr = MakeRR(area);
 
                         var first = empty[0];
                         var floor = Instantiate(_floorPrefab, rr.Container);
-                        floor.transform.position = (Vector2)first * _tilePixelSize / 100f;
+                        floor.transform.position = (Vector2)first * LocalToGlobalScale;
                         floor.name = $"Floor ({first.x};{first.y})";
                         group.Add(first, floor);
                         empty.RemoveAt(0);
@@ -421,7 +423,7 @@ namespace Sketch.Generation
                             if (group.Keys.Any(x => directions.Any(d => d + empty[i] == x)))
                             {
                                 floor = Instantiate(_floorPrefab, rr.Container);
-                                floor.transform.position = (Vector2)empty[i] * _tilePixelSize / 100f;
+                                floor.transform.position = (Vector2)empty[i] * LocalToGlobalScale;
                                 floor.name = $"Floor ({empty[i].x};{empty[i].y})";
                                 group.Add(empty[i], floor);
                                 empty.RemoveAt(i);
@@ -487,7 +489,7 @@ namespace Sketch.Generation
         /// <returns></returns>
         private IEnumerator GenerateRoom(int x, int y, MapArea fromArea)
         {
-            var pxlSize = _tilePixelSize / 100f;
+            var pxlSize = LocalToGlobalScale;
             var realPos = new Vector2(x, y) * pxlSize;
             var bounds = _cam.CalculateBounds();
             /*if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
@@ -586,7 +588,7 @@ namespace Sketch.Generation
                         if (room.Data[dx, dy] == TileType.WALL)
                         {
                             instance = Instantiate(_wallPrefab, rr.Container);
-                            instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                            instance.transform.position = (Vector2)p * LocalToGlobalScale;
                             instance.name = $"Wall ({p.x};{p.y})";
                             rr.Walls.Add(instance);
                         }
@@ -594,14 +596,14 @@ namespace Sketch.Generation
                         {
                             instance = Instantiate(_wallPrefab, rr.Container);
                             instance.GetComponent<SpriteRenderer>().color = Color.red;
-                            instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                            instance.transform.position = (Vector2)p * LocalToGlobalScale;
                             instance.name = $"Door ({p.x};{p.y})";
                             rr.Doors.Add(p);
                         }
                         else
                         {
                             instance = Instantiate(_floorPrefab, rr.Container);
-                            instance.transform.position = (Vector2)p * _tilePixelSize / 100f;
+                            instance.transform.position = (Vector2)p * LocalToGlobalScale;
                             instance.name = $"Floor ({p.x};{p.y})";
                             rr.Floors.Add(p);
                         }
