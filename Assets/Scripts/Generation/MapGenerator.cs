@@ -379,7 +379,7 @@ namespace Sketch.Generation
                 }
 
                 // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
-                if (_roomMade == 0 && OptionsManager.Instance.CalculateNewRooms) // TODO: Remove false
+                if (_roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
                 {
                     var min = areas[-Vector2Int.one].MinBound * _tilePixelSize / 10f;
                     var max = areas[Vector2Int.one].MaxBound * _tilePixelSize / 10f;
@@ -437,6 +437,10 @@ namespace Sketch.Generation
                         })))
                         {
                             // Room is not finished and going oob
+                            foreach (var r in group.Values)
+                            {
+                                Destroy(r);
+                            }
                             area.Rooms.Remove(rr);
                             continue;
                         }
