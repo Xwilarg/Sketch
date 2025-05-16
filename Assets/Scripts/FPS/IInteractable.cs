@@ -1,7 +1,6 @@
-using Sketch.FPS;
 using UnityEngine;
 
-namespace Sketch.Player
+namespace Sketch.FPS.Player
 {
     public interface IInteractable
     {
