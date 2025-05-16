@@ -35,17 +35,17 @@
     "FPS_interactionText": "'E'かスクリーンを押します",
 
     "ACH_landlockedName": "りくふう",
-    "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
-    "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir",
-    "ACH_150cmName": "Il y a toujours un plus gros poisson",
-    "ACH_150cmDesc": "Attrape un poisson d'au moins 150cm",
-    "ACH_150cmHint": "Le plus fort ils mordent, le plus délicieux ils sont",
-    "ACH_noSkipName": "Auditeur attentif",
-    "ACH_noSkipDesc": "Lire les divaguations de Yuzu sans les passer",
-    "ACH_noSkipHint": "C'est pas grave de le passer mais le lire est tout de même apprecié",
-    "ACH_circleNName": "Vrai ranger",
-    "ACH_circleNDesc": "Capture 3 formes en même temps",
-    "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps",
+    "ACH_landlockedDesc": "出口がないの部屋をクリックする",
+    "ACH_landlockedHint": "入口と出口がない",
+    "ACH_150cmName": "必ず大きな魚がいます",
+    "ACH_150cmDesc": "150cm以上魚を釣る",
+    "ACH_150cmHint": "The hardest they bite, the tastier they are",
+    "ACH_noSkipName": "Attentive listener",
+    "ACH_noSkipDesc": "Read Yuzu rambling without skipping it",
+    "ACH_noSkipHint": "Skipping it is okay but reading it is appreciated too",
+    "ACH_circleNName": "Real Ranger",
+    "ACH_circleNDesc": "Catch 3 shapes at once",
+    "ACH_circleNHint": "Show your mastery of the lasso",
 
     "langWarning": "ビジュアルノベルのテキストは英語だけ\n\n私の日本語はちょっと下手 (ごめん)"
 }

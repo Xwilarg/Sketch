@@ -37,15 +37,15 @@
     "ACH_landlockedName": "Enclavé",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
     "ACH_landlockedHint": "On ne peut ni en entrer, ni en sortir",
-    "ACH_150cmName": "Il y a toujours un plus gros poisson",
+    "ACH_150cmName": "Il y a toujours de plus gros poisson",
     "ACH_150cmDesc": "Attrape un poisson d'au moins 150cm",
-    "ACH_150cmHint": "Le plus fort ils mordent, le plus délicieux ils sont",
+    "ACH_150cmHint": "Le plus fort ils mordent, le meilleur ils seront",
     "ACH_noSkipName": "Auditeur attentif",
     "ACH_noSkipDesc": "Lire les divaguations de Yuzu sans les passer",
-    "ACH_noSkipHint": "C'est pas grave de le passer mais le lire est tout de même apprecié",
-    "ACH_circleNName": "Vrai ranger",
+    "ACH_noSkipHint": "Tu peux le passer mais le lire est tout de même apprecié",
+    "ACH_circleNName": "Véritable ranger",
     "ACH_circleNDesc": "Capture 3 formes en même temps",
-    "ACH_circleNHint": "Montre tes capacitées à en attraper plusieurs en même temps",
+    "ACH_circleNHint": "Montre tes compétences au lasso",
 
     "langWarning": "Le text du Visual Novel est uniquement disponible en anglais"
 }
