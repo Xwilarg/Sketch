@@ -1,8 +1,8 @@
 using Sketch.Common;
+using Sketch.FPS.Player;
 using Sketch.Player;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,6 +23,8 @@ namespace Sketch.FPS
         [SerializeField]
         private GameObject _interactionText;
 
+        private TriggerArea _triggerArea;
+
         /*[SerializeField]
         private RectTransform _stamina;
         private float _staminaLeft = 1f;
@@ -42,6 +44,7 @@ namespace Sketch.FPS
         private Vector2 _touchPos;
 
         private List<IInteractable> _interactions = new();
+        public IInteractable ClosestInteraction => _interactions.Where(x => x.CanInteract(this)).OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position)).First();
 
         private void Awake()
         {
@@ -49,8 +52,8 @@ namespace Sketch.FPS
             _baseSpawnPos = transform.position;
             _interactionText.SetActive(false);
 
-            var tArea = GetComponentInChildren<TriggerArea>();
-            tArea.OnTriggerEnterEvent.AddListener((Collider c) =>
+            _triggerArea = GetComponentInChildren<TriggerArea>();
+            _triggerArea.OnTriggerEnterEvent.AddListener((Collider c) =>
             {
                 if (c.TryGetComponent<IInteractable>(out var i))
                 {
@@ -58,7 +61,7 @@ namespace Sketch.FPS
                     _interactionText.SetActive(true);
                 }
             });
-            tArea.OnTriggerExitEvent.AddListener((Collider c) =>
+            _triggerArea.OnTriggerExitEvent.AddListener((Collider c) =>
             {
                 if (c.gameObject.TryGetComponent<IInteractable>(out var i))
                 {
@@ -148,11 +151,6 @@ namespace Sketch.FPS
             */
         }
 
-        public void UpdateInteractUI()
-        {
-
-        }
-
         public void OnMobileDrag(InputAction.CallbackContext value)
         {
             if (value.phase == InputActionPhase.Started)
@@ -208,9 +206,10 @@ namespace Sketch.FPS
 
         private void OnInteractInternal()
         {
-            if (_interactions.Count > 0 && _interactions[0].CanInteract(this))
+            var closestInteraction = ClosestInteraction;
+            if (ClosestInteraction != null)
             {
-                _interactions[0].Interact(this);
+                closestInteraction.Interact(this);
                 if (!_interactions.Any(x => x.CanInteract(this))) _interactionText.SetActive(false);
             }
         }
@@ -220,7 +219,6 @@ namespace Sketch.FPS
             {
                 OnInteractInternal();
             }
-            
         }
     }
 }
