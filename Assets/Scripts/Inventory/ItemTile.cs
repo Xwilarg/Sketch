@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Sketch.Inventory
 {
-    public class ItemTile : MonoBehaviour, IPointerDownHandler
+    public class ItemTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField]
         private Image _bgItem, _item;
@@ -26,10 +26,10 @@ namespace Sketch.Inventory
         }
 
         /// <param name="item">null to clear</param>
-        public void SetItem(InventoryItemInfo item)
+        public void SetItem(InventoryItemInfo item, int count = 1)
         {
             ContainedItem = item;
-            Count = item == null ? 0 : 1;
+            Count = item == null ? 0 : count;
 
             _bgItem.gameObject.SetActive(item != null);
             _item.gameObject.SetActive(item != null);
@@ -51,6 +51,27 @@ namespace Sketch.Inventory
             if (ContainedItem != null)
             {
                 InventoryManager.Instance.SetSelectedItem(this);
+            }
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            if (InventoryManager.Instance.DraggingTile != null)
+            {
+                if (ContainedItem == null) // Nothing here, we just move the item
+                {
+                    SetItem(InventoryManager.Instance.DraggingTile.ContainedItem, InventoryManager.Instance.DraggingTile.Count);
+                    InventoryManager.Instance.DraggingTile.SetItem(null);
+                }
+                else if (ContainedItem.Name == InventoryManager.Instance.DraggingTile.ContainedItem.Name)
+                {
+
+                }
+                else
+                {
+
+                }
+                InventoryManager.Instance.ClearSelectedItem();
             }
         }
     }

@@ -26,10 +26,17 @@ namespace Sketch.Inventory
 
         private readonly List<ItemTile> _tiles = new();
 
+        public ItemTile DraggingTile { private set; get; }
+
         public void SetSelectedItem(ItemTile tile)
         {
             _dragItem.gameObject.SetActive(true);
             _dragItem.sprite = tile.ItemSprite;
+        }
+
+        public void ClearSelectedItem()
+        {
+            _dragItem.gameObject.SetActive(false);
         }
 
         public bool TryAddItem(InventoryItemInfo item)
