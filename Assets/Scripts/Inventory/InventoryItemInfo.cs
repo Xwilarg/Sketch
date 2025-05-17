@@ -6,9 +6,8 @@ namespace Sketch.Inventory
     public class InventoryItemInfo : ScriptableObject
     {
         public string Name;
-        public string FullName;
-        public float MinSize, MaxSize;
 
-        public float Speed;
+        public Sprite Sprite;
+        public int MaxStackSize;
     }
 }

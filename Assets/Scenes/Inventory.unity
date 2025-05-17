@@ -361,7 +361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -419,6 +419,10 @@ MonoBehaviour:
   _dragItem: {fileID: 151877205}
   _inventoryTransform: {fileID: 556896273}
   _inventoryTileCount: 50
+  _defaultItems:
+  - {fileID: 11400000, guid: 75eb9c69624387e4a9495b64dda268e8, type: 2}
+  - {fileID: 11400000, guid: 114c4f08f47dc2a46a96032851e6b45d, type: 2}
+  - {fileID: 11400000, guid: 114c4f08f47dc2a46a96032851e6b45d, type: 2}
 --- !u!4 &1161484795
 Transform:
   m_ObjectHideFlags: 0
