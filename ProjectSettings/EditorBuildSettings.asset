@@ -38,5 +38,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FPS.unity
     guid: dfd008a2b3c0a7444a0b14ac30594db4
+  - enabled: 1
+    path: Assets/Scenes/Inventory.unity
+    guid: 42ec0b286e3ccd0439e79f8082bafbde
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
