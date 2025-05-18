@@ -16,6 +16,11 @@ namespace Sketch.FPS.Prop
             Renderer = GetComponent<Renderer>();
         }
 
+        private void Start()
+        {
+            FPSManager.Instance.Register(this);
+        }
+
         public GameObject GameObject => gameObject;
 
         public string InteractionVerb => "FPS_activateSwitch";

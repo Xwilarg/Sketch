@@ -1,6 +1,5 @@
 using Sketch.Common;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Sketch.Circle
