@@ -37,7 +37,7 @@
 
     "FPS_interactionText": "{0}のが'E'かスクリーンを押します",
     "FPS_open": "開く",
-    "FPS_active": "使う",
+    "FPS_activate": "使う",
 
     "ACH_landlockedName": "りくふう",
     "ACH_landlockedDesc": "出口がないの部屋をクリックする",

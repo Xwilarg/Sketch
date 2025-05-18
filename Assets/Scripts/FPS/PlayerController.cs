@@ -161,7 +161,7 @@ namespace Sketch.FPS
             var interaction = ClosestInteraction;
             if (interaction != null)
             {
-                _interactionText.gameObject.SetActive(false);
+                _interactionText.gameObject.SetActive(true);
                 _interactionText.text = Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(interaction.InteractionVerb));
             }
             else _interactionText.gameObject.SetActive(false);

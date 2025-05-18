@@ -37,7 +37,7 @@
 
     "FPS_interactionText": "Press 'E' (or touch screen) to {0}",
     "FPS_open": "open",
-    "FPS_active": "active",
+    "FPS_activate": "active",
 
     "ACH_landlockedName": "Enclavé",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",
