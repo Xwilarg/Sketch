@@ -1,7 +1,7 @@
 using Sketch.FPS.Player;
 using UnityEngine;
 
-namespace Sketch.FPS
+namespace Sketch.FPS.Prop
 {
     public class Switch : MonoBehaviour, IInteractable
     {
@@ -17,6 +17,8 @@ namespace Sketch.FPS
         }
 
         public GameObject GameObject => gameObject;
+
+        public string InteractionVerb => "FPS_activate";
 
         public bool CanInteract(PlayerController pc)
             => FPSManager.Instance.ActiveSwitch == null || FPSManager.Instance.ActiveSwitch.gameObject.GetInstanceID() != gameObject.GetInstanceID();

@@ -32,7 +32,12 @@
     "creditsYuzu": "L'image de Yuzu pour le Visual Novel par FractalStella",
     "creditsFont": "La police d'écriture Sweetie Bubble Gum par Galdino Otten Fonts",
 
-    "FPS_interactionText": "Appuyez sur 'E' (ou touchez l'écran) pour interagir",
+    "persistency": "Save file size: {0}",
+    "persistencyDelete": "Delete saves",
+
+    "FPS_interactionText": "Press 'E' (or touch screen) to {0}",
+    "FPS_open": "open",
+    "FPS_active": "active",
 
     "ACH_landlockedName": "Enclavé",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",

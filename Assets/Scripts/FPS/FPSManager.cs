@@ -1,3 +1,4 @@
+using Sketch.FPS.Prop;
 using UnityEngine;
 
 namespace Sketch.FPS

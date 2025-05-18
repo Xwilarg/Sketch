@@ -1,8 +1,10 @@
 using Sketch.Common;
 using Sketch.FPS.Player;
 using Sketch.Player;
+using Sketch.Translation;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,7 +23,7 @@ namespace Sketch.FPS
         private PlayerInput _pInput;
 
         [SerializeField]
-        private GameObject _interactionText;
+        private TMP_Text _interactionText;
 
         private TriggerArea _triggerArea;
 
@@ -44,13 +46,13 @@ namespace Sketch.FPS
         private Vector2 _touchPos;
 
         private List<IInteractable> _interactions = new();
-        public IInteractable ClosestInteraction => _interactions.Where(x => x.CanInteract(this)).OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position)).First();
+        public IInteractable ClosestInteraction => _interactions.Where(x => x.CanInteract(this)).OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position)).FirstOrDefault();
 
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
             _baseSpawnPos = transform.position;
-            _interactionText.SetActive(false);
+            _interactionText.gameObject.SetActive(false);
 
             _triggerArea = GetComponentInChildren<TriggerArea>();
             _triggerArea.OnTriggerEnterEvent.AddListener((Collider c) =>
@@ -58,7 +60,7 @@ namespace Sketch.FPS
                 if (c.TryGetComponent<IInteractable>(out var i))
                 {
                     _interactions.Add(i);
-                    _interactionText.SetActive(true);
+                    UpdateInteractionText();
                 }
             });
             _triggerArea.OnTriggerExitEvent.AddListener((Collider c) =>
@@ -66,7 +68,7 @@ namespace Sketch.FPS
                 if (c.gameObject.TryGetComponent<IInteractable>(out var i))
                 {
                     _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
-                    if (!_interactions.Any(x => x.CanInteract(this))) _interactionText.SetActive(false);
+                    UpdateInteractionText();
                 }
             });
         }
@@ -132,6 +134,9 @@ namespace Sketch.FPS
                 _verticalSpeed = 0f;
             }
 
+            // If we can interact with anything, we check if target changed
+            if (_interactions.Count > 1) UpdateInteractionText();
+
             /*
             if (_isSprinting && _staminaLeft > 0f && desiredMove.magnitude > 0f)
             {
@@ -149,6 +154,17 @@ namespace Sketch.FPS
             _stamina.gameObject.SetActive(_staminaLeft < 1f);
             _stamina.localScale = new Vector3(_staminaLeft, 1f, 1f);
             */
+        }
+
+        private void UpdateInteractionText()
+        {
+            var interaction = ClosestInteraction;
+            if (interaction != null)
+            {
+                _interactionText.gameObject.SetActive(false);
+                _interactionText.text = Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(interaction.InteractionVerb));
+            }
+            else _interactionText.gameObject.SetActive(false);
         }
 
         public void OnMobileDrag(InputAction.CallbackContext value)
@@ -210,7 +226,8 @@ namespace Sketch.FPS
             if (ClosestInteraction != null)
             {
                 closestInteraction.Interact(this);
-                if (!_interactions.Any(x => x.CanInteract(this))) _interactionText.SetActive(false);
+                _interactions.RemoveAll(x => x.GameObject == null);
+                UpdateInteractionText();
             }
         }
         public void OnInteract(InputAction.CallbackContext value)
