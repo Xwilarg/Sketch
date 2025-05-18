@@ -30,12 +30,14 @@ namespace Sketch.Inventory
 
         public void SetSelectedItem(ItemTile tile)
         {
+            DraggingTile = tile;
             _dragItem.gameObject.SetActive(true);
             _dragItem.sprite = tile.ItemSprite;
         }
 
         public void ClearSelectedItem()
         {
+            DraggingTile = null;
             _dragItem.gameObject.SetActive(false);
         }
 

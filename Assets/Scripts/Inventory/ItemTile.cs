@@ -54,22 +54,26 @@ namespace Sketch.Inventory
             }
         }
 
-        public void OnPointerUp(PointerEventData eventData)
+        public void OnPointerUp(PointerEventData _)
         {
             if (InventoryManager.Instance.DraggingTile != null)
             {
                 if (ContainedItem == null) // Nothing here, we just move the item
                 {
+                    Debug.Log("No item");
                     SetItem(InventoryManager.Instance.DraggingTile.ContainedItem, InventoryManager.Instance.DraggingTile.Count);
                     InventoryManager.Instance.DraggingTile.SetItem(null);
                 }
                 else if (ContainedItem.Name == InventoryManager.Instance.DraggingTile.ContainedItem.Name)
                 {
-
+                    Debug.Log("Same item");
                 }
                 else
                 {
-
+                    Debug.Log("Switch item");
+                    (InventoryItemInfo TmpItem, int TmpCount) = (ContainedItem, Count);
+                    SetItem(InventoryManager.Instance.DraggingTile.ContainedItem, InventoryManager.Instance.DraggingTile.Count);
+                    InventoryManager.Instance.DraggingTile.SetItem(TmpItem, TmpCount);
                 }
                 InventoryManager.Instance.ClearSelectedItem();
             }
