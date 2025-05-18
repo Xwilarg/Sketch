@@ -46,7 +46,7 @@ namespace Sketch.FPS
         private Vector2 _touchPos;
 
         private List<IInteractable> _interactions = new();
-        public IInteractable ClosestInteraction => _interactions.Where(x => x.CanInteract(this)).OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position)).FirstOrDefault();
+        public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
         private void Awake()
         {
@@ -158,13 +158,26 @@ namespace Sketch.FPS
 
         private void UpdateInteractionText()
         {
-            var interaction = ClosestInteraction;
-            if (interaction != null)
+            var interactions = InteractionByDistance;
+            var validInteraction = interactions.FirstOrDefault(x => x.CanInteract(this));
+            if (validInteraction != null)
             {
                 _interactionText.gameObject.SetActive(true);
-                _interactionText.text = Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(interaction.InteractionVerb));
+                _interactionText.text = Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(validInteraction.InteractionVerb));
             }
-            else _interactionText.gameObject.SetActive(false);
+            else
+            {
+                var closestInvalid = interactions.FirstOrDefault();
+                if (closestInvalid == null || closestInvalid.DenySentence == null)
+                {
+                    _interactionText.gameObject.SetActive(false);
+                }
+                else
+                {
+                    _interactionText.gameObject.SetActive(true);
+                    _interactionText.text = Translate.Instance.Tr(closestInvalid.DenySentence);
+                }
+            }
         }
 
         public void OnMobileDrag(InputAction.CallbackContext value)
@@ -222,8 +235,8 @@ namespace Sketch.FPS
 
         private void OnInteractInternal()
         {
-            var closestInteraction = ClosestInteraction;
-            if (ClosestInteraction != null)
+            var closestInteraction = InteractionByDistance.Where(x => x.CanInteract(this)).FirstOrDefault();
+            if (closestInteraction != null)
             {
                 closestInteraction.Interact(this);
                 _interactions.RemoveAll(x => x.GameObject == null);

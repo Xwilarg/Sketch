@@ -38,6 +38,7 @@
     "FPS_interactionText": "Appuyez sur 'E' (ou touchez l'écran) pour {0}",
     "FPS_openDoor": "ouvrir la porte",
     "FPS_activateSwitch": "activer le bouton",
+    "FPS_doorClosed": "Cette porte à l'air verrouillé",
 
     "ACH_landlockedName": "Enclavé",
     "ACH_landlockedDesc": "Click sur une salle qui n'a aucune porte",

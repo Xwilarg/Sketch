@@ -38,6 +38,7 @@
     "FPS_interactionText": "Press 'E' (or touch screen) to {0}",
     "FPS_openDoor": "open the door",
     "FPS_activateSwitch": "active the switch",
+    "FPS_doorClosed": "This door appears to be locked",
 
     "ACH_landlockedName": "Landlocked",
     "ACH_landlockedDesc": "Click on a room that doesn't have any door",

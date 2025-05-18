@@ -38,6 +38,7 @@
     "FPS_interactionText": "{0}のが'E'かスクリーンを押す",
     "FPS_openDoor": "戸を開く",
     "FPS_activateSwitch": "スイッチを使う",
+    "FPS_doorClosed": "この戸は閉まりようだ",
 
     "ACH_landlockedName": "りくふう",
     "ACH_landlockedDesc": "出口がないの部屋をクリックする",

@@ -7,31 +7,28 @@ namespace Sketch.FPS.Prop
     {
         [SerializeField]
         private Material _highlightMat;
-        private Material _defaultMat;
         public Renderer Renderer { private set; get; }
+
+        public bool IsOn { private set; get; }
 
         private void Awake()
         {
             Renderer = GetComponent<Renderer>();
-            _defaultMat = Renderer.material;
         }
 
         public GameObject GameObject => gameObject;
 
-        public string InteractionVerb => "FPS_activate";
+        public string InteractionVerb => "FPS_activateSwitch";
+
+        public string DenySentence => null;
 
         public bool CanInteract(PlayerController pc)
-            => FPSManager.Instance.ActiveSwitch == null || FPSManager.Instance.ActiveSwitch.gameObject.GetInstanceID() != gameObject.GetInstanceID();
+            => !IsOn;
 
         public void Interact(PlayerController pc)
         {
-            if (FPSManager.Instance.ActiveSwitch != null)
-            {
-                FPSManager.Instance.ActiveSwitch.Renderer.material = _defaultMat;
-            }
             Renderer.material = _highlightMat;
-            FPSManager.Instance.ActiveSwitch = this;
-
+            IsOn = true;
         }
     }
 }
