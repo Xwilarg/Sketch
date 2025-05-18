@@ -36,8 +36,8 @@
     "persistencyDelete": "Delete saves",
 
     "FPS_interactionText": "Press 'E' (or touch screen) to {0}",
-    "FPS_open": "open",
-    "FPS_activate": "active",
+    "FPS_openDoor": "open the door",
+    "FPS_activateSwitch": "active the switch",
 
     "ACH_landlockedName": "Landlocked",
     "ACH_landlockedDesc": "Click on a room that doesn't have any door",
