@@ -1,6 +1,4 @@
 using Sketch.Common;
-using Sketch.FPS.Player;
-using Sketch.Player;
 using Sketch.Translation;
 using System.Collections.Generic;
 using System.Linq;

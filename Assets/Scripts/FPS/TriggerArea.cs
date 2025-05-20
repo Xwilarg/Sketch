@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Sketch.Player
+namespace Sketch.FPS
 {
     public class TriggerArea : MonoBehaviour
     {
