@@ -68,22 +68,6 @@ namespace Sketch.Generation
 
         private float LocalToGlobalScale => _tilePixelSize / 100f;
 
-        public void ToggleAllLinks(bool value)
-        {
-            foreach (var rr in _areas.Values.SelectMany(x => x.Rooms))
-            {
-                rr.ToggleLinks(value);
-            }
-        }
-
-        public void ToggleDistance(bool value)
-        {
-            foreach (var rr in _areas.Values.SelectMany(x => x.Rooms))
-            {
-                rr.ToggleDistances(value);
-            }
-        }
-
         private void Awake()
         {
             Instance = this;
@@ -381,7 +365,7 @@ namespace Sketch.Generation
                 }
 
                 // If we created all rooms we could, we calculate spaces between rooms that could make rooms themselves
-                if (_roomMade == 0 && OptionsManager.Instance.CalculateNewRooms)
+                if (_roomMade == 0)
                 {
                     var min = areas[-Vector2Int.one].MinBound / LocalToGlobalScale;
                     var max = areas[Vector2Int.one].MaxBound / LocalToGlobalScale;

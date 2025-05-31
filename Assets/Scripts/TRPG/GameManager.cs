@@ -230,45 +230,42 @@ namespace Sketch.TRPG
 
                         while (nextPos.From != nextPos.Position) // While we have tiles to display
                         {
-                            if (OptionsManager.Instance.ShowPath) // If options say we don't show path we can skip all these calculations
+                            // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
+                            var dir = nextPos.Position - nextPos.From;
+                            var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
+
+                            Quaternion rot = Quaternion.identity;
+                            if (isStraight)
                             {
-                                // Path is straight is we are the last element or if the Vector Dot between our last direction and current one gives -1 or 1
-                                var dir = nextPos.Position - nextPos.From;
-                                var isStraight = lastDir == null || Mathf.Abs(Vector2.Dot(lastDir, dir)) == 1f;
-
-                                Quaternion rot = Quaternion.identity;
-                                if (isStraight)
+                                if (dir == Vector2.up || dir == Vector2.down)
                                 {
-                                    if (dir == Vector2.up || dir == Vector2.down)
-                                    {
-                                        rot = Quaternion.Euler(0f, 0f, 90f);
-                                    }
+                                    rot = Quaternion.Euler(0f, 0f, 90f);
                                 }
-                                else
-                                {
-                                    if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
-                                    {
-                                        rot = Quaternion.Euler(0f, 0f, 90f);
-                                    }
-                                    else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
-                                    {
-                                        rot = Quaternion.Euler(0f, 0f, 180f);
-                                    }
-                                    else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
-                                    {
-                                        rot = Quaternion.Euler(0f, 0f, -90f);
-                                    }
-                                }
-
-                                var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
-                                tile.transform.parent = _pathContainer;
-                                var sr = tile.GetComponent<SpriteRenderer>();
-                                sr.sprite = isStraight ? _straightPath : _cornerPath;
-                                sr.color = Color.black;
-
-                                _dirInstances.Add(tile);
-                                lastDir = dir;
                             }
+                            else
+                            {
+                                if ((lastDir == Vector2.left && dir == Vector2.up) || (dir == Vector2.right && lastDir == Vector2.down))
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, 90f);
+                                }
+                                else if ((lastDir == Vector2.right && dir == Vector2.up) || (dir == Vector2.left && lastDir == Vector2.down))
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, 180f);
+                                }
+                                else if ((lastDir == Vector2.right && dir == Vector2.down) || (dir == Vector2.left && lastDir == Vector2.up))
+                                {
+                                    rot = Quaternion.Euler(0f, 0f, -90f);
+                                }
+                            }
+
+                            var tile = Instantiate(_pathPrefab, (Vector2)nextPos.Position, rot);
+                            tile.transform.parent = _pathContainer;
+                            var sr = tile.GetComponent<SpriteRenderer>();
+                            sr.sprite = isStraight ? _straightPath : _cornerPath;
+                            sr.color = Color.black;
+
+                            _dirInstances.Add(tile);
+                            lastDir = dir;
 
                             nextPos = _dirInfo.First(x => x.Position == nextPos.From);
                             _pathToMouse.Add(nextPos.Position);
@@ -294,51 +291,48 @@ namespace Sketch.TRPG
         // Draw LoS
         private void OnPostRenderCallback(Camera c)
         {
-            if (OptionsManager.Instance.ShowLos)
+            GL.PushMatrix();
+
+            GL.LoadOrtho();
+
+            _highlightMat.SetPass(0);
+
+            Vector2? prevPos = null;
+
+            for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
             {
-                GL.PushMatrix();
+                var from = (Vector2)_player.transform.position;
 
-                GL.LoadOrtho();
+                GL.Begin(GL.TRIANGLES); // Performances :thinking:
+                Vector2 pos;
 
-                _highlightMat.SetPass(0);
+                var screenPos = CursorUtils.GetPosition(_pInput) ?? _lastMousePosCam;
+                _lastMousePosCam = screenPos;
 
-                Vector2? prevPos = null;
+                var mousePos = _cam.ScreenToWorldPoint(screenPos);
+                var angleRad = Mathf.Atan2(mousePos.y - from.y, mousePos.x - from.x);
 
-                for (float i = Mathf.PI / 4; i < 3 * Mathf.PI / 4; i += .001f)
+                var angle = angleRad + i - Mathf.PI / 2;
+
+                var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                var hit = Physics2D.Raycast(from, dir, _visionRange);
+                if (hit.collider == null)
                 {
-                    var from = (Vector2)_player.transform.position;
-
-                    GL.Begin(GL.TRIANGLES); // Performances :thinking:
-                    Vector2 pos;
-
-                    var screenPos = CursorUtils.GetPosition(_pInput) ?? _lastMousePosCam;
-                    _lastMousePosCam = screenPos;
-
-                    var mousePos = _cam.ScreenToWorldPoint(screenPos);
-                    var angleRad = Mathf.Atan2(mousePos.y - from.y, mousePos.x - from.x);
-
-                    var angle = angleRad + i - Mathf.PI / 2;
-
-                    var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                    var hit = Physics2D.Raycast(from, dir, _visionRange);
-                    if (hit.collider == null)
-                    {
-                        pos = from + dir * _visionRange;
-                    }
-                    else
-                    {
-                        pos = hit.point;
-                    }
-
-                    if (prevPos != null)
-                    {
-                        DrawTriangle(from, prevPos.Value, pos);
-                    }
-                    prevPos = pos;
-                    GL.End();
+                    pos = from + dir * _visionRange;
                 }
-                GL.PopMatrix();
+                else
+                {
+                    pos = hit.point;
+                }
+
+                if (prevPos != null)
+                {
+                    DrawTriangle(from, prevPos.Value, pos);
+                }
+                prevPos = pos;
+                GL.End();
             }
+            GL.PopMatrix();
         }
 
         /// <summary>

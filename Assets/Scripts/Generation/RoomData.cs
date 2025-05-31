@@ -95,8 +95,6 @@ namespace Sketch.Generation
                 Distance = room.Distance + 1;
                 _hintDistanceInstance.text = Distance.ToString();
                 _hintDistanceInstance.transform.position = _center * _pixelSize;
-
-                _hintDistanceInstance.gameObject.SetActive(OptionsManager.Instance.ShowDistances);
             }
 
             _adjacentRooms.Add(room);
@@ -108,24 +106,6 @@ namespace Sketch.Generation
                 (Vector3)_center * _pixelSize, (Vector3)room._center * _pixelSize
             });
             LRs.Add(room.ID, (lr, room));
-
-            ToggleLinks(OptionsManager.Instance.ShowLinks);
-        }
-
-        public void ToggleLinks(bool value)
-        {
-            foreach (var l in LRs)
-            {
-                l.Value.LR.gameObject.SetActive(value);
-            }
-        }
-
-        public void ToggleDistances(bool value)
-        {
-            if (_hintDistanceInstance != null)
-            {
-                _hintDistanceInstance.gameObject.SetActive(value);
-            }
         }
 
         public void Highlight()
