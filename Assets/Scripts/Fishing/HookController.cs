@@ -48,7 +48,7 @@ namespace Sketch.Fishing
             // If we are not hooked, the float follow the mouse
             if (_hooked == null && !IsTargeted)
             {
-                var camBounds = CameraUtils.CalculateBounds(_cam);
+                var camBounds = CameraUtils.CalculateBounds(_cam, .1f);
 
                 var mousePos = CursorUtils.GetPosition(_pInput);
                 if (!mousePos.HasValue) return;

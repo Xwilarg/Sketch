@@ -6,13 +6,14 @@ namespace Sketch.Common
     {
 
         // http://answers.unity.com/answers/502236/view.html
-        public static Bounds CalculateBounds(this Camera cam)
+        public static Bounds CalculateBounds(this Camera cam, float innerOffset01 = 0f)
         {
             float screenAspect = Screen.width / (float)Screen.height;
             float cameraHeight = cam.orthographicSize * 2;
             Bounds bounds = new(
                 cam.transform.position,
-                new Vector3(cameraHeight * screenAspect, cameraHeight, 0));
+                new Vector3(cameraHeight * screenAspect, cameraHeight, 0) * (1f - innerOffset01));
+
             return bounds;
         }
     }

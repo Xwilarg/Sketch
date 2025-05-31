@@ -53,7 +53,11 @@ namespace Sketch.Fishing
             _timer = 0f;
             _maxTimer = 3f;
             _overallProgress.localScale = new(1f, .5f, 1f);
-            _cursor.position = new(_cursor.position.x, _height / 2f + _cursor.rect.height);
+
+            // Put fishing target at the center of the screen
+            _fish.anchoredPosition = new(0f, _max / 2f);
+            _cursor.anchoredPosition = new Vector2(0f, (-_height + _cursor.rect.height) / 2f);
+
             StartCoroutine(StartMinigame());
         }
 
