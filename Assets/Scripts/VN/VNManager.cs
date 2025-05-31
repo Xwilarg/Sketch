@@ -58,7 +58,6 @@ namespace Sketch.VN
         private void Awake()
         {
             Instance = this;
-            ShowStory(_intro);
 
             _display.OnDisplayDone += (_sender, _e) =>
             {
@@ -86,6 +85,11 @@ namespace Sketch.VN
                     StartCoroutine(AutoNextDialogue());
                 }
             };
+        }
+
+        private void Start()
+        {
+            ShowStory(_intro);
         }
 
         private IEnumerator AutoNextDialogue()
