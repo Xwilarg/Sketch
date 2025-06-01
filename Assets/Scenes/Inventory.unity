@@ -154,7 +154,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &151877205
 MonoBehaviour:
@@ -344,7 +344,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 50, y: 50}
+  m_CellSize: {x: 75, y: 75}
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -419,7 +419,7 @@ MonoBehaviour:
   _itemTilePrefab: {fileID: 8329593469317404661, guid: 645cf65cbfdef5a4fb5cd047f440adce, type: 3}
   _dragItem: {fileID: 151877205}
   _inventoryTransform: {fileID: 556896273}
-  _inventoryTileCount: 50
+  _inventoryTileCount: 25
   _defaultItems:
   - {fileID: 11400000, guid: 75eb9c69624387e4a9495b64dda268e8, type: 2}
   - {fileID: 11400000, guid: 114c4f08f47dc2a46a96032851e6b45d, type: 2}
