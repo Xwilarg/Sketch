@@ -94,8 +94,8 @@ namespace Sketch.Circle
                 for (int i = 1; i <= points.Length; i++)
                 {
                     var a = p;
-                    var b = p + points[i - 1];
-                    var c = p + (i == points.Length ? points[0] : points[i]);
+                    var b = p + (points[i - 1] * enn.transform.localScale.x);
+                    var c = p + ((i == points.Length ? points[0] : points[i]) * enn.transform.localScale.x);
                     Debug.DrawLine(a, b, Color.red);
                     Debug.DrawLine(b, c, Color.red);
                     Debug.DrawLine(c, a, Color.red);
@@ -111,7 +111,7 @@ namespace Sketch.Circle
                     {
                         var a = center;
                         var b = _positions[i - 1];
-                        var c = i == _positions.Count ? _positions[0] : _positions[i];
+                        var c = (i == _positions.Count ? _positions[0] : _positions[i]);
                         var color = PointInTriangle(enn.transform.position, a, b, c) ? Color.green : Color.grey;
                         Debug.DrawLine(a, b, color);
                         Debug.DrawLine(b, c, color);
@@ -128,8 +128,8 @@ namespace Sketch.Circle
             for (int i = 1; i <= points.Length; i++) // ...we get each triangle of the collider...
             {
                 var a = p;
-                var b = p + points[i - 1];
-                var c = p + (i == points.Length ? points[0] : points[i]);
+                var b = p + (points[i - 1] * enn.transform.localScale.x);
+                var c = p + ((i == points.Length ? points[0] : points[i]) * enn.transform.localScale.x);
                 Debug.DrawLine(a, b, Color.red);
                 Debug.DrawLine(b, c, Color.red);
                 Debug.DrawLine(c, a, Color.red);
