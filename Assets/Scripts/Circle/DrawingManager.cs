@@ -89,7 +89,7 @@ namespace Sketch.Circle
 
             foreach (var enn in EnemyManager.Instance.Enemies)
             {
-                var points = enn.points;
+                var points = enn.Collider.points;
                 var p = (Vector2)enn.transform.position;
                 for (int i = 1; i <= points.Length; i++)
                 {
@@ -156,9 +156,9 @@ namespace Sketch.Circle
 
                 // Is the mouse inside a Katsis
                 var isColliding = false;
-                foreach (var coll in EnemyManager.Instance.Enemies) // For each enemy...
+                foreach (var enn in EnemyManager.Instance.Enemies) // For each enemy...
                 {
-                    if (IsTouchingLines(coll))
+                    if (IsTouchingLines(enn.Collider))
                     {
                         CleanLines();
                         isColliding = true;
@@ -194,8 +194,12 @@ namespace Sketch.Circle
                                                 var c = y == _positions.Count ? _positions[0] : _positions[y];
                                                 if (PointInTriangle(enn.transform.position, a, b, c)) // ...and check if the enemy is inside
                                                 {
-                                                    EnemyManager.Instance.Remove(it);
-                                                    catchCount++;
+                                                    enn.Health--;
+                                                    if (enn.Health == 0)
+                                                    {
+                                                        EnemyManager.Instance.Remove(it);
+                                                        catchCount++;
+                                                    }
                                                     break;
                                                 }
                                             }

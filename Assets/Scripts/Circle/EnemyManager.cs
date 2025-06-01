@@ -8,8 +8,8 @@ namespace Sketch.Circle
     {
         public static EnemyManager Instance { private set; get; }
 
-        private readonly List<PolygonCollider2D> _enemies = new();
-        public IReadOnlyList<PolygonCollider2D> Enemies => _enemies.AsReadOnly();
+        private readonly List<CircleEnemy> _enemies = new();
+        public IReadOnlyList<CircleEnemy> Enemies => _enemies.AsReadOnly();
 
         private Camera _cam;
 
@@ -41,7 +41,7 @@ namespace Sketch.Circle
             var bounds = _cam.CalculateBounds();
             var p = new Vector2(Random.Range(bounds.min.x + 1f, bounds.max.x - 1f), Random.Range(bounds.min.y + 1f, bounds.max.y - 1f));
             var go = Instantiate(_spawnables[Random.Range(0, _spawnables.Length)], p, Quaternion.identity);
-            _enemies.Add(go.GetComponent<PolygonCollider2D>());
+            _enemies.Add(go.GetComponent<CircleEnemy>());
         }
     }
 }
