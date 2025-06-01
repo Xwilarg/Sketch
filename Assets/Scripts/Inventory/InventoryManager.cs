@@ -26,7 +26,10 @@ namespace Sketch.Inventory
 
         private readonly List<ItemTile> _tiles = new();
 
+        // Tile we are currently drag and dropping
         public ItemTile DraggingTile { private set; get; }
+
+        public ItemTile HoverredTile { set; get; }
 
         public void SetSelectedItem(ItemTile tile)
         {
