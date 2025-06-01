@@ -7,9 +7,6 @@ namespace Sketch.LoSManager
     public class LoSManager : MonoBehaviour
     {
         [SerializeField]
-        private GameObject _wallPrefab;
-
-        [SerializeField]
         private Material _highlightMat;
 
         private float _maxVisionRange;
@@ -45,8 +42,8 @@ namespace Sketch.LoSManager
 
                     if (Mathf.PerlinNoise(offX + x / 5f, offY + y / 5f) < _wallChance)
                     {
-                        obstacle = Instantiate(_wallPrefab, new Vector2(x, y), Quaternion.identity);
-                        obstacle.transform.localScale = new(3.2f, 3.2f, 1f);
+                        var go = new GameObject("Wall", typeof(BoxCollider2D));
+                        go.transform.position = new Vector2(x, y);
                     }
                 }
             }
@@ -61,6 +58,7 @@ namespace Sketch.LoSManager
 
         private void OnPostRenderCallback(Camera c)
         {
+
             GL.PushMatrix();
 
             GL.LoadOrtho();
@@ -81,7 +79,7 @@ namespace Sketch.LoSManager
                 _lastPos = screenPos;
             }
 
-
+            Vector2 firstPos = Vector2.zero;
             for (float i = 0f; i < 2 * Mathf.PI; i += .001f)
             {
                 GL.Begin(GL.TRIANGLES); // Performances :thinking:
@@ -106,9 +104,17 @@ namespace Sketch.LoSManager
                 {
                     DrawTriangle(from, prevPos.Value, pos);
                 }
+                else firstPos = pos;
+
                 prevPos = pos;
                 GL.End();
             }
+
+            // Close the circle
+            GL.Begin(GL.TRIANGLES);
+            DrawTriangle(from, firstPos, prevPos.Value);
+            GL.End();
+
             GL.PopMatrix();
         }
 
