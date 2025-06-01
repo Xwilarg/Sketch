@@ -38,9 +38,18 @@ namespace Sketch.Circle
 
         private void SpawnOne()
         {
+            GameObject go = null;
+
             var bounds = _cam.CalculateBounds();
-            var p = new Vector2(Random.Range(bounds.min.x + 1f, bounds.max.x - 1f), Random.Range(bounds.min.y + 1f, bounds.max.y - 1f));
-            var go = Instantiate(_spawnables[Random.Range(0, _spawnables.Length)], p, Quaternion.identity);
+            while (go == null)
+            {
+                var p = new Vector2(Random.Range(bounds.min.x + 1f, bounds.max.x - 1f), Random.Range(bounds.min.y + 1f, bounds.max.y - 1f));
+
+                if (Physics2D.OverlapCircle(p, 1f) == null)
+                {
+                    go = Instantiate(_spawnables[Random.Range(0, _spawnables.Length)], p, Quaternion.identity);
+                }
+            }
             _enemies.Add(go.GetComponent<CircleEnemy>());
         }
     }
