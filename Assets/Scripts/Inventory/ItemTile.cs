@@ -69,19 +69,26 @@ namespace Sketch.Inventory
             }
             else
             {
-                if (me.ContainedItem == null) // Nothing here, we just move the item
+                if (me.ContainedItem == null)
                 {
-                    Debug.Log("No item");
+                    // Slot is empty, we just move the item
                     me.SetItem(InventoryManager.Instance.DraggingTile.ContainedItem, InventoryManager.Instance.DraggingTile.Count);
                     InventoryManager.Instance.DraggingTile.SetItem(null);
                 }
                 else if (me.ContainedItem.Name == InventoryManager.Instance.DraggingTile.ContainedItem.Name)
                 {
-                    Debug.Log("Same item");
+                    if (me.GetInstanceID() == InventoryManager.Instance.DraggingTile.GetInstanceID())
+                    {
+                        // The target tile is the current tile we are on, nothing to do
+                    }
+                    else
+                    {
+                        Debug.Log("Same item");
+                    }
                 }
                 else
                 {
-                    Debug.Log("Switch item");
+                    // Target item is different, so we switch their position
                     (InventoryItemInfo TmpItem, int TmpCount) = (me.ContainedItem, me.Count);
                     me.SetItem(InventoryManager.Instance.DraggingTile.ContainedItem, InventoryManager.Instance.DraggingTile.Count);
                     InventoryManager.Instance.DraggingTile.SetItem(TmpItem, TmpCount);

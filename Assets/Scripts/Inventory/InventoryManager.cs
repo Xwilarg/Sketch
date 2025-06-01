@@ -1,6 +1,8 @@
+using Sketch.Common;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Sketch.Inventory
@@ -21,6 +23,8 @@ namespace Sketch.Inventory
 
         [SerializeField]
         private InventoryItemInfo[] _defaultItems;
+
+        private PlayerInput _pInput;
 
         public static InventoryManager Instance { private set; get; }
 
@@ -63,6 +67,8 @@ namespace Sketch.Inventory
         {
             Instance = this;
 
+            _pInput = GetComponent<PlayerInput>();
+
             _dragItem.gameObject.SetActive(false);
             for (int i = 0; i < _inventoryTileCount; i++)
             {
@@ -73,6 +79,15 @@ namespace Sketch.Inventory
             foreach (var i in _defaultItems)
             {
                 TryAddItem(i);
+            }
+        }
+
+        private void Update()
+        {
+            if (_dragItem.gameObject.activeInHierarchy)
+            {
+                var mouse = CursorUtils.GetPosition(_pInput);
+                _dragItem.transform.position = (Vector3)mouse;
             }
         }
     }
