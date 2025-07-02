@@ -1,10 +1,10 @@
 ﻿using Ink.Runtime;
-using Sketch.Achievement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -17,34 +17,31 @@ namespace Sketch.VN
         public static bool QuickRetry = false;
         public static VNManager Instance { private set; get; }
 
-        [SerializeField]
+        [SerializeField, Tooltip("Text that will show your visual novel story")]
         private TextDisplay _display;
 
-        [SerializeField]
+        [SerializeField, Tooltip("List of characters that are shown by your visual novel")]
         private VNCharacterInfo[] _characters;
         private VNCharacterInfo _currentCharacter;
 
         private Story _story;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Object that contains all the others visual novel components")]
         private GameObject _container;
 
-        [SerializeField]
-        private TextAsset _intro;
-
-        [SerializeField]
+        [SerializeField, Tooltip("Pannel around the name text")]
         private GameObject _namePanel;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Text that show the name of the character")]
         private TMP_Text _nameText;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Where the image of the character will be shown")]
         private Image _characterImage;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Object that contains the choices")]
         private Transform _choiceContainer;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Prefab of the choices to spawn them in runtime")]
         private GameObject _choicePrefab;
 
         private bool _isSkipEnabled;
@@ -53,7 +50,7 @@ namespace Sketch.VN
 
         private bool _isAutoEnabled;
 
-        private bool _didUseSkip;
+        public UnityEvent<string, string> OnTagParsed { get; } = new();
 
         private void Awake()
         {
@@ -85,11 +82,6 @@ namespace Sketch.VN
                     StartCoroutine(AutoNextDialogue());
                 }
             };
-        }
-
-        private void Start()
-        {
-            ShowStory(_intro);
         }
 
         private IEnumerator AutoNextDialogue()
@@ -172,18 +164,6 @@ namespace Sketch.VN
                         else Debug.LogError($"[STORY] Unable to find format {content}");
                         break;
 
-                    case "ach-noskip":
-                        if (content == "START") _didUseSkip = false;
-                        else if (content == "STOP")
-                        {
-                            if (!_didUseSkip)
-                            {
-                                AchievementManager.Instance.Unlock(AchievementID.VIS_NoSkip);
-                            }
-                        }
-                        else Debug.LogError($"[STORY] Invalid achievement value {content}");
-                        break;
-
                     default:
                         Debug.LogError($"Unknown story key: {s[0]}");
                         break;
@@ -230,11 +210,6 @@ namespace Sketch.VN
         public void ToggleSkip()
         {
             _isSkipEnabled = !_isSkipEnabled;
-
-            if (_isSkipEnabled)
-            {
-                _didUseSkip = true;
-            }
         }
 
         public void ToggleAuto()
