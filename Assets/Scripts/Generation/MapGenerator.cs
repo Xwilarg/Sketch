@@ -455,8 +455,8 @@ namespace Sketch.Generation
         /// <returns></returns>
         private IEnumerator GenerateRoom(int x, int y, MapArea fromArea)
         {
-            var pxlSize = LocalToGlobalScale;
-            var realPos = new Vector2(x, y) * pxlSize;
+            //var pxlSize = LocalToGlobalScale;
+            //var realPos = new Vector2(x, y) * pxlSize;
             var bounds = _cam.CalculateBounds();
             /*if (realPos.x < bounds.min.x - pxlSize || realPos.x > bounds.max.x + pxlSize || realPos.y < bounds.min.y - pxlSize || realPos.y > bounds.max.y + pxlSize)
             {
@@ -498,7 +498,7 @@ namespace Sketch.Generation
                         // Place the room
                         yield return new WaitForEndOfFrame();
                         _roomMade++;
-                        var newArea = _grid.GetOrCreateMapAreaFromWorld(new Vector2(x - door.x, y - door.y) * pxlSize, _mapAreaFactory);
+                        var newArea = _grid.GetOrCreateMapAreaFromWorld(new Vector2(x - door.x, y - door.y) * LocalToGlobalScale, _mapAreaFactory);
                         _generatedRr = MakeRR(newArea);
                         DrawRoom(room, x - door.x, y - door.y, _generatedRr);
                         newArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
@@ -514,7 +514,7 @@ namespace Sketch.Generation
             target.SR = null;
 
             _roomMade++;
-            var p = (Vector2)new(x, y) * pxlSize;
+            var p = (Vector2)new(x, y) * LocalToGlobalScale;
             var floor = Instantiate(_floorPrefab, target.RR.Container);
             floor.transform.position = p;
             floor.name = $"Floor ({x};{y})";

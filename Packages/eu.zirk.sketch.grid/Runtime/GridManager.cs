@@ -28,7 +28,7 @@ namespace Sketch.Grid
         /// </summary>
         private Vector2Int GlobalToMapAreaCoordinate(Vector2 v)
         {
-            return new Vector2Int(Mathf.RoundToInt(v.x / _areaSize), Mathf.RoundToInt(v.y / _areaSize));
+            return new Vector2Int(Mathf.RoundToInt(v.x / LocalToGlobalScale / _areaSize), Mathf.RoundToInt(v.y / LocalToGlobalScale / _areaSize));
         }
 
         public Bounds GetTile(Vector2 worldPos)
@@ -52,7 +52,6 @@ namespace Sketch.Grid
             {
                 return _areas[p];
             }
-            Debug.Log($"{p}");
             var area = factory.CreateMapArea<MA>(p, _areaSize, LocalToGlobalScale);
             _areas.Add(p, area);
             return area;
