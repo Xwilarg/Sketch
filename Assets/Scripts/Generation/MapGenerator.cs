@@ -303,7 +303,7 @@ namespace Sketch.Generation
                     // Fill doors
                     if (_generatedRr != null)
                     {
-                        foreach (var door in _grid.Where<InstanciatedTileData>((key, value) => value.Tile == TileType.DOOR)) // TODO
+                        foreach (var door in areas.SelectMany(x => x.Value.Where<InstanciatedTileData>((key, value) => value.Tile == TileType.DOOR))) // TODO
                         {
                             // Remove doors that lead to a wall or another door
                             if (directions.Count(x => _grid.Has(door.Key + x) && _grid.Get<InstanciatedTileData>(door.Key + x).Tile != TileType.FLOOR && _grid.Get<InstanciatedTileData>(door.Key + x).Tile != TileType.NONE) >= 3)
