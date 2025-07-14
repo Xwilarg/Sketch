@@ -1,6 +1,5 @@
 using Mono.Cecil;
 using Sketch.Grid.MapArea;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -63,22 +62,22 @@ namespace Sketch.Grid
 
         public void RegisterTile(Vector2Int p, ITileData data)
         {
-            GetOrCreateMapArea(p).Data.Add(p, data);
+            GetOrCreateMapArea(p / _areaSize).Data.Add(p, data);
         }
 
         public bool Has(Vector2Int p)
         {
-            return _areas.ContainsKey(p) && _areas[p].Data.ContainsKey(p);
+            return _areas.ContainsKey(p / _areaSize) && _areas[p / _areaSize].Data.ContainsKey(p);
         }
 
         public T Get<T>(Vector2Int p) where T : ITileData
         {
-            return (T)_areas[p].Data[p];
+            return (T)_areas[p / _areaSize].Data[p];
         }
 
         public void Set(Vector2Int p, ITileData data)
         {
-            _areas[p].Data[p] = data;
+            _areas[p / _areaSize].Data[p] = data;
         }
     }
 }
