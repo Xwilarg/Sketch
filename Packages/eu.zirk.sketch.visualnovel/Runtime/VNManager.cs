@@ -1,4 +1,5 @@
 ﻿using Ink.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Sketch.VN
@@ -50,7 +50,8 @@ namespace Sketch.VN
 
         private bool _isAutoEnabled;
 
-        public UnityEvent<string, string> OnTagParsed { get; } = new();
+        private Action _onDone;
+        private Func<string, string, bool> _onTags;
 
         private void Awake()
         {
@@ -124,11 +125,21 @@ namespace Sketch.VN
             }
         }
 
-        public void ShowStory(TextAsset asset)
+        /// <summary>
+        /// Start showing a story to the player
+        /// </summary>
+        /// <param name="asset">Compiled Ink file containing the story</param>
+        /// <param name="updateVariables">Method taking a VariablesState as parameter, allow to update the variables within the Ink file</param>
+        /// <param name="onDone">Called once the story is done being read</param>
+        /// <param name="onTags">Called upon an unknown tag is found, first parameter is the tag name and second is its value, function expect to return if the tag was treated or not</param>
+        public void ShowStory(TextAsset asset, Action<VariablesState> updateVariables = null, Action onDone = null, Func<string, string, bool> onTags = null)
         {
             Debug.Log($"[STORY] Playing {asset.name}");
             _currentCharacter = null;
             _story = new(asset.text);
+            updateVariables?.Invoke(_story.variablesState);
+            _onDone = onDone;
+            _onTags = onTags;
             ResetVN();
             DisplayStory(_story.Continue());
         }
@@ -154,8 +165,6 @@ namespace Sketch.VN
                                 Debug.LogError($"[STORY] Unable to find character {content}");
                             }
                         }
-
-                        Debug.Log($"[STORY] Speaker set to {_currentCharacter?.Name}");
                         break;
 
                     case "skip":
@@ -165,7 +174,10 @@ namespace Sketch.VN
                         break;
 
                     default:
-                        Debug.LogError($"Unknown story key: {s[0]}");
+                        if (_onTags == null || !_onTags.Invoke(s[0], content))
+                        {
+                            Debug.LogError($"[STORY] Unknown tag {s[0]}");
+                        }
                         break;
                 }
             }
@@ -184,6 +196,9 @@ namespace Sketch.VN
             }
         }
 
+        /// <summary>
+        /// Display the next dialogue if available
+        /// </summary>
         public void DisplayNextDialogue()
         {
             if (!_container.activeInHierarchy)
@@ -203,15 +218,23 @@ namespace Sketch.VN
             else if (!_story.canContinue && !_story.currentChoices.Any())
             {
                 _container.SetActive(false);
-                SceneManager.LoadScene("Main");
+                _onDone?.Invoke();
             }
         }
 
+        /// <summary>
+        /// Toggle visual novel skip
+        /// Skip allow to quickly go throught dialogues without needing user click to pass them
+        /// </summary>
         public void ToggleSkip()
         {
             _isSkipEnabled = !_isSkipEnabled;
         }
 
+        /// <summary>
+        /// Toggle visual novel auto
+        /// Auto slowly go throught dialogues without needing user click to pass them
+        /// </summary>
         public void ToggleAuto()
         {
             _isAutoEnabled = !_isAutoEnabled;
@@ -222,6 +245,9 @@ namespace Sketch.VN
             }
         }
 
+        /// <summary>
+        /// Hide all the visual novel interface until the user click anywhere
+        /// </summary>
         public void ToggleHide()
         {
             _container.SetActive(!_container.activeInHierarchy);

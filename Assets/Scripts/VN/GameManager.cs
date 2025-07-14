@@ -13,19 +13,25 @@ namespace Sketch.VN
 
         private void Start()
         {
-            VNManager.Instance.ShowStory(_introStory);
-
-            VNManager.Instance.OnTagParsed.AddListener((string tag, string value) =>
-            {
-                if (value == "START") _didUseSkip = false;
-                else
+            VNManager.Instance.ShowStory(_introStory,
+                onDone: () => { },
+                onTags: (tag, value) =>
                 {
-                    if (!_didUseSkip)
+                    if (tag == "ach-noskip")
                     {
-                        AchievementManager.Instance.Unlock(AchievementID.VIS_NoSkip);
+                        if (value == "START") _didUseSkip = false;
+                        else
+                        {
+                            if (!_didUseSkip)
+                            {
+                                AchievementManager.Instance.Unlock(AchievementID.VIS_NoSkip);
+                            }
+                        }
+                        return true;
                     }
+                    return false;
                 }
-            });
+            );
         }
 
         public void OnUseSkip(InputAction value)
