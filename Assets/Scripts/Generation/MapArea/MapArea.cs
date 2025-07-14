@@ -1,18 +1,19 @@
+using Sketch.Grid.MapArea;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace Sketch.Generation
+namespace Sketch.Generation.Area
 {
-    public class MapArea
+    public class MapArea : AMapArea
     {
-        public MapArea(int x, int y, GameObject lrPrefab, GameObject textHint, Vector2 minBound, Vector2 maxBound)
+        public MapArea(int x, int y, GameObject lrPrefab, GameObject textHint, Vector2 center, float size) : base(new Bounds(center, size * Vector2.one))
         {
             RoomRoot = new GameObject($"Rooms ({x} ; {y})").transform;
-            RoomRoot.transform.position = (maxBound - minBound) / 2f;
 
-            MinBound = minBound;
-            MaxBound = maxBound;
+            MinBound = Bounds.min;
+            MaxBound = Bounds.max;
+            RoomRoot.transform.position = (Bounds.max - Bounds.min) / 2f;
 
             // Add lines debug to show areas
             _lrs = new LineRenderer[]
@@ -22,12 +23,12 @@ namespace Sketch.Generation
                 Object.Instantiate(lrPrefab, RoomRoot).GetComponent<LineRenderer>(),
                 Object.Instantiate(lrPrefab, RoomRoot).GetComponent<LineRenderer>()
             };
-            _lrs[0].SetPositions(new Vector3[] { minBound, new Vector2(maxBound.x, minBound.y) });
-            _lrs[1].SetPositions(new Vector3[] { minBound, new Vector2(minBound.x, maxBound.y) });
-            _lrs[2].SetPositions(new Vector3[] { new Vector2(minBound.x, maxBound.y), maxBound });
-            _lrs[3].SetPositions(new Vector3[] { new Vector2(maxBound.x, minBound.y), maxBound });
+            _lrs[0].SetPositions(new Vector3[] { Bounds.min, new Vector2(Bounds.max.x, Bounds.min.y) });
+            _lrs[1].SetPositions(new Vector3[] { Bounds.min, new Vector2(Bounds.min.x, Bounds.max.y) });
+            _lrs[2].SetPositions(new Vector3[] { new Vector2(Bounds.min.x, Bounds.max.y), Bounds.max });
+            _lrs[3].SetPositions(new Vector3[] { new Vector2(Bounds.max.x, Bounds.min.y), Bounds.max });
             _textHint = Object.Instantiate(textHint, RoomRoot);
-            _textHint.transform.position = minBound + new Vector2(.5f, -.5f);
+            _textHint.transform.position = new Vector2(Bounds.min.x + .5f, Bounds.max.y - .5f);
             _textHint.GetComponent<TMP_Text>().text = $"{x};{y}";
 
             Toggle(false);

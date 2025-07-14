@@ -1,5 +1,7 @@
 using Sketch.Achievement;
 using Sketch.Common;
+using Sketch.Generation.Area;
+using Sketch.Grid;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,26 +54,24 @@ namespace Sketch.Generation
         // The room we clicked on
         private RuntimeRoom _highlightedRoom;
 
-        // We split the world into areas for optimization purposes
-        private readonly Dictionary<Vector2Int, MapArea> _areas = new();
-
         // All tiles instanciated
         // This is used as a grid to check if some tile is at a specific position
         private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
-
-        /// <summary>
-        /// Size used for MapArea
-        /// </summary>
-        private const int AreaSize = 10;
 
         private int _runtimeRoomId;
 
         private float LocalToGlobalScale => _tilePixelSize / 100f;
 
+        private GridManager<MapArea> _grid;
+        private MapAreaFactory _mapAreaFactory;
+
         private void Awake()
         {
             Instance = this;
             _dInput = GetComponent<DragInput>();
+
+            _grid = new(_tilePixelSize, 20);
+            _mapAreaFactory = new(_lrAreaPrefab, _textAreaHint);
 
             _cam = Camera.main;
             _availableRooms = _rooms.SelectMany(r => // Convert all room text assets to RoomData
@@ -172,7 +172,7 @@ namespace Sketch.Generation
 
             // Create first room
             var startingRoom = _availableRooms[0];
-            var mapArea = GetOrCreateMapArea(Vector2Int.zero);
+            var mapArea = _grid.GetOrCreateMapArea(Vector2Int.zero, _mapAreaFactory);
             RuntimeRoom rr = MakeRR(mapArea);
             DrawRoom(startingRoom, 0, 0, rr);
             mapArea.NextDoors.AddRange(startingRoom.Doors);
@@ -194,7 +194,7 @@ namespace Sketch.Generation
             }
 
             var rounded = new Vector2Int(Mathf.RoundToInt(pos.x / (LocalToGlobalScale)), Mathf.RoundToInt(pos.y / (LocalToGlobalScale)));
-            var room = _areas.SelectMany(x => x.Value.Rooms).FirstOrDefault(x => x.Floors.Contains(rounded));
+            var room = _grid.GetAllMapAreas().SelectMany(x => x.Rooms).FirstOrDefault(x => x.Floors.Contains(rounded));
             if (room != null)
             {
                 _highlightedRoom = room;
@@ -205,24 +205,6 @@ namespace Sketch.Generation
                     AchievementManager.Instance.Unlock(AchievementID.GEN_noDoor);
                 }
             }
-        }
-
-        /// <summary>
-        /// Convert a coordinate in the world by one that can be used by <see cref="GetOrCreateMapArea(Vector2Int)"/>
-        /// </summary>
-        private Vector2Int GlobalToMapAreaCoordinate(Vector2 v)
-        {
-            return new Vector2Int(Mathf.RoundToInt(v.x / AreaSize), Mathf.RoundToInt(v.y / AreaSize));
-        }
-        private MapArea GetOrCreateMapArea(Vector2Int p)
-        {
-            if (_areas.ContainsKey(p))
-            {
-                return _areas[p];
-            }
-            var area = new MapArea(p.x, p.y, _lrAreaPrefab, _textAreaHint, (p - Vector2.one / 2f) * AreaSize, (p + Vector2.one / 2f) * AreaSize);
-            _areas.Add(p, area);
-            return area;
         }
 
         /// <summary>
@@ -257,7 +239,7 @@ namespace Sketch.Generation
             r1.AddAdjacentRoom(r2);
             r2.AddAdjacentRoom(r1);
 
-            var allRuntimes = _areas.SelectMany(x => x.Value.Rooms); // TODO: Don't do on all?
+            var allRuntimes = _grid.GetAllMapAreas().SelectMany(x => x.Rooms); // TODO: Don't do on all?
             while (allRuntimes.Any(x => x.UpdateDistances()))
             { }
         }
@@ -295,7 +277,7 @@ namespace Sketch.Generation
                     {
                         for (int x = -1; x <= 1; x++)
                         {
-                            var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate(pos) + new Vector2Int(x, y));
+                            var area = _grid.GetOrCreateMapAreaFromWorld(pos, _mapAreaFactory, x, y);
                             if (true)//area.NextDoors.Count > 0 || area.Rooms.Count > 0)
                             {
                                 areas.Add(new(x, y), area);
@@ -339,7 +321,7 @@ namespace Sketch.Generation
                             // Same for inside doors
                             else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
                             {
-                                var adjacentRoom = _areas.SelectMany(x => x.Value.Rooms).First(x => x.Doors.Contains(door.Key));
+                                var adjacentRoom = _grid.GetAllMapAreas().SelectMany(x => x.Rooms).First(x => x.Doors.Contains(door.Key));
 
                                 AddRoomLinks(_generatedRr, adjacentRoom);
 
@@ -389,7 +371,7 @@ namespace Sketch.Generation
                         yield return new WaitForEndOfFrame();
                         group.Clear();
 
-                        var area = GetOrCreateMapArea(GlobalToMapAreaCoordinate((Vector2)empty[0] * LocalToGlobalScale));
+                        var area = _grid.GetOrCreateMapAreaFromWorld((Vector2)empty[0] * LocalToGlobalScale, _mapAreaFactory);
                         var rr = MakeRR(area);
 
                         var first = empty[0];
@@ -516,7 +498,7 @@ namespace Sketch.Generation
                         // Place the room
                         yield return new WaitForEndOfFrame();
                         _roomMade++;
-                        var newArea = GetOrCreateMapArea(GlobalToMapAreaCoordinate(new Vector2(x - door.x, y - door.y) * pxlSize));
+                        var newArea = _grid.GetOrCreateMapAreaFromWorld(new Vector2(x - door.x, y - door.y) * pxlSize, _mapAreaFactory);
                         _generatedRr = MakeRR(newArea);
                         DrawRoom(room, x - door.x, y - door.y, _generatedRr);
                         newArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
