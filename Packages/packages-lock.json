@@ -276,6 +276,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "eu.zirk.sketch.grid": {
+      "version": "file:eu.zirk.sketch.grid",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "eu.zirk.sketch.visualnovel": {
       "version": "file:eu.zirk.sketch.visualnovel",
       "depth": 0,
