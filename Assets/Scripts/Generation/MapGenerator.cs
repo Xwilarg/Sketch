@@ -54,24 +54,18 @@ namespace Sketch.Generation
         // The room we clicked on
         private RuntimeRoom _highlightedRoom;
 
-        // All tiles instanciated
-        // This is used as a grid to check if some tile is at a specific position
-        private readonly Dictionary<Vector2Int, InstanciatedTileData> _tiles = new();
-
         private int _runtimeRoomId;
 
         private float LocalToGlobalScale => _tilePixelSize / 100f;
 
         private GridManager<MapArea> _grid;
-        private MapAreaFactory _mapAreaFactory;
 
         private void Awake()
         {
             Instance = this;
             _dInput = GetComponent<DragInput>();
 
-            _grid = new(_tilePixelSize, 20);
-            _mapAreaFactory = new(_lrAreaPrefab, _textAreaHint);
+            _grid = new(_tilePixelSize, 20, new MapAreaFactory(_lrAreaPrefab, _textAreaHint));
 
             _cam = Camera.main;
             _availableRooms = _rooms.SelectMany(r => // Convert all room text assets to RoomData
@@ -172,7 +166,7 @@ namespace Sketch.Generation
 
             // Create first room
             var startingRoom = _availableRooms[0];
-            var mapArea = _grid.GetOrCreateMapArea(Vector2Int.zero, _mapAreaFactory);
+            var mapArea = _grid.GetOrCreateMapArea(Vector2Int.zero);
             RuntimeRoom rr = MakeRR(mapArea);
             DrawRoom(startingRoom, 0, 0, rr);
             mapArea.NextDoors.AddRange(startingRoom.Doors);
@@ -277,7 +271,7 @@ namespace Sketch.Generation
                     {
                         for (int x = -1; x <= 1; x++)
                         {
-                            var area = _grid.GetOrCreateMapAreaFromWorld(pos, _mapAreaFactory, x, y);
+                            var area = _grid.GetOrCreateMapAreaFromWorld(pos, x, y);
                             if (true)//area.NextDoors.Count > 0 || area.Rooms.Count > 0)
                             {
                                 areas.Add(new(x, y), area);
@@ -309,17 +303,17 @@ namespace Sketch.Generation
                     // Fill doors
                     if (_generatedRr != null)
                     {
-                        foreach (var door in _tiles.Where(x => x.Value.Tile == TileType.DOOR)) // TODO
+                        foreach (var door in _grid.Where<InstanciatedTileData>((key, value) => value.Tile == TileType.DOOR)) // TODO
                         {
                             // Remove doors that lead to a wall or another door
-                            if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile != TileType.FLOOR && _tiles[door.Key + x].Tile != TileType.NONE) >= 3)
+                            if (directions.Count(x => _grid.Has(door.Key + x) && _grid.Get<InstanciatedTileData>(door.Key + x).Tile != TileType.FLOOR && _grid.Get<InstanciatedTileData>(door.Key + x).Tile != TileType.NONE) >= 3)
                             {
                                 // DEBUG
                                 door.Value.SR.color = Color.white;
                                 door.Value.Tile = TileType.WALL;
                             }
                             // Same for inside doors
-                            else if (directions.Count(x => _tiles.ContainsKey(door.Key + x) && _tiles[door.Key + x].Tile == TileType.FLOOR) == 2)
+                            else if (directions.Count(x => _grid.Has(door.Key + x) && _grid.Get<InstanciatedTileData>(door.Key + x).Tile == TileType.FLOOR) == 2)
                             {
                                 var adjacentRoom = _grid.GetAllMapAreas().SelectMany(x => x.Rooms).First(x => x.Doors.Contains(door.Key));
 
@@ -358,7 +352,7 @@ namespace Sketch.Generation
                     {
                         for (int x = Mathf.RoundToInt(min.x); x < Mathf.RoundToInt(max.x); x++)
                         {
-                            if (!_tiles.ContainsKey(new(x, y)))
+                            if (!_grid.Has(new(x, y)))
                             {
                                 empty.Add(new(x, y));
                             }
@@ -371,7 +365,7 @@ namespace Sketch.Generation
                         yield return new WaitForEndOfFrame();
                         group.Clear();
 
-                        var area = _grid.GetOrCreateMapAreaFromWorld((Vector2)empty[0] * LocalToGlobalScale, _mapAreaFactory);
+                        var area = _grid.GetOrCreateMapAreaFromWorld((Vector2)empty[0] * LocalToGlobalScale);
                         var rr = MakeRR(area);
 
                         var first = empty[0];
@@ -415,23 +409,24 @@ namespace Sketch.Generation
 
                         foreach (var f in group)
                         {
-                            _tiles[f.Key] = new InstanciatedTileData()
+                            _grid.RegisterTile(f.Key, new InstanciatedTileData()
                             {
                                 RR = rr,
                                 SR = f.Value.GetComponent<SpriteRenderer>(),
                                 Tile = TileType.FLOOR
-                            };
+                            });
                         }
                         rr.Floors.AddRange(group.Keys);
                         rr.LateInit();
                         foreach (var t in group.Keys)
                         {
-                            foreach (var room in directions.Where(d => _tiles.ContainsKey(t + d)))
+                            foreach (var room in directions.Where(d => _grid.Has(t + d)))
                             {
-                                var r = _tiles[t + room].RR;
+                                var tile = _grid.Get<InstanciatedTileData>(t + room);
+                                var r = tile.RR;
                                 if (r != null && r.ID != rr.ID && r.Doors.Contains(t + room))
                                 {
-                                    AddRoomLinks(rr, _tiles[t + room].RR);
+                                    AddRoomLinks(rr, tile.RR);
                                 }
                             }
                         }
@@ -476,7 +471,7 @@ namespace Sketch.Generation
                         {
                             var globalPos = new Vector2Int(x - door.x + dx, y - door.y + dy);
                             var me = room.Data[dx, dy];
-                            var other = !_tiles.ContainsKey(globalPos) ? TileType.NONE : _tiles[globalPos].Tile;
+                            var other = !_grid.Has(globalPos) ? TileType.NONE : _grid.Get<InstanciatedTileData>(globalPos).Tile;
                             if (other != TileType.NONE && other != me) // We can't place the tile if we are a wall but there is already a wall there
                             {
                                 // So let's check the next room
@@ -498,7 +493,7 @@ namespace Sketch.Generation
                         // Place the room
                         yield return new WaitForEndOfFrame();
                         _roomMade++;
-                        var newArea = _grid.GetOrCreateMapAreaFromWorld(new Vector2(x - door.x, y - door.y) * LocalToGlobalScale, _mapAreaFactory);
+                        var newArea = _grid.GetOrCreateMapAreaFromWorld(new Vector2(x - door.x, y - door.y) * LocalToGlobalScale);
                         _generatedRr = MakeRR(newArea);
                         DrawRoom(room, x - door.x, y - door.y, _generatedRr);
                         newArea.NextDoors.AddRange(room.Doors.Select(d => new Vector2Int(x - door.x + d.x, y - door.y + d.y)));
@@ -508,7 +503,7 @@ namespace Sketch.Generation
                 }
             }
             // We can't do anything with that door
-            var target = _tiles[new(x, y)];
+            var target = _grid.Get<InstanciatedTileData>(new(x, y));
             target.Tile = TileType.FLOOR;
             Destroy(target.SR.gameObject);
             target.SR = null;
@@ -549,7 +544,7 @@ namespace Sketch.Generation
                     var yPos = y + dy;
                     var p = new Vector2Int(xPos, yPos);
                     GameObject instance;
-                    if (!_tiles.ContainsKey(p)) // We didn't already place the tile and it's a wall
+                    if (!_grid.Has(p)) // We didn't already place the tile and it's a wall
                     {
                         if (room.Data[dx, dy] == TileType.WALL)
                         {
@@ -573,7 +568,7 @@ namespace Sketch.Generation
                             instance.name = $"Floor ({p.x};{p.y})";
                             rr.Floors.Add(p);
                         }
-                        _tiles.Add(p, new() { SR = instance.GetComponent<SpriteRenderer>(), Tile = room.Data[dx, dy], RR = rr });
+                        _grid.RegisterTile(p, new InstanciatedTileData() { SR = instance.GetComponent<SpriteRenderer>(), Tile = room.Data[dx, dy], RR = rr });
                     }
                 }
             }

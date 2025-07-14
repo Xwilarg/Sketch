@@ -1,22 +1,26 @@
+using Mono.Cecil;
 using Sketch.Grid.MapArea;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 namespace Sketch.Grid
 {
-    public class GridManager<MA> where MA : AMapArea
+    public class GridManager<MA> where MA : BaseMapArea
     {
         /// <param name="elementsize">The size of a tile, if your scale is 1 it'll be 100</param>
         /// <param name="areaSize">Amount of tiles we contains within a sub-group</param>
-        public GridManager(float elementSize, int areaSize)
+        public GridManager(float elementSize, int areaSize, AMapAreaFactory factory)
         {
             _elementSize = elementSize;
             _areaSize = areaSize;
+            _factory = factory;
         }
 
 
         private readonly float _elementSize;
         private readonly int _areaSize;
+        private AMapAreaFactory _factory;
 
         private float LocalToGlobalScale => _elementSize / 100f;
 
@@ -41,20 +45,45 @@ namespace Sketch.Grid
         public IEnumerable<MA> GetAllMapAreas()
             => _areas.Select(x => x.Value);
 
-        public MA GetOrCreateMapAreaFromWorld(Vector2 worldP, AMapAreaFactory factory, int xOffset = 0, int yOffset = 0)
+        public MA GetOrCreateMapAreaFromWorld(Vector2 worldP, int xOffset = 0, int yOffset = 0)
         {
-            return GetOrCreateMapArea(GlobalToMapAreaCoordinate(worldP) + new Vector2Int(xOffset, yOffset), factory);
+            return GetOrCreateMapArea(GlobalToMapAreaCoordinate(worldP) + new Vector2Int(xOffset, yOffset));
         }
 
-        public MA GetOrCreateMapArea(Vector2Int p, AMapAreaFactory factory)
+        public MA GetOrCreateMapArea(Vector2Int p)
         {
             if (_areas.ContainsKey(p))
             {
                 return _areas[p];
             }
-            var area = factory.CreateMapArea<MA>(p, _areaSize, LocalToGlobalScale);
+            var area = _factory.CreateMapArea<MA>(p, _areaSize, LocalToGlobalScale);
             _areas.Add(p, area);
             return area;
+        }
+
+        public IEnumerable<KeyValuePair<Vector2Int, T>> Where<T>(Func<Vector2Int, T, bool> func) where T : ITileData
+        {
+            return _areas.SelectMany(x => x.Value.Data).Where(x => func(x.Key, (T)x.Value)).Select(x => new KeyValuePair<Vector2Int, T>(x.Key, (T)x.Value));
+        }
+
+        public void RegisterTile(Vector2Int p, ITileData data)
+        {
+            GetOrCreateMapArea(p).Data.Add(p, data);
+        }
+
+        public bool Has(Vector2Int p)
+        {
+            return _areas.ContainsKey(p) && _areas[p].Data.ContainsKey(p);
+        }
+
+        public T Get<T>(Vector2Int p) where T : ITileData
+        {
+            return (T)_areas[p].Data[p];
+        }
+
+        public void Set(Vector2Int p, ITileData data)
+        {
+            _areas[p].Data[p] = data;
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Sketch.Generation.Area
 {
-    public class MapArea : AMapArea
+    public class MapArea : BaseMapArea
     {
         public MapArea(int x, int y, GameObject lrPrefab, GameObject textHint, Vector2 center, float size) : base(new Bounds(center, size * Vector2.one))
         {

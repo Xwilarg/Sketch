@@ -15,7 +15,7 @@ namespace Sketch.Generation.Area
 
         public override T CreateMapArea<T>(Vector2Int p, int areaSize, float globalScale)
         {
-            return (T)(AMapArea)new MapArea(p.x, p.y, _lrPrefab, _textHint, (Vector2)p * globalScale * areaSize, areaSize * globalScale);
+            return (T)(BaseMapArea)new MapArea(p.x, p.y, _lrPrefab, _textHint, (Vector2)p * globalScale * areaSize, areaSize * globalScale);
         }
     }
 }
