@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace Sketch.Persistency
 {
-    public class PersistencyManager
+    public class PersistencyManager<T>
+        where T : ISaveData, new()
     {
         // Exactly 16 bytes
         private const string _key = "Yuzu we love you";
@@ -41,8 +42,8 @@ namespace Sketch.Persistency
 
         private static string SaveFilePath => Path.Combine(Application.persistentDataPath, "save.sav");
 
-        private static PersistencyManager _instance;
-        public static PersistencyManager Instance
+        private static PersistencyManager<T> _instance;
+        public static PersistencyManager<T> Instance
         {
             get
             {
@@ -57,8 +58,8 @@ namespace Sketch.Persistency
 
         public int PersistencySize => File.Exists(SaveFilePath) ? File.ReadAllBytes(SaveFilePath).Length : 0;
 
-        private SaveData _saveData;
-        public SaveData SaveData
+        private T _saveData;
+        public T SaveData
         {
             get
             {
@@ -66,11 +67,11 @@ namespace Sketch.Persistency
                 {
                     if (File.Exists(SaveFilePath))
                     {
-                        _saveData = JsonConvert.DeserializeObject<SaveData>(Decrypt(File.ReadAllBytes(SaveFilePath)));
+                        _saveData = JsonConvert.DeserializeObject<T>(Decrypt(File.ReadAllBytes(SaveFilePath)));
                         if (_saveData == null)
                         {
                             Debug.LogError("Save file couldn't be parsed, creating a new one...");
-                            _saveData = new SaveData();
+                            _saveData = new();
                         }
                     }
                     else

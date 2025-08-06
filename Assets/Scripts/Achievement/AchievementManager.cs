@@ -23,7 +23,7 @@ namespace Sketch.Achievement
 
         public void Unlock(AchievementID achievement)
         {
-            if (PersistencyManager.Instance.SaveData.IsUnlocked(achievement))
+            if (PersistencyManager<SaveData>.Instance.SaveData.IsUnlocked(achievement))
             {
                 return;
             }
@@ -32,8 +32,8 @@ namespace Sketch.Achievement
             var data = Achievements[achievement];
             instance.GetComponentInChildren<TMP_Text>().text = data.Name;
 
-            PersistencyManager.Instance.SaveData.Unlock(achievement);
-            PersistencyManager.Instance.Save();
+            PersistencyManager<SaveData>.Instance.SaveData.Unlock(achievement);
+            PersistencyManager<SaveData>.Instance.Save();
 
             Destroy(instance, 2f);
         }

@@ -1,10 +1,10 @@
 {
-  "name": "eu.zirk.sketch.common",
+  "name": "eu.zirk.sketch.persistency",
   "version": "1.0.0",
   "author": {
     "name": "Xwilarg",
     "email": "contact@zirk.eu",
     "url": "https://zirk.eu"
   },
-  "displayName": "Sketch.Common"
+  "displayName": "Sketch.Persistency"
 }

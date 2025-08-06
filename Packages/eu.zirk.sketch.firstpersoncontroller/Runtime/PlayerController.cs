@@ -1,5 +1,4 @@
 using Sketch.Common;
-using Sketch.Translation;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -10,9 +9,26 @@ namespace Sketch.FPS
 {
     public class PlayerController : MonoBehaviour
     {
+        [Header("Configuration")]
         [SerializeField]
-        private PlayerInfo _info;
+        private float _mouvementSpeed = 5f;
 
+        [SerializeField]
+        private float _horizontalSensitivity = .1f;
+
+        [SerializeField]
+        private float _verticalSensitivity = .1f;
+
+        [SerializeField]
+        private float _runningMultiplier = 1.5f;
+
+        [SerializeField]
+        private float _jumpForce = 2f;
+
+        [SerializeField]
+        private float _gravityMultiplier = .75f;
+
+        [Header("Data")]
         [SerializeField]
         private Transform _head;
         private float _headRotation;
@@ -21,9 +37,10 @@ namespace Sketch.FPS
         private PlayerInput _pInput;
 
         [SerializeField]
-        private TMP_Text _interactionText;
-
         private TriggerArea _triggerArea;
+
+        [SerializeField]
+        private TMP_Text _interactionText;
 
         /*[SerializeField]
         private RectTransform _stamina;
@@ -48,27 +65,33 @@ namespace Sketch.FPS
 
         private void Awake()
         {
+            if (_pInput == null) Debug.LogWarning("PInput not assigned, mobile controls won't be available");
+            if (_triggerArea == null) Debug.LogWarning("Trigger Area not assigned, interactions won't be available");
+            if (_interactionText == null) Debug.LogWarning("Interaction Text not assigned, interaction hints won't be available");
+
             _controller = GetComponent<CharacterController>();
             _baseSpawnPos = transform.position;
-            _interactionText.gameObject.SetActive(false);
+            if (_interactionText != null) _interactionText.gameObject.SetActive(false);
 
-            _triggerArea = GetComponentInChildren<TriggerArea>();
-            _triggerArea.OnTriggerEnterEvent.AddListener((Collider c) =>
+            if (_triggerArea != null)
             {
-                if (c.TryGetComponent<IInteractable>(out var i))
+                _triggerArea.OnTriggerEnterEvent.AddListener((Collider c) =>
                 {
-                    _interactions.Add(i);
-                    UpdateInteractionText();
-                }
-            });
-            _triggerArea.OnTriggerExitEvent.AddListener((Collider c) =>
-            {
-                if (c.gameObject.TryGetComponent<IInteractable>(out var i))
+                    if (c.TryGetComponent<IInteractable>(out var i))
+                    {
+                        _interactions.Add(i);
+                        UpdateInteractionText();
+                    }
+                });
+                _triggerArea.OnTriggerExitEvent.AddListener((Collider c) =>
                 {
-                    _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
-                    UpdateInteractionText();
-                }
-            });
+                    if (c.gameObject.TryGetComponent<IInteractable>(out var i))
+                    {
+                        _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
+                        UpdateInteractionText();
+                    }
+                });
+            }
         }
 
         private void Start()
@@ -109,22 +132,22 @@ namespace Sketch.FPS
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
             Vector3 moveDir = Vector3.zero;
-            moveDir.x = desiredMove.x * _info.ForceMultiplier * (_isSprinting/* && _staminaLeft > 0f*/ ? _info.SpeedRunningMultiplicator : 1f);
-            moveDir.z = desiredMove.z * _info.ForceMultiplier * (_isSprinting/* && _staminaLeft > 0f*/ ? _info.SpeedRunningMultiplicator : 1f);
+            moveDir.x = desiredMove.x * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+            moveDir.z = desiredMove.z * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
 
             if (_controller.isGrounded && _verticalSpeed < 0f) // We are on the ground and not jumping
             {
                 moveDir.y = -.1f; // Stick to the ground
-                _verticalSpeed = -_info.GravityMultiplicator;
+                _verticalSpeed = -_gravityMultiplier;
             }
             else
             {
                 // We are currently jumping, reduce our jump velocity by gravity and apply it
-                _verticalSpeed += Physics.gravity.y * _info.GravityMultiplicator * Time.deltaTime;
+                _verticalSpeed += Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
                 moveDir.y += _verticalSpeed;
             }
 
-            _controller.Move(moveDir * _info.MovementSpeed * Time.deltaTime);
+            _controller.Move(moveDir * Time.deltaTime);
 
             if (transform.position.y < -10f)
             {
@@ -156,12 +179,14 @@ namespace Sketch.FPS
 
         private void UpdateInteractionText()
         {
+            if (_interactionText == null) return;
+
             var interactions = InteractionByDistance;
             var validInteraction = interactions.FirstOrDefault(x => x.CanInteract(this));
             if (validInteraction != null)
             {
                 _interactionText.gameObject.SetActive(true);
-                _interactionText.text = Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(validInteraction.InteractionVerb));
+                _interactionText.text = $"Press 'E' to {validInteraction.InteractionVerb}"; //Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(validInteraction.InteractionVerb));
             }
             else
             {
@@ -173,7 +198,7 @@ namespace Sketch.FPS
                 else
                 {
                     _interactionText.gameObject.SetActive(true);
-                    _interactionText.text = Translate.Instance.Tr(closestInvalid.DenySentence);
+                    _interactionText.text = closestInvalid.DenySentence; //Translate.Instance.Tr(closestInvalid.DenySentence);
                 }
             }
         }
@@ -205,9 +230,9 @@ namespace Sketch.FPS
 
         private void OnLookInternal(Vector2 rot)
         {
-            transform.rotation *= Quaternion.AngleAxis(rot.x * _info.HorizontalLookMultiplier, Vector3.up);
+            transform.rotation *= Quaternion.AngleAxis(rot.x * _horizontalSensitivity, Vector3.up);
 
-            _headRotation -= rot.y * _info.VerticalLookMultiplier; // Vertical look is inverted by default, hence the -=
+            _headRotation -= rot.y * _verticalSensitivity; // Vertical look is inverted by default, hence the -=
 
             _headRotation = Mathf.Clamp(_headRotation, -89, 89);
             _head.transform.localRotation = Quaternion.AngleAxis(_headRotation, Vector3.right);
@@ -222,7 +247,7 @@ namespace Sketch.FPS
         {
             if (_controller.isGrounded)
             {
-                _verticalSpeed = _info.JumpForce;
+                _verticalSpeed = _jumpForce;
             }
         }
 

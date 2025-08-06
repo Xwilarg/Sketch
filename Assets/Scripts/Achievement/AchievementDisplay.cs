@@ -16,7 +16,7 @@ namespace Sketch.Achievement
         {
             foreach (var ach in AchievementManager.Instance.Achievements)
             {
-                var unlocked = PersistencyManager.Instance.SaveData.IsUnlocked(ach.Key);
+                var unlocked = PersistencyManager<SaveData>.Instance.SaveData.IsUnlocked(ach.Key);
 
                 var obj = Instantiate(_prefab, _container);
 

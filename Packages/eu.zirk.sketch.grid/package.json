@@ -1,9 +1,10 @@
 {
-    "name": "eu.zirk.sketch.grid",
-    "version": "1.0.0",
-    "author": {
-        "name": "Xwilarg",
-        "email": "contact@zirk.eu",
-        "url": "https://zirk.eu"
-    }
+  "name": "eu.zirk.sketch.grid",
+  "version": "1.0.0",
+  "author": {
+    "name": "Xwilarg",
+    "email": "contact@zirk.eu",
+    "url": "https://zirk.eu"
+  },
+  "displayName": "Sketch.Grid"
 }

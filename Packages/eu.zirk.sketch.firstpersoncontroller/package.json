@@ -1,0 +1,13 @@
+{
+  "name": "eu.zirk.sketch.firstpersoncontroller",
+  "version": "1.0.0",
+  "author": {
+    "name": "Xwilarg",
+    "email": "contact@zirk.eu",
+    "url": "https://zirk.eu"
+  },
+  "dependencies": {
+    "eu.zirk.sketch.common": "1.0.0"
+  },
+  "displayName": "Sketch.FirstPersonController"
+}

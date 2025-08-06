@@ -1,9 +1,9 @@
-﻿using Sketch.Achievement;
+using Sketch.Achievement;
 using System.Collections.Generic;
 
 namespace Sketch.Persistency
 {
-    public class SaveData
+    public class SaveData : ISaveData
     {
         public List<AchievementID> UnlockedAchievements { set; get; } = new();
 
@@ -13,7 +13,7 @@ namespace Sketch.Persistency
         public void Unlock(AchievementID id)
         {
             UnlockedAchievements.Add(id);
-            PersistencyManager.Instance.Save();
+            PersistencyManager<SaveData>.Instance.Save();
         }
     }
 }
