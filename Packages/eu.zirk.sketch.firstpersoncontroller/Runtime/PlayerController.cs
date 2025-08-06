@@ -177,6 +177,9 @@ namespace Sketch.FPS
             */
         }
 
+        public virtual string GetInteractionText(string interactionVerb) => $"Press 'E' to {interactionVerb}";
+        public virtual string GetDenyText(string denySentence) => denySentence;
+
         private void UpdateInteractionText()
         {
             if (_interactionText == null) return;
@@ -186,7 +189,7 @@ namespace Sketch.FPS
             if (validInteraction != null)
             {
                 _interactionText.gameObject.SetActive(true);
-                _interactionText.text = $"Press 'E' to {validInteraction.InteractionVerb}"; //Translate.Instance.Tr("FPS_interactionText", Translate.Instance.Tr(validInteraction.InteractionVerb));
+                _interactionText.text = GetInteractionText(validInteraction.InteractionVerb);
             }
             else
             {
@@ -198,7 +201,7 @@ namespace Sketch.FPS
                 else
                 {
                     _interactionText.gameObject.SetActive(true);
-                    _interactionText.text = closestInvalid.DenySentence; //Translate.Instance.Tr(closestInvalid.DenySentence);
+                    _interactionText.text = GetDenyText(closestInvalid.DenySentence);
                 }
             }
         }
