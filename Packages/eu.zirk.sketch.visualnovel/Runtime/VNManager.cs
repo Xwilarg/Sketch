@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -57,32 +56,41 @@ namespace Sketch.VN
         {
             Instance = this;
 
-            _display.OnDisplayDone += (_sender, _e) =>
+            if (_container == null) // If user didn't give a container, we just use the one of the text instead
             {
-                if (_story.currentChoices.Any())
+                _container = _display.gameObject;
+            }
+
+            // Setup choice button spawn
+            if (_choicePrefab != null && _choiceContainer != null)
+            {
+                _display.OnDisplayDone += (_sender, _e) =>
                 {
-                    ResetVN();
-                    foreach (var choice in _story.currentChoices)
+                    if (_story.currentChoices.Any())
                     {
-                        var button = Instantiate(_choicePrefab, _choiceContainer);
-                        button.GetComponentInChildren<TMP_Text>().text = choice.text;
-
-                        var elem = choice;
-                        button.GetComponent<Button>().onClick.AddListener(() =>
+                        ResetVN();
+                        foreach (var choice in _story.currentChoices)
                         {
-                            _story.ChoosePath(elem.targetPath);
-                            for (int i = 0; i < _choiceContainer.childCount; i++)
-                                Destroy(_choiceContainer.GetChild(i).gameObject);
-                            DisplayStory(_story.Continue());
-                        });
-                    }
-                }
+                            var button = Instantiate(_choicePrefab, _choiceContainer);
+                            button.GetComponentInChildren<TMP_Text>().text = choice.text;
 
-                if (_isAutoEnabled)
-                {
-                    StartCoroutine(AutoNextDialogue());
-                }
-            };
+                            var elem = choice;
+                            button.GetComponent<Button>().onClick.AddListener(() =>
+                            {
+                                _story.ChoosePath(elem.targetPath);
+                                for (int i = 0; i < _choiceContainer.childCount; i++)
+                                    Destroy(_choiceContainer.GetChild(i).gameObject);
+                                DisplayStory(_story.Continue());
+                            });
+                        }
+                    }
+
+                    if (_isAutoEnabled)
+                    {
+                        StartCoroutine(AutoNextDialogue());
+                    }
+                };
+            }
         }
 
         private IEnumerator AutoNextDialogue()
@@ -117,11 +125,14 @@ namespace Sketch.VN
             if (resetUI)
             {
                 _container.SetActive(true);
-                if (_currentCharacter != null)
+                if (_characterImage != null && _currentCharacter != null)
                 {
                     _characterImage.gameObject.SetActive(true);
                 }
-                _choiceContainer.gameObject.SetActive(true);
+                if (_choiceContainer != null)
+                {
+                    _choiceContainer.gameObject.SetActive(true);
+                }
             }
         }
 
@@ -147,7 +158,12 @@ namespace Sketch.VN
         private void DisplayStory(string text)
         {
             _container.SetActive(true);
-            _namePanel.SetActive(false);
+
+            if (_nameText != null)
+            {
+                _namePanel?.SetActive(false);
+                _nameText.text = string.Empty;
+            }
 
             foreach (var tag in _story.currentTags)
             {
@@ -156,16 +172,31 @@ namespace Sketch.VN
                 switch (s[0])
                 {
                     case "speaker":
-                        if (content == "NONE") _currentCharacter = null;
-                        else
+                        if (_characters.Length > 0)
                         {
-                            _currentCharacter = _characters.FirstOrDefault(x => x.Name.ToUpperInvariant() == content);
-                            if (_currentCharacter == null)
+                            if (content == "NONE") _currentCharacter = null;
+                            else
                             {
-                                Debug.LogError($"[STORY] Unable to find character {content}");
+                                _currentCharacter = _characters.FirstOrDefault(x => x.Name.ToUpperInvariant() == content);
+                                if (_currentCharacter == null)
+                                {
+                                    Debug.LogError($"[STORY] Unable to find character {content}");
+                                }
                             }
                         }
-                        break;
+                        else
+                        {
+                            if (content == "NONE") _currentCharacter = null;
+                            else
+                            {
+                                _currentCharacter = new()
+                                {
+                                    DisplayName = content,
+                                    Name = content
+                                };
+                            }
+                        }
+                            break;
 
                     case "skip":
                         if (content == "TRUE") _isSkipEnabled = true;
@@ -184,15 +215,26 @@ namespace Sketch.VN
             _display.ToDisplay = text;
             if (_currentCharacter == null)
             {
-                _namePanel.SetActive(false);
-                _characterImage.gameObject.SetActive(false);
+                if (_nameText != null)
+                {
+                    _namePanel?.SetActive(false);
+                    _nameText.text = string.Empty;
+                }
+                if (_characterImage != null)
+                    _characterImage.gameObject.SetActive(false);
             }
             else
             {
-                _namePanel.SetActive(true);
-                _nameText.text = _currentCharacter.DisplayName;
-                _characterImage.gameObject.SetActive(true);
-                _characterImage.sprite = _currentCharacter.Image;
+                if (_nameText != null)
+                {
+                    _namePanel?.SetActive(true);
+                    _nameText.text = _currentCharacter.DisplayName;
+                }
+                if (_characterImage != null)
+                {
+                    _characterImage.gameObject.SetActive(true);
+                    _characterImage.sprite = _currentCharacter.Image;
+                }
             }
         }
 
@@ -252,8 +294,10 @@ namespace Sketch.VN
         {
             _container.SetActive(!_container.activeInHierarchy);
 
-            _characterImage.gameObject.SetActive(_container.activeInHierarchy);
-            _choiceContainer.gameObject.SetActive(_container.activeInHierarchy);
+            if (_characterImage != null)
+                _characterImage.gameObject.SetActive(_container.activeInHierarchy);
+            if (_choiceContainer != null)
+                _choiceContainer.gameObject.SetActive(_container.activeInHierarchy);
 
             ResetVN(resetUI: false);
         }
