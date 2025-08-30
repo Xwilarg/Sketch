@@ -21,7 +21,7 @@ namespace Sketch.Grid
         private readonly int _areaSize;
         private AMapAreaFactory _factory;
 
-        private float LocalToGlobalScale => _elementSize / 100f;
+        public float LocalToGlobalScale => _elementSize / 100f;
 
         // We split the world into areas for optimization purposes
         private readonly Dictionary<Vector2Int, MA> _areas = new();
@@ -29,9 +29,14 @@ namespace Sketch.Grid
         /// <summary>
         /// Convert a coordinate in the world by one that can be used by <see cref="GetOrCreateMapArea(Vector2Int)"/>
         /// </summary>
-        private Vector2Int GlobalToMapAreaCoordinate(Vector2 v)
+        public Vector2Int GlobalToLocal(Vector2 v)
         {
-            return new Vector2Int(Mathf.RoundToInt(v.x / LocalToGlobalScale / _areaSize), Mathf.RoundToInt(v.y / LocalToGlobalScale / _areaSize));
+            return new(Mathf.RoundToInt(v.x / LocalToGlobalScale), Mathf.RoundToInt(v.y / LocalToGlobalScale));
+        }
+
+        public Vector2 LocalToGlobal(Vector2Int v)
+        {
+            return new(v.x * LocalToGlobalScale, v.y * LocalToGlobalScale);
         }
 
         public Bounds GetTile(Vector2 worldPos)
@@ -46,7 +51,8 @@ namespace Sketch.Grid
 
         public MA GetOrCreateMapAreaFromWorld(Vector2 worldP, int xOffset = 0, int yOffset = 0)
         {
-            return GetOrCreateMapArea(GlobalToMapAreaCoordinate(worldP) + new Vector2Int(xOffset, yOffset));
+            var local = new Vector2Int(Mathf.RoundToInt(worldP.x / LocalToGlobalScale / _areaSize), Mathf.RoundToInt(worldP.y / LocalToGlobalScale / _areaSize));
+            return GetOrCreateMapArea(local + new Vector2Int(xOffset, yOffset));
         }
 
         public MA GetOrCreateMapArea(Vector2Int p)
