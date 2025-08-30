@@ -62,16 +62,19 @@ namespace Sketch.Generation
             Vector2Int middle = new(Floors.Sum(p => p.x) / Floors.Count, Floors.Sum(p => p.y) / Floors.Count);
             _center = Floors.OrderBy(p => Vector2.Distance(p, middle)).First();
 
-
+#if UNITY_EDITOR
             _debugText = Object.Instantiate(_textHintPrefab, Container).GetComponent<TMP_Text>();
             _debugText.transform.position = _center * _pixelSize + Vector2.down * .2f;
             _debugText.fontSize = 2;
             UpdateDebug();
+#endif
         }
 
         private void UpdateDebug()
         {
+#if UNITY_EDITOR
             _debugText.text = $"Adjacent rooms: {_adjacentRooms.Count}";
+#endif
         }
 
         // Line renderers that link rooms
