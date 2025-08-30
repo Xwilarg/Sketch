@@ -180,8 +180,8 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sketch.Generation.DragInput, Assembly-CSharp
+      - m_Target: {fileID: 399316022}
+        m_TargetAssemblyTypeName: Sketch.Generation2.DragInput, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -196,8 +196,8 @@ MonoBehaviour:
     m_ActionName: 'Player/Move[/Mouse/delta]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sketch.Generation.DragInput, Assembly-CSharp
+      - m_Target: {fileID: 399316022}
+        m_TargetAssemblyTypeName: Sketch.Generation2.DragInput, Assembly-CSharp
         m_MethodName: OnClick
         m_Mode: 0
         m_Arguments:
@@ -283,6 +283,8 @@ MonoBehaviour:
   - {fileID: 4900000, guid: c5b24268f7f77f341a6572d2aeaa26ef, type: 3}
   - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
   _tilePixelSize: 32
+  _floorPrefab: {fileID: 4738975240478743032, guid: de090d7828e3d8f42ad565ed0cfd3c0c, type: 3}
+  _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
   _textAreaHint: {fileID: 7444206077765769309, guid: 029d249e9328c084aa4198ab96997385, type: 3}
   _lrAreaPrefab: {fileID: 4897434291111433263, guid: f6d2ddf5e6f656e43808a55b4e053d00, type: 3}
 --- !u!114 &399316022
