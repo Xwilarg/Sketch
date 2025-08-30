@@ -16,7 +16,6 @@ namespace Sketch.Grid
             _factory = factory;
         }
 
-
         private readonly float _elementSize;
         private readonly int _areaSize;
         private AMapAreaFactory _factory;
