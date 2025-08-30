@@ -226,14 +226,26 @@ namespace Sketch.Generation
             return ret;
         }
 
-        private void AddRoomLinks(RuntimeRoom r1, RuntimeRoom r2)
+        private bool AddRoomLinks(RuntimeRoom r1, RuntimeRoom r2)
         {
+            if (r1.ID == r2.ID)
+            {
+                Debug.LogWarning("Trying to add an adjacent room to itself");
+                return false;
+            }
+            if (r1.IsAlreadyAdded(r2) || r2.IsAlreadyAdded(r1))
+            {
+                Debug.LogWarning("Trying to add an adjacent room when it was already added");
+                return false;
+            }
             r1.AddAdjacentRoom(r2);
             r2.AddAdjacentRoom(r1);
 
             var allRuntimes = _grid.GetAllMapAreas().SelectMany(x => x.Rooms); // TODO: Don't do on all?
             while (allRuntimes.Any(x => x.UpdateDistances()))
             { }
+
+            return true;
         }
 
         // Keep track of the doors we area checking by areas
@@ -301,7 +313,12 @@ namespace Sketch.Generation
                     // Fill doors
                     if (_generatedRr != null)
                     {
-                        foreach (var door in areas.SelectMany(x => x.Value.Where<InstanciatedTileData>((key, value) => value.Tile == TileType.DOOR))) // TODO
+                        var doors =
+                            areas
+                                .SelectMany(x =>
+                                    x.Value.Where<InstanciatedTileData>((key, value) => value.Tile == TileType.DOOR)
+                                );
+                        foreach (var door in doors) // TODO
                         {
                             // Remove doors that lead to a wall or another door
                             if (directions.Count(x => _grid.Has(door.Key + x) && _grid.Get<InstanciatedTileData>(door.Key + x).Tile != TileType.FLOOR && _grid.Get<InstanciatedTileData>(door.Key + x).Tile != TileType.NONE) >= 3)
@@ -315,17 +332,18 @@ namespace Sketch.Generation
                             {
                                 var adjacentRoom = _grid.GetAllMapAreas().SelectMany(x => x.Rooms).First(x => x.Doors.Contains(door.Key));
 
-                                AddRoomLinks(_generatedRr, adjacentRoom);
+                                if (AddRoomLinks(_generatedRr, adjacentRoom))
+                                {
+                                    Destroy(door.Value.SR.gameObject);
+                                    door.Value.SR = null;
 
-                                Destroy(door.Value.SR.gameObject);
-                                door.Value.SR = null;
+                                    var floor = Instantiate(_floorPrefab, _generatedRr.Container);
+                                    floor.transform.position = _grid.LocalToGlobal(door.Key);
+                                    floor.name = $"Floor ({door.Key.x};{door.Key.y})";
+                                    door.Value.SR = floor.GetComponent<SpriteRenderer>();
 
-                                var floor = Instantiate(_floorPrefab, _generatedRr.Container);
-                                floor.transform.position = _grid.LocalToGlobal(door.Key);
-                                floor.name = $"Floor ({door.Key.x};{door.Key.y})";
-                                door.Value.SR = floor.GetComponent<SpriteRenderer>();
-
-                                door.Value.Tile = TileType.FLOOR;
+                                    door.Value.Tile = TileType.FLOOR;
+                                }
                             }
                         }
                     }

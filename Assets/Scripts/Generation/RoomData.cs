@@ -49,6 +49,7 @@ namespace Sketch.Generation
         // Distance with m
         public int Distance { private set; get; }
         private TMP_Text _hintDistanceInstance;
+        private TMP_Text _debugText;
 
         private Vector2 _center;
 
@@ -60,6 +61,17 @@ namespace Sketch.Generation
         {
             Vector2Int middle = new(Floors.Sum(p => p.x) / Floors.Count, Floors.Sum(p => p.y) / Floors.Count);
             _center = Floors.OrderBy(p => Vector2.Distance(p, middle)).First();
+
+
+            _debugText = Object.Instantiate(_textHintPrefab, Container).GetComponent<TMP_Text>();
+            _debugText.transform.position = _center * _pixelSize + Vector2.down * .2f;
+            _debugText.fontSize = 2;
+            UpdateDebug();
+        }
+
+        private void UpdateDebug()
+        {
+            _debugText.text = $"Adjacent rooms: {_adjacentRooms.Count}";
         }
 
         // Line renderers that link rooms
@@ -82,14 +94,13 @@ namespace Sketch.Generation
             return false;
         }
 
+        public bool IsAlreadyAdded(RuntimeRoom room)
+        {
+            return _adjacentRooms.Contains(room);
+        }
+
         public void AddAdjacentRoom(RuntimeRoom room)
         {
-            if (_adjacentRooms.Contains(room))
-            {
-                Debug.LogWarning("Trying to add an adjacent room when it was already added");
-                return;
-            }
-
             if (_hintDistanceInstance == null)
             {
                 _hintDistanceInstance = Object.Instantiate(_textHintPrefab, Container).GetComponent<TMP_Text>();
@@ -107,6 +118,7 @@ namespace Sketch.Generation
                 (Vector3)_center * _pixelSize, (Vector3)room._center * _pixelSize
             });
             LRs.Add(room.ID, (lr, room));
+            UpdateDebug();
         }
 
         public void Highlight()
@@ -120,7 +132,7 @@ namespace Sketch.Generation
             {
                 var go = Object.Instantiate(_filterTile, Container);
                 go.transform.position = (Vector2)pos * _pixelSize;
-                go.GetComponent<SpriteRenderer>().color = new(0F, 0f, 1f, .5f);
+                go.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
                 _instanciatedHints.Add(go);
             }
             if (_hintDistanceInstance != null)
