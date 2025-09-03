@@ -1,3 +1,4 @@
+using Sketch.Achievement;
 using Sketch.Generation2.Area;
 using Sketch.Generation2.Parsing;
 using Sketch.Generation2.Runtime;
@@ -97,10 +98,10 @@ namespace Sketch.Generation2
                 _highlightedRoom = room;
                 room.Highlight(_grid);
 
-                /*if (!room.HasDoors)
+                if (!room.HasDoors)
                 {
                     AchievementManager.Instance.Unlock(AchievementID.GEN_noDoor);
-                }*/
+                }
             }
         }
 
@@ -237,12 +238,19 @@ namespace Sketch.Generation2
                     {
                         var tile = _grid.Get<InstantiatedTileData>(t + room);
                         var r = tile.RR;
-                        if (false && r != null && !RuntimeRoom.Compare(r, rr) && r._doors.Contains(t + room))
+                        if (r != null && !RuntimeRoom.Compare(r, rr) && r._doors.Contains(t + room) && !r.IsAdjacent(rr))
                         {
                             r.AddAdjacentRoom(rr);
                             rr.AddAdjacentRoom(r);
 
                             UpdateAllDistances();
+
+                            // Replace the door with a floor
+                            var target = _grid.Get<InstantiatedTileData>(t + room);
+                            target.Tile = TileType.FLOOR;
+                            Destroy(target.SR.gameObject);
+                            go = target.RR.AddWall(_floorPrefab, _grid.LocalToGlobal(t + room), t + room);
+                            target.SR = go.GetComponent<SpriteRenderer>();
                         }
                     }
                 }
@@ -279,7 +287,6 @@ namespace Sketch.Generation2
                         // Make a link to the next room
                         rr.AddAdjacentRoom(newRoom);
                         newRoom.AddAdjacentRoom(rr);
-
 
                         yield return newRoom;
                     }

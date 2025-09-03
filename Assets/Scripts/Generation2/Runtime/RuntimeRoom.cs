@@ -102,6 +102,11 @@ namespace Sketch.Generation2.Runtime
             _hintDistanceInstance.color = Color.white;
         }
 
+        public bool IsAdjacent(RuntimeRoom room)
+        {
+            return _adjacentRooms.Any(x => x._id == room._id);
+        }
+
         public void AddAdjacentRoom(RuntimeRoom room)
         {
             _adjacentRooms.Add(room);
@@ -120,6 +125,8 @@ namespace Sketch.Generation2.Runtime
             });
             _lrs.Add(room._id, (lr, room));
         }
+
+        public bool HasDoors => _adjacentRooms.Any();
 
         public bool UpdateDistances()
         {
