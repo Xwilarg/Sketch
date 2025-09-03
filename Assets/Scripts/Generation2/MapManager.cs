@@ -195,6 +195,18 @@ namespace Sketch.Generation2
                         if (surroundings.Any())
                         {
                             // We can't place anything, but this door link to an existing room!
+                            var adjRr = surroundings.First();
+
+                            // Replace the door with a floor
+                            var target = _grid.Get<InstantiatedTileData>(door);
+                            target.Tile = TileType.FLOOR;
+                            Destroy(target.SR.gameObject);
+                            var go = target.RR.AddWall(_floorPrefab, _grid.LocalToGlobal(door), door);
+                            target.SR = go.GetComponent<SpriteRenderer>();
+
+                            // Make a link to the next room
+                            rr.AddAdjacentRoom(adjRr);
+                            adjRr.AddAdjacentRoom(rr);
                         }
                         else
                         {
