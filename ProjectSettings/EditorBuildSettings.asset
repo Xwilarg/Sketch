@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 6cbc0896dcfbbd349aa2c4abf8a057e9
   - enabled: 1
-    path: Assets/Scenes/MapGeneration.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Scenes/MapGeneration2.unity
+    guid: ec7d4519523db30459242bf9565b7f24
   - enabled: 1
     path: Assets/Scenes/Fishing.unity
     guid: aba83e44c57d81b4c89ede03fcb79c51
