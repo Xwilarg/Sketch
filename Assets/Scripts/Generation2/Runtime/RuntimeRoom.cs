@@ -23,7 +23,7 @@ namespace Sketch.Generation2.Runtime
             _normalMat = normalMat;
             _lrPrefab = lrPrefab;
 
-            _hintDistanceInstance = Object.Instantiate(textHintPrefab, _container).GetComponent<TMP_Text>();
+            _hintDistanceInstance = Object.Instantiate(textDistancePrefab, _container).GetComponent<TMP_Text>();
             _hintDistanceInstance.text = string.Empty;
         }
 
@@ -32,6 +32,8 @@ namespace Sketch.Generation2.Runtime
             Vector2Int middle = new(_floors.Sum(p => p.x) / _floors.Count, _floors.Sum(p => p.y) / _floors.Count);
             _centerGrid = _floors.OrderBy(p => Vector2.Distance(p, middle)).First();
             _center = grid.LocalToGlobal(_centerGrid);
+
+            _hintDistanceInstance.transform.position = _center;
         }
 
         public GameObject AddWall(GameObject prefab, Vector2 globalPos, Vector2Int localPos)
@@ -102,13 +104,16 @@ namespace Sketch.Generation2.Runtime
 
         public void AddAdjacentRoom(RuntimeRoom room)
         {
+            _distance = room._distance + 1;
+            _hintDistanceInstance.text = _distance.ToString();
+
             _adjacentRooms.Add(room);
 
             var go = Object.Instantiate(_lrPrefab, _container.transform);
             var lr = go.GetComponent<LineRenderer>();
             lr.SetPositions(new[]
             {
-                (Vector3)_center, (Vector3)room._center
+                _center, room._center
             });
             _lrs.Add(room._id, (lr, room));
         }

@@ -168,8 +168,6 @@ namespace Sketch.Generation2
                         // Make a link to the next room
                         rr.AddAdjacentRoom(newRoom);
                         newRoom.AddAdjacentRoom(rr);
-
-                        UpdateAllDistances();
                     }
                     else
                     {
