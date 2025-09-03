@@ -53,6 +53,13 @@ namespace Sketch.Generation2
         // The room we clicked on
         private RuntimeRoom _highlightedRoom;
 
+
+        private Vector2Int[] _directions = new[]
+        {
+            Vector2Int.up, Vector2Int.down,
+            Vector2Int.left, Vector2Int.right
+        };
+
         private void Awake()
         {
             _availableRooms = _rooms.SelectMany(RoomParser.Parse).ToArray();
@@ -102,6 +109,7 @@ namespace Sketch.Generation2
         {
             Vector2 oldPos = Vector2.one * 100f; // Trigger change at start
             var areas = new Dictionary<Vector2Int, MapArea>();
+            bool needFillHoles = true;
             while (true)
             {
                 // Only parse areas near the mouse
@@ -129,16 +137,119 @@ namespace Sketch.Generation2
                     {
                         a.Toggle(true);
                     }
+
+                    needFillHoles = true;
                     oldPos = pos;
                 }
 
-                yield return InstantiationLoop(areas);
+                var builtAnyRoom = false;
+                foreach (var _ in InstantiationLoop(areas))
+                {
+                    builtAnyRoom = true;
+                    yield return new WaitForEndOfFrame();
+                }
+
+                if (!builtAnyRoom && needFillHoles)
+                {
+                    yield return FillHoles(areas);
+                    needFillHoles = false;
+                }
 
                 yield return new WaitForEndOfFrame();
             }
         }
 
-        private IEnumerator InstantiationLoop(IDictionary<Vector2Int, MapArea> areas)
+        private IEnumerator FillHoles(Dictionary<Vector2Int, MapArea> areas)
+        {
+            var min = areas[-Vector2Int.one].MinBound / _grid.LocalToGlobalScale;
+            var max = areas[Vector2Int.one].MaxBound / _grid.LocalToGlobalScale;
+
+            List<Vector2Int> empty = new();
+
+            for (int y = Mathf.RoundToInt(min.y); y < Mathf.RoundToInt(max.y); y++)
+            {
+                for (int x = Mathf.RoundToInt(min.x); x < Mathf.RoundToInt(max.x); x++)
+                {
+                    if (!_grid.Has(new(x, y)))
+                    {
+                        empty.Add(new(x, y));
+                    }
+                }
+            }
+
+            Dictionary<Vector2Int, GameObject> group = new();
+            while (empty.Any())
+            {
+                yield return new WaitForEndOfFrame();
+                group.Clear();
+
+                var area = _grid.GetOrCreateMapAreaFromWorld(_grid.LocalToGlobal(empty[0]));
+                var rr = CreateRuntimeRoom(area);
+
+                var first = empty[0];
+                var go = rr.AddFloor(_floorPrefab, _grid.LocalToGlobal(first), first);
+                group.Add(first, go);
+                empty.RemoveAt(0);
+
+                yield return new WaitForEndOfFrame();
+
+                // We get a group of all the adjacent tiles
+                for (int i = 0; i < empty.Count; i++) // Ugly but I'll optimize that later
+                {
+                    if (group.Keys.Any(x => _directions.Any(d => d + empty[i] == x)))
+                    {
+                        go = rr.AddFloor(_floorPrefab, _grid.LocalToGlobal(empty[i]), empty[i]);
+                        group.Add(empty[i], go);
+                        empty.RemoveAt(i);
+                        i = -1;
+                        yield return new WaitForEndOfFrame();
+                    }
+                }
+
+                if (group.Keys.Any(x => _directions.Any(d =>
+                {
+                    var p = d + x;
+                    return p.x <= Mathf.RoundToInt(min.x) || p.x >= Mathf.RoundToInt(max.x) || p.y <= Mathf.RoundToInt(min.y) || p.y >= Mathf.RoundToInt(max.y);
+                })))
+                {
+                    // Room is not finished and going oob
+                    foreach (var r in group.Values)
+                    {
+                        Destroy(r);
+                    }
+                    area.Rooms.Remove(rr);
+                    continue;
+                }
+
+                foreach (var f in group)
+                {
+                    _grid.RegisterTile(f.Key, new InstantiatedTileData()
+                    {
+                        RR = rr,
+                        SR = f.Value.GetComponent<SpriteRenderer>(),
+                        Tile = TileType.FLOOR
+                    });
+                }
+                rr.LateInit(_grid);
+                foreach (var t in group.Keys)
+                {
+                    foreach (var room in _directions.Where(d => _grid.Has(t + d)))
+                    {
+                        var tile = _grid.Get<InstantiatedTileData>(t + room);
+                        var r = tile.RR;
+                        if (false && r != null && !RuntimeRoom.Compare(r, rr) && r._doors.Contains(t + room))
+                        {
+                            r.AddAdjacentRoom(rr);
+                            rr.AddAdjacentRoom(r);
+
+                            UpdateAllDistances();
+                        }
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<RuntimeRoom> InstantiationLoop(IDictionary<Vector2Int, MapArea> areas)
         {
             var doorAreas = areas.Values.Where(x => x.NextDoors.Count > 0).ToArray();
 
@@ -168,19 +279,19 @@ namespace Sketch.Generation2
                         // Make a link to the next room
                         rr.AddAdjacentRoom(newRoom);
                         newRoom.AddAdjacentRoom(rr);
+
+
+                        yield return newRoom;
                     }
                     else
                     {
                         // We can't place any room there
 
                         // If a surrounding room exist
-                        var surroundings = new Vector2Int[]
-                        {
-                            door + Vector2Int.up,
-                            door + Vector2Int.down,
-                            door + Vector2Int.left,
-                            door + Vector2Int.right
-                        }.Select(p =>
+                        var surroundings =
+                        _directions
+                        .Select(x => door + x)
+                        .Select(p =>
                         {
                             if (_grid.Has(p))
                             {
@@ -219,10 +330,8 @@ namespace Sketch.Generation2
                         }
                     }
                     da.NextDoors.RemoveAt(i);
-                    yield return new WaitForEndOfFrame();
                 }
             }
-            yield break;
         }
 
         /// <returns>Information about the room that will be generated, null if not possible</returns>
@@ -280,8 +389,14 @@ namespace Sketch.Generation2
 
         private RuntimeRoom CreateRoom(MapArea mapArea, TextRoomData data, Vector2Int worldPos)
         {
-            var rr = new RuntimeRoom(mapArea, _filterTile, _importantMat, _normalMat, _textAreaHint, _lrPrefab, _textDistancePrefab);
+            var rr = CreateRuntimeRoom(mapArea);
             DrawRoom(rr, data, worldPos, mapArea);
+            return rr;
+        }
+
+        private RuntimeRoom CreateRuntimeRoom(MapArea mapArea)
+        {
+            var rr = new RuntimeRoom(mapArea, _filterTile, _importantMat, _normalMat, _textAreaHint, _lrPrefab, _textDistancePrefab);
             mapArea.Rooms.Add(rr);
             return rr;
         }

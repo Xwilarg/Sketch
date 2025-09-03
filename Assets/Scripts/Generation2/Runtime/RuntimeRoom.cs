@@ -144,7 +144,7 @@ namespace Sketch.Generation2.Runtime
         // Runtime tiles
         // Border tiles are shared between rooms so there are mostly for organization purpose
         private List<GameObject> _walls = new();
-        private List<Vector2Int> _doors = new();
+        public List<Vector2Int> _doors = new(); // TODO: Set private
         private List<Vector2Int> _floors = new();
 
         private Vector2Int _centerGrid;
