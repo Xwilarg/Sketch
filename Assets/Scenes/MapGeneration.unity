@@ -128,8 +128,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 399316017}
-  - component: {fileID: 399316018}
-  - component: {fileID: 399316020}
+  - component: {fileID: 399316021}
+  - component: {fileID: 399316022}
   - component: {fileID: 399316019}
   m_Layer: 0
   m_Name: GameManager
@@ -153,35 +153,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &399316018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399316016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95ade911910e2d04fb0bee8f1c5bc8ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rooms:
-  - {fileID: 4900000, guid: 64a17dc9172deaa43935308b22369081, type: 3}
-  - {fileID: 4900000, guid: df0627ef6f207ed43918938fc06e23b8, type: 3}
-  - {fileID: 4900000, guid: ffaba7a2e8d79cb499349eaf69c7997f, type: 3}
-  - {fileID: 4900000, guid: 141c53891e9572941a2003fc576bb9c7, type: 3}
-  - {fileID: 4900000, guid: c5b24268f7f77f341a6572d2aeaa26ef, type: 3}
-  - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
-  _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
-  _floorPrefab: {fileID: 4738975240478743032, guid: de090d7828e3d8f42ad565ed0cfd3c0c, type: 3}
-  _tilePixelSize: 32
-  _lrPrefab: {fileID: 4897434291111433263, guid: 61cb39de8b8a02640b976889c8f98e12, type: 3}
-  _lrAreaPrefab: {fileID: 4897434291111433263, guid: f6d2ddf5e6f656e43808a55b4e053d00, type: 3}
-  _normalMat: {fileID: 2100000, guid: 196661d8d03fc07459c8ddcbb7c0674e, type: 2}
-  _importantMat: {fileID: 2100000, guid: f0de2a3f621ecfd499416f5a8d0e10e9, type: 2}
-  _textAreaHint: {fileID: 7444206077765769309, guid: 029d249e9328c084aa4198ab96997385, type: 3}
-  _filterTile: {fileID: 5675098872774511247, guid: b2e3c2a17857fe74991b01b2193a9edc, type: 3}
-  _textHintPrefab: {fileID: 133175695142451242, guid: 0e45efee39221fd42bc08b9175a0136b, type: 3}
 --- !u!114 &399316019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,8 +180,8 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 399316020}
-        m_TargetAssemblyTypeName: Sketch.Generation.DragInput, Assembly-CSharp
+      - m_Target: {fileID: 399316022}
+        m_TargetAssemblyTypeName: Sketch.Generation2.DragInput, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -225,8 +196,8 @@ MonoBehaviour:
     m_ActionName: 'Player/Move[/Mouse/delta]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 399316020}
-        m_TargetAssemblyTypeName: Sketch.Generation.DragInput, Assembly-CSharp
+      - m_Target: {fileID: 399316022}
+        m_TargetAssemblyTypeName: Sketch.Generation2.DragInput, Assembly-CSharp
         m_MethodName: OnClick
         m_Mode: 0
         m_Arguments:
@@ -287,36 +258,12 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 263a5a9f-e6ee-4209-be19-f64322bb3066
     m_ActionName: 'Player/Skip[/Keyboard/leftShift]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0f7324db-897f-482f-8783-ae55bf672f8e
-    m_ActionName: '3DController/Move[/SwitchProControllerHID/leftStick,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: b281e709-87b4-4410-bd9d-c5df975a982e
-    m_ActionName: '3DController/Look[/SwitchProControllerHID/rightStick,/Mouse/delta,/Pen/delta]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 6d354aea-2061-434c-9508-3acea1b336f2
-    m_ActionName: 3DController/MobileDrag
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: d81e7398-eba4-45ca-ae53-f20d49f7c1bf
-    m_ActionName: '3DController/Jump[/Keyboard/space,/SwitchProControllerHID/buttonSouth]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: ecbb4aaf-f1b9-4ddb-b9e4-d58a5cf9841a
-    m_ActionName: '3DController/Interact[/Keyboard/e,/SwitchProControllerHID/buttonNorth]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 24a58f9e-ac58-40dc-91fb-01bc6a968c18
-    m_ActionName: '3DController/Sprint[/Keyboard/leftShift,/SwitchProControllerHID/leftStickPress]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &399316020
+--- !u!114 &399316021
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -325,9 +272,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 399316016}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1846bdbd3c9e4ea4ea1937e95341535d, type: 3}
+  m_Script: {fileID: 11500000, guid: d4cf4e2d887d9b24c8a78021bccf6ff3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapManager
+  _rooms:
+  - {fileID: 4900000, guid: 64a17dc9172deaa43935308b22369081, type: 3}
+  - {fileID: 4900000, guid: df0627ef6f207ed43918938fc06e23b8, type: 3}
+  - {fileID: 4900000, guid: ffaba7a2e8d79cb499349eaf69c7997f, type: 3}
+  - {fileID: 4900000, guid: 141c53891e9572941a2003fc576bb9c7, type: 3}
+  - {fileID: 4900000, guid: c5b24268f7f77f341a6572d2aeaa26ef, type: 3}
+  - {fileID: 4900000, guid: c83b6a1a8b717ec44a5c100a0ec8e383, type: 3}
+  _tilePixelSize: 32
+  _floorPrefab: {fileID: 4738975240478743032, guid: de090d7828e3d8f42ad565ed0cfd3c0c, type: 3}
+  _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
+  _filterTile: {fileID: 5675098872774511247, guid: b2e3c2a17857fe74991b01b2193a9edc, type: 3}
+  _importantMat: {fileID: 2100000, guid: b51879dcf17e65942b2d87e1204c703d, type: 2}
+  _normalMat: {fileID: 2100000, guid: 9185d5af5548e884baffeb33b4dd34b4, type: 2}
+  _textDistancePrefab: {fileID: 133175695142451242, guid: 0e45efee39221fd42bc08b9175a0136b, type: 3}
+  _lrPrefab: {fileID: 4897434291111433263, guid: 61cb39de8b8a02640b976889c8f98e12, type: 3}
+  _textAreaHint: {fileID: 7444206077765769309, guid: 029d249e9328c084aa4198ab96997385, type: 3}
+  _lrAreaPrefab: {fileID: 4897434291111433263, guid: f6d2ddf5e6f656e43808a55b4e053d00, type: 3}
+--- !u!114 &399316022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399316016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f324aa7ded9e2b42b99efede592a10e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sketch.Generation2.DragInput
 --- !u!1 &422943507
 GameObject:
   m_ObjectHideFlags: 0
