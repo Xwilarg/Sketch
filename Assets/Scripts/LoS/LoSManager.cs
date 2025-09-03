@@ -38,8 +38,6 @@ namespace Sketch.LoSManager
                 {
                     if (x == 0 && y == 0) continue;
 
-                    GameObject obstacle = null;
-
                     if (Mathf.PerlinNoise(offX + x / 5f, offY + y / 5f) < _wallChance)
                     {
                         var go = new GameObject("Wall", typeof(BoxCollider2D));

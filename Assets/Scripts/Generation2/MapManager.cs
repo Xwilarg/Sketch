@@ -1,3 +1,4 @@
+using Sketch.Achievement;
 using Sketch.Generation2.Area;
 using Sketch.Generation2.Parsing;
 using Sketch.Generation2.Runtime;
@@ -26,6 +27,12 @@ namespace Sketch.Generation2
         [SerializeField]
         private GameObject _wallPrefab;
 
+        [Header("Room highlight")]
+        [SerializeField]
+        private GameObject _filterTile;
+        [SerializeField]
+        private Material _importantMat, _normalMat;
+
         [Header("Area debug")]
         [SerializeField]
         private GameObject _textAreaHint;
@@ -38,6 +45,9 @@ namespace Sketch.Generation2
 
         private Camera _cam;
         private DragInput _dInput;
+
+        // The room we clicked on
+        private RuntimeRoom _highlightedRoom;
 
         private void Awake()
         {
@@ -58,6 +68,31 @@ namespace Sketch.Generation2
         {
             StartCoroutine(WatchOverInstantiation());
         }
+
+        public void HandleClick(Vector2 uiPos)
+        {
+            var pos = _cam.ScreenToWorldPoint(uiPos);
+
+            if (_highlightedRoom != null)
+            {
+                _highlightedRoom.UnHighlight();
+                _highlightedRoom = null;
+            }
+
+            var rounded = _grid.GlobalToLocal(pos);
+            var room = _grid.GetAllMapAreas().SelectMany(x => x.Rooms).FirstOrDefault(x => x.IsClickedOn(rounded));
+            if (room != null)
+            {
+                _highlightedRoom = room;
+                room.Highlight(_grid);
+
+                /*if (!room.HasDoors)
+                {
+                    AchievementManager.Instance.Unlock(AchievementID.GEN_noDoor);
+                }*/
+            }
+        }
+
 
         private IEnumerator WatchOverInstantiation()
         {
@@ -90,10 +125,10 @@ namespace Sketch.Generation2
                     {
                         a.Toggle(true);
                     }
-
-                    yield return InstantiationLoop(areas);
                     oldPos = pos;
                 }
+
+                yield return InstantiationLoop(areas);
 
                 yield return new WaitForEndOfFrame();
             }
@@ -170,7 +205,6 @@ namespace Sketch.Generation2
         private bool CanGenerateRoom(Vector2Int localPos, TextRoomData availableRoom, Vector2Int door)
         {
             bool isSuperposition = true;
-            bool isValid = true;
 
             // Iterate on all tiles
             for (int dy = 0; dy < availableRoom.Height; dy++)
@@ -198,7 +232,7 @@ namespace Sketch.Generation2
 
         private RuntimeRoom CreateRoom(MapArea mapArea, TextRoomData data, Vector2Int worldPos)
         {
-            var rr = new RuntimeRoom(mapArea);
+            var rr = new RuntimeRoom(mapArea, _filterTile, _importantMat, _normalMat);
             DrawRoom(rr, data, worldPos, mapArea);
             mapArea.Rooms.Add(rr);
             return rr;

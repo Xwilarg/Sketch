@@ -32,7 +32,7 @@ namespace Sketch.Generation2
                 var pos = CursorUtils.GetPosition(PInput);
                 if (_clickPos == pos) // Click and not drag
                 {
-                    //_generator.HandleClick(pos.Value);
+                    _generator.HandleClick(pos.Value);
                 }
 
                 _clickPos = null;

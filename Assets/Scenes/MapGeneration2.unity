@@ -285,6 +285,9 @@ MonoBehaviour:
   _tilePixelSize: 32
   _floorPrefab: {fileID: 4738975240478743032, guid: de090d7828e3d8f42ad565ed0cfd3c0c, type: 3}
   _wallPrefab: {fileID: 4738975240478743032, guid: ff2d5604a84a12748b8116f6d23b20e8, type: 3}
+  _filterTile: {fileID: 4738975240478743032, guid: de090d7828e3d8f42ad565ed0cfd3c0c, type: 3}
+  _importantMat: {fileID: 2100000, guid: b51879dcf17e65942b2d87e1204c703d, type: 2}
+  _normalMat: {fileID: 2100000, guid: 9185d5af5548e884baffeb33b4dd34b4, type: 2}
   _textAreaHint: {fileID: 7444206077765769309, guid: 029d249e9328c084aa4198ab96997385, type: 3}
   _lrAreaPrefab: {fileID: 4897434291111433263, guid: f6d2ddf5e6f656e43808a55b4e053d00, type: 3}
 --- !u!114 &399316022
