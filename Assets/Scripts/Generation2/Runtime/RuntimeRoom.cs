@@ -12,7 +12,7 @@ namespace Sketch.Generation2.Runtime
         {
             _id = _roomId++;
             _container = new GameObject($"Room {_id}").transform;
-            _container.transform.parent = _container;
+            _container.transform.parent = area.RoomRoot;
         }
 
         public GameObject AddWall(GameObject prefab, Vector2 globalPos, Vector2Int localPos)

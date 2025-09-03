@@ -119,15 +119,18 @@ namespace Sketch.Generation2
 
                         CreateRoom(newArea, placementData.Room, pos);
 
-                        da.NextDoors.AddRange(
-                            placementData.Room.Doors.Select(d => pos + d)
-                        );
+                        // Replace the door with a floor
+                        var target = _grid.Get<InstantiatedTileData>(door);
+                        target.Tile = TileType.FLOOR;
+                        Destroy(target.SR.gameObject);
+                        var go = target.RR.AddWall(_floorPrefab, _grid.LocalToGlobal(door), door);
+                        target.SR = go.GetComponent<SpriteRenderer>();
                     }
                     else
                     {
+                        // Nothing to do with this door, we replace it by a wall
                         var target = _grid.Get<InstantiatedTileData>(door);
-                        target.Tile = TileType.FLOOR;
-
+                        target.Tile = TileType.WALL;
                         Destroy(target.SR.gameObject);
                         var go = target.RR.AddWall(_wallPrefab, _grid.LocalToGlobal(door), door);
                         target.SR = go.GetComponent<SpriteRenderer>();
