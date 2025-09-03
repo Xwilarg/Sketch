@@ -45,7 +45,7 @@ namespace Sketch.Generation2.Area
         public Transform RoomRoot { private set; get; }
         public List<RuntimeRoom> Rooms { get; } = new();
 
-        public List<Vector2Int> NextDoors { get; } = new();
+        public List<(RuntimeRoom, Vector2Int)> NextDoors { get; } = new();
 
         private readonly LineRenderer[] _lrs;
         private GameObject _textHint;

@@ -1,4 +1,3 @@
-using Sketch.Achievement;
 using Sketch.Generation2.Area;
 using Sketch.Generation2.Parsing;
 using Sketch.Generation2.Runtime;
@@ -33,10 +32,15 @@ namespace Sketch.Generation2
         [SerializeField]
         private Material _importantMat, _normalMat;
 
+        [Header("Distances")]
+        [SerializeField]
+        private GameObject _textDistancePrefab;
+        [SerializeField]
+        private GameObject _lrPrefab;
+
         [Header("Area debug")]
         [SerializeField]
         private GameObject _textAreaHint;
-
         [SerializeField]
         private GameObject _lrAreaPrefab;
 
@@ -143,7 +147,7 @@ namespace Sketch.Generation2
             {
                 for (int i = da.NextDoors.Count - 1; i >= 0; i--)
                 {
-                    var door = da.NextDoors[i];
+                    var (rr, door) = da.NextDoors[i];
                     var placementData = LookForValidRoom(door);
 
                     if (placementData != null)
@@ -152,7 +156,7 @@ namespace Sketch.Generation2
                         var pos = new Vector2Int(door.x - placementData.DoorPos.x, door.y - placementData.DoorPos.y);
                         var newArea = _grid.GetOrCreateMapAreaFromWorld(_grid.LocalToGlobal(pos));
 
-                        CreateRoom(newArea, placementData.Room, pos);
+                        var newRoom = CreateRoom(newArea, placementData.Room, pos);
 
                         // Replace the door with a floor
                         var target = _grid.Get<InstantiatedTileData>(door);
@@ -160,6 +164,12 @@ namespace Sketch.Generation2
                         Destroy(target.SR.gameObject);
                         var go = target.RR.AddWall(_floorPrefab, _grid.LocalToGlobal(door), door);
                         target.SR = go.GetComponent<SpriteRenderer>();
+
+                        // Make a link to the next room
+                        rr.AddAdjacentRoom(newRoom);
+                        newRoom.AddAdjacentRoom(rr);
+
+                        UpdateAllDistances();
                     }
                     else
                     {
@@ -232,10 +242,17 @@ namespace Sketch.Generation2
 
         private RuntimeRoom CreateRoom(MapArea mapArea, TextRoomData data, Vector2Int worldPos)
         {
-            var rr = new RuntimeRoom(mapArea, _filterTile, _importantMat, _normalMat);
+            var rr = new RuntimeRoom(mapArea, _filterTile, _importantMat, _normalMat, _textAreaHint, _lrPrefab, _textDistancePrefab);
             DrawRoom(rr, data, worldPos, mapArea);
             mapArea.Rooms.Add(rr);
             return rr;
+        }
+
+        private void UpdateAllDistances()
+        {
+            var allRuntimes = _grid.GetAllMapAreas().SelectMany(x => x.Rooms); // TODO: Don't do on all?
+            while (allRuntimes.Any(x => x.UpdateDistances()))
+            { }
         }
 
         /// <summary>
@@ -268,7 +285,7 @@ namespace Sketch.Generation2
                         else if (data.Data[dx, dy] == TileType.DOOR)
                         {
                             instance = rr.AddDoor(_wallPrefab, _grid.LocalToGlobal(p), p);
-                            mapArea.NextDoors.Add(p);
+                            mapArea.NextDoors.Add((rr, p));
                         }
                         else
                         {
@@ -282,6 +299,7 @@ namespace Sketch.Generation2
                     }
                 }
             }
+            rr.LateInit(_grid);
         }
     }
 }

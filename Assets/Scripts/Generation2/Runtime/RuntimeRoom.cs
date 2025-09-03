@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Sketch.Generation2.Runtime
 {
@@ -12,14 +11,27 @@ namespace Sketch.Generation2.Runtime
     {
         public static int _roomId = 0;
 
-        public RuntimeRoom(MapArea area, GameObject filterTile, Material importantMat, Material normalMat)
+        public RuntimeRoom(MapArea area, GameObject filterTile, Material importantMat, Material normalMat, GameObject textHintPrefab, GameObject lrPrefab, GameObject textDistancePrefab)
         {
             _id = _roomId++;
+
             _container = new GameObject($"Room {_id}").transform;
             _container.transform.parent = area.RoomRoot;
+
             _filterTile = filterTile;
             _importantMat = importantMat;
             _normalMat = normalMat;
+            _lrPrefab = lrPrefab;
+
+            _hintDistanceInstance = Object.Instantiate(textHintPrefab, _container).GetComponent<TMP_Text>();
+            _hintDistanceInstance.text = string.Empty;
+        }
+
+        public void LateInit(GridManager<MapArea> grid)
+        {
+            Vector2Int middle = new(_floors.Sum(p => p.x) / _floors.Count, _floors.Sum(p => p.y) / _floors.Count);
+            _centerGrid = _floors.OrderBy(p => Vector2.Distance(p, middle)).First();
+            _center = grid.LocalToGlobal(_centerGrid);
         }
 
         public GameObject AddWall(GameObject prefab, Vector2 globalPos, Vector2Int localPos)
@@ -70,10 +82,7 @@ namespace Sketch.Generation2.Runtime
                 go.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f, .5f);
                 _instantiatedHints.Add(go);
             }
-            if (_hintDistanceInstance != null)
-            {
-                _hintDistanceInstance.color = Color.red;
-            }
+            _hintDistanceInstance.color = Color.red;
         }
 
         public void UnHighlight()
@@ -88,10 +97,34 @@ namespace Sketch.Generation2.Runtime
                 Object.Destroy(t);
             }
             _instantiatedHints.Clear();
-            if (_hintDistanceInstance != null)
+            _hintDistanceInstance.color = Color.white;
+        }
+
+        public void AddAdjacentRoom(RuntimeRoom room)
+        {
+            _adjacentRooms.Add(room);
+
+            var go = Object.Instantiate(_lrPrefab, _container.transform);
+            var lr = go.GetComponent<LineRenderer>();
+            lr.SetPositions(new[]
             {
-                _hintDistanceInstance.color = Color.white;
+                (Vector3)_center, (Vector3)room._center
+            });
+            _lrs.Add(room._id, (lr, room));
+        }
+
+        public bool UpdateDistances()
+        {
+            foreach (var r in _adjacentRooms)
+            {
+                if (_distance - r._distance > 1)
+                {
+                    _distance = r._distance + 1;
+                    _hintDistanceInstance.text = _distance.ToString();
+                    return true;
+                }
             }
+            return false;
         }
 
         private int _id;
@@ -103,12 +136,18 @@ namespace Sketch.Generation2.Runtime
         private List<Vector2Int> _doors = new();
         private List<Vector2Int> _floors = new();
 
+        private Vector2Int _centerGrid;
+        private Vector3 _center;
+        private int _distance;
+
         // Previews
         private readonly List<GameObject> _instantiatedHints = new();
         private GameObject _filterTile;
         private Material _normalMat, _importantMat;
         // Room links and distances
+        private readonly List<RuntimeRoom> _adjacentRooms = new();
         private readonly Dictionary<int, (LineRenderer LR, RuntimeRoom RR)> _lrs = new();
         private TMP_Text _hintDistanceInstance;
+        private GameObject _lrPrefab;
     }
 }
