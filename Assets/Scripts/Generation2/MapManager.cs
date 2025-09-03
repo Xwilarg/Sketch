@@ -171,12 +171,40 @@ namespace Sketch.Generation2
                     }
                     else
                     {
-                        // Nothing to do with this door, we replace it by a wall
-                        var target = _grid.Get<InstantiatedTileData>(door);
-                        target.Tile = TileType.WALL;
-                        Destroy(target.SR.gameObject);
-                        var go = target.RR.AddWall(_wallPrefab, _grid.LocalToGlobal(door), door);
-                        target.SR = go.GetComponent<SpriteRenderer>();
+                        // We can't place any room there
+
+                        // If a surrounding room exist
+                        var surroundings = new Vector2Int[]
+                        {
+                            door + Vector2Int.up,
+                            door + Vector2Int.down,
+                            door + Vector2Int.left,
+                            door + Vector2Int.right
+                        }.Select(p =>
+                        {
+                            if (_grid.Has(p))
+                            {
+                                var itd = _grid.Get<InstantiatedTileData>(p);
+                                if (itd.Tile == TileType.FLOOR) return itd.RR;
+                                return null;
+                            }
+                            return null;
+                        })
+                        .Where(x => x != null && !RuntimeRoom.Compare(x, rr));
+
+                        if (surroundings.Any())
+                        {
+                            // We can't place anything, but this door link to an existing room!
+                        }
+                        else
+                        {
+                            // Nothing to do with this door, we replace it by a wall
+                            var target = _grid.Get<InstantiatedTileData>(door);
+                            target.Tile = TileType.WALL;
+                            Destroy(target.SR.gameObject);
+                            var go = target.RR.AddWall(_wallPrefab, _grid.LocalToGlobal(door), door);
+                            target.SR = go.GetComponent<SpriteRenderer>();
+                        }
                     }
                     da.NextDoors.RemoveAt(i);
                     yield return new WaitForEndOfFrame();

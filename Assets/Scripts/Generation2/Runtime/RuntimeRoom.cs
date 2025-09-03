@@ -104,10 +104,13 @@ namespace Sketch.Generation2.Runtime
 
         public void AddAdjacentRoom(RuntimeRoom room)
         {
-            _distance = room._distance + 1;
-            _hintDistanceInstance.text = _distance.ToString();
-
             _adjacentRooms.Add(room);
+
+            if (_distance == 0)
+            {
+                _distance = room._distance + 1;
+                _hintDistanceInstance.text = _distance.ToString();
+            }
 
             var go = Object.Instantiate(_lrPrefab, _container.transform);
             var lr = go.GetComponent<LineRenderer>();
@@ -131,6 +134,9 @@ namespace Sketch.Generation2.Runtime
             }
             return false;
         }
+
+        public static bool Compare(RuntimeRoom a, RuntimeRoom b)
+            => a._id == b._id;
 
         private int _id;
         private Transform _container;
