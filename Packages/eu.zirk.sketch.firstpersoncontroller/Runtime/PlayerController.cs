@@ -87,8 +87,7 @@ namespace Sketch.FPS
                 {
                     if (c.gameObject.TryGetComponent<IInteractable>(out var i))
                     {
-                        _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
-                        UpdateInteractionText();
+                        RemoveInteraction(i);
                     }
                 });
             }
@@ -175,6 +174,12 @@ namespace Sketch.FPS
             _stamina.gameObject.SetActive(_staminaLeft < 1f);
             _stamina.localScale = new Vector3(_staminaLeft, 1f, 1f);
             */
+        }
+
+        public void RemoveInteraction(IInteractable i)
+        {
+            _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
+            UpdateInteractionText();
         }
 
         public virtual string GetInteractionText(string interactionVerb) => $"Press 'E' to {interactionVerb}";
