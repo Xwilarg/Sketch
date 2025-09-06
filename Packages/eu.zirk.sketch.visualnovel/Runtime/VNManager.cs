@@ -52,6 +52,8 @@ namespace Sketch.VN
         private Action _onDone;
         private Func<string, string, bool> _onTags;
 
+        private CursorLockMode _lastCursorMode;
+
         private void Awake()
         {
             Instance = this;
@@ -153,6 +155,10 @@ namespace Sketch.VN
             _onDone = onDone;
             _onTags = onTags;
             ResetVN();
+
+            _lastCursorMode = Cursor.lockState;
+            Cursor.lockState = CursorLockMode.None;
+
             DisplayStory(_story.Continue());
         }
 
@@ -262,6 +268,7 @@ namespace Sketch.VN
             {
                 _container.SetActive(false);
                 _onDone?.Invoke();
+                Cursor.lockState = _lastCursorMode;
             }
         }
 
