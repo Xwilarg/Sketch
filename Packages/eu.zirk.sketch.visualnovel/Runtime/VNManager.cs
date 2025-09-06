@@ -60,6 +60,7 @@ namespace Sketch.VN
             {
                 _container = _display.gameObject;
             }
+            _container.SetActive(false);
 
             // Setup choice button spawn
             if (_choicePrefab != null && _choiceContainer != null)
