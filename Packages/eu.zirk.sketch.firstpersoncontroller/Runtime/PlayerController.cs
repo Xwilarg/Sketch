@@ -63,6 +63,8 @@ namespace Sketch.FPS
         private List<IInteractable> _interactions = new();
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
+        public virtual bool IsActive => true;
+
         protected virtual void Awake()
         {
             if (_pInput == null) Debug.LogWarning("PInput not assigned, mobile controls won't be available");
@@ -131,8 +133,11 @@ namespace Sketch.FPS
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
             Vector3 moveDir = Vector3.zero;
-            moveDir.x = desiredMove.x * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
-            moveDir.z = desiredMove.z * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+            if (IsActive)
+            {
+                moveDir.x = desiredMove.x * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+                moveDir.z = desiredMove.z * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+            }
 
             if (_controller.isGrounded && _verticalSpeed < 0f) // We are on the ground and not jumping
             {
@@ -238,6 +243,8 @@ namespace Sketch.FPS
 
         private void OnLookInternal(Vector2 rot)
         {
+            if (!IsActive) return;
+
             transform.rotation *= Quaternion.AngleAxis(rot.x * _horizontalSensitivity, Vector3.up);
 
             _headRotation -= rot.y * _verticalSensitivity; // Vertical look is inverted by default, hence the -=
@@ -253,7 +260,7 @@ namespace Sketch.FPS
 
         public void OnJump(InputAction.CallbackContext value)
         {
-            if (_controller.isGrounded)
+            if (_controller.isGrounded && IsActive)
             {
                 _verticalSpeed = _jumpForce;
             }
@@ -266,6 +273,8 @@ namespace Sketch.FPS
 
         private void OnInteractInternal()
         {
+            if (!IsActive) return;
+
             var closestInteraction = InteractionByDistance.Where(x => x.CanInteract(this)).FirstOrDefault();
             if (closestInteraction != null)
             {
