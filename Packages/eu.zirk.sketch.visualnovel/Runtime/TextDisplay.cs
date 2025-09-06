@@ -69,8 +69,18 @@ namespace Sketch.VN
                     break;
                 }
             }
-            var res = tmp.ToString()[1..];
-            _displayLeft = _toDisplay[res.Length..];
+            var value = tmp.ToString();
+
+            string res;
+            if (_toDisplay.Length > 0)
+            {
+                res = value[1..];
+                _displayLeft = _toDisplay[res.Length..];
+            }
+            else
+            {
+                res = string.Empty;
+            }
             _toDisplay = res.TrimStart();
         }
 
