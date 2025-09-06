@@ -11,10 +11,10 @@ namespace Sketch.FPS
         /// <summary>
         /// Verb shown in the format "Press 'E' to {verb}
         /// </summary>
-        public string InteractionVerb { get; }
+        public string InteractionVerb(PlayerController pc);
         /// <summary>
         /// Shown when we can't interact with the object, can be null
         /// </summary>
-        public string DenySentence { get; }
+        public string DenySentence(PlayerController pc);
     }
 }

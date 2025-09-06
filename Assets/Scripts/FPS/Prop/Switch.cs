@@ -22,9 +22,9 @@ namespace Sketch.FPS.Prop
 
         public GameObject GameObject => gameObject;
 
-        public string InteractionVerb => "FPS_activateSwitch";
+        public string InteractionVerb(PlayerController _) => "FPS_activateSwitch";
 
-        public string DenySentence => null;
+        public string DenySentence(PlayerController _) => null;
 
         public bool CanInteract(PlayerController pc)
             => !IsOn;

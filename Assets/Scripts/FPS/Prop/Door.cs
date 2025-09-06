@@ -13,9 +13,9 @@ namespace Sketch.FPS.Prop
 
         public GameObject GameObject => _me;
 
-        public string InteractionVerb => "FPS_openDoor";
+        public string InteractionVerb(PlayerController _) => "FPS_openDoor";
 
-        public string DenySentence => "FPS_doorClosed";
+        public string DenySentence(PlayerController _) => "FPS_doorClosed";
 
         public bool CanInteract(PlayerController pc)
             => FPSManager.Instance.AreAllSwitchesActive;

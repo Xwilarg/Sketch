@@ -189,19 +189,19 @@ namespace Sketch.FPS
             if (validInteraction != null)
             {
                 _interactionText.gameObject.SetActive(true);
-                _interactionText.text = GetInteractionText(validInteraction.InteractionVerb);
+                _interactionText.text = GetInteractionText(validInteraction.InteractionVerb(this));
             }
             else
             {
                 var closestInvalid = interactions.FirstOrDefault();
-                if (closestInvalid == null || closestInvalid.DenySentence == null)
+                if (closestInvalid == null || closestInvalid.DenySentence(this) == null)
                 {
                     _interactionText.gameObject.SetActive(false);
                 }
                 else
                 {
                     _interactionText.gameObject.SetActive(true);
-                    _interactionText.text = GetDenyText(closestInvalid.DenySentence);
+                    _interactionText.text = GetDenyText(closestInvalid.DenySentence(this));
                 }
             }
         }
