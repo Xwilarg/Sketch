@@ -63,7 +63,7 @@ namespace Sketch.FPS
         private List<IInteractable> _interactions = new();
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
-        private void Awake()
+        protected virtual void Awake()
         {
             if (_pInput == null) Debug.LogWarning("PInput not assigned, mobile controls won't be available");
             if (_triggerArea == null) Debug.LogWarning("Trigger Area not assigned, interactions won't be available");
@@ -93,12 +93,12 @@ namespace Sketch.FPS
             }
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (!_controller.enabled)
                 return;
