@@ -187,7 +187,7 @@ namespace Sketch.FPS
             UpdateInteractionText();
         }
 
-        public virtual string GetInteractionText(string interactionVerb) => $"Press 'E' to {interactionVerb}";
+        public virtual string GetInteractionText(string interactionVerb) => string.IsNullOrEmpty(interactionVerb) ? string.Empty : $"Press 'E' to {interactionVerb}";
         public virtual string GetDenyText(string denySentence) => denySentence;
 
         private void UpdateInteractionText()
