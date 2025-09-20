@@ -9,7 +9,7 @@ PlayerController.cs fields:
 ### Configuration
 - **Mouvement Speed**: Speed at which the player will walk
 - **Horizontal Sensitivity**: Sensitivity of the mouse on the X axis
-- **V**ertical Sensitivity**: Sensitivity of the mouse on the Y axis
+- **Vertical Sensitivity**: Sensitivity of the mouse on the Y axis
 - **Running Multiplier**: Speed to which the mouvement speed is multiplied, when running
 - **Jump Force**: Vertical force applied when jumping
 - **Gravity Multiplier**: Multiplier applied to the gravity when calculating falling speed
