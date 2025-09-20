@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Sketch.Circle
+namespace Sketch.Drawing
 {
     public class LineShineAnim : MonoBehaviour
     {

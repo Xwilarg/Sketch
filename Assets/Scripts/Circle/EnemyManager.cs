@@ -1,6 +1,9 @@
+using Sketch.Achievement;
 using Sketch.Common;
+using Sketch.Drawing;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Sketch.Circle
 {
@@ -9,30 +12,62 @@ namespace Sketch.Circle
         public static EnemyManager Instance { private set; get; }
 
         private readonly List<CircleEnemy> _enemies = new();
-        public IReadOnlyList<CircleEnemy> Enemies => _enemies.AsReadOnly();
 
         private Camera _cam;
 
+        private PlayerInput _pInput;
+        private int _amountCircled;
+
         [SerializeField]
         private GameObject[] _spawnables;
-
-        public void Remove(int index)
-        {
-            Destroy(_enemies[index].gameObject);
-            _enemies.RemoveAt(index);
-
-            SpawnOne();
-        }
 
         private void Awake()
         {
             Instance = this;
 
             _cam = Camera.main;
+            _pInput = GetComponent<PlayerInput>();
+        }
 
+        private void Start()
+        {
             for (int i = 0; i < 10; i++)
             {
                 SpawnOne();
+            }
+        }
+
+        private void Update()
+        {
+            _amountCircled = 0;
+            var mousePos = CursorUtils.GetPosition(_pInput).Value;
+            DrawingManager.Instance.UpdatePosition(mousePos);
+        }
+
+        public void OnClick(InputAction.CallbackContext value)
+        {
+            if (value.phase == InputActionPhase.Started)
+            {
+                DrawingManager.Instance.UpdateMousePress(true);
+            }
+            else if (value.phase == InputActionPhase.Canceled)
+            {
+                DrawingManager.Instance.UpdateMousePress(false);
+            }
+        }
+
+        public void Remove(CircleEnemy enn)
+        {
+            DrawingManager.Instance.Unregister(enn);
+            Destroy(enn.gameObject);
+            _enemies.Remove(enn);
+
+            SpawnOne();
+
+            _amountCircled++;
+            if (_amountCircled >= 3)
+            {
+                AchievementManager.Instance.Unlock(AchievementID.CIR_CircleN);
             }
         }
 
@@ -50,7 +85,9 @@ namespace Sketch.Circle
                     go = Instantiate(_spawnables[Random.Range(0, _spawnables.Length)], p, Quaternion.identity);
                 }
             }
-            _enemies.Add(go.GetComponent<CircleEnemy>());
+            var ce = go.GetComponent<CircleEnemy>();
+            DrawingManager.Instance.Register(ce);
+            _enemies.Add(ce);
         }
     }
 }

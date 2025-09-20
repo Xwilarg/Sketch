@@ -1,14 +1,13 @@
-using Sketch.Achievement;
-using Sketch.Common;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace Sketch.Circle
+namespace Sketch.Drawing
 {
     public class DrawingManager : MonoBehaviour
     {
+        public static DrawingManager Instance { private set; get; }
+
         [SerializeField]
         private LineRenderer _lr, _bufferLr;
         private LineShineAnim _bufferAnim;
@@ -22,13 +21,25 @@ namespace Sketch.Circle
         private const float MaxLength = 20f;
 
         private bool _isMousePressed;
-        private PlayerInput _pInput;
+
+        private List<ITargetShape> _shapes = new();
+
+        public void Register(ITargetShape shape)
+        {
+            _shapes.Add(shape);
+        }
+
+        public void Unregister(ITargetShape shape)
+        {
+            _shapes.Remove(shape);
+        }
 
         private void Awake()
         {
+            Instance = this;
+
             _cam = Camera.main;
             _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
-            _pInput = GetComponent<PlayerInput>();
         }
         // Check if 2 segments intersect
         // https://stackoverflow.com/a/9997374
@@ -82,20 +93,15 @@ namespace Sketch.Circle
 
         private void OnDrawGizmos()
         {
-            if (EnemyManager.Instance == null)
-            {
-                return; // Unity editor
-            }
-
-            foreach (var enn in EnemyManager.Instance.Enemies)
+            foreach (var enn in _shapes)
             {
                 var points = enn.Collider.points;
-                var p = (Vector2)enn.transform.position;
+                var p = enn.Position;
                 for (int i = 1; i <= points.Length; i++)
                 {
                     var a = p;
-                    var b = p + (points[i - 1] * enn.transform.localScale.x);
-                    var c = p + ((i == points.Length ? points[0] : points[i]) * enn.transform.localScale.x);
+                    var b = p + (points[i - 1] * enn.Scale);
+                    var c = p + ((i == points.Length ? points[0] : points[i]) * enn.Scale);
                     Debug.DrawLine(a, b, Color.red);
                     Debug.DrawLine(b, c, Color.red);
                     Debug.DrawLine(c, a, Color.red);
@@ -104,7 +110,7 @@ namespace Sketch.Circle
 
             if (_positions.Any())
             {
-                foreach (var enn in EnemyManager.Instance.Enemies)
+                foreach (var enn in _shapes)
                 {
                     var center = ShapeCenter(_positions);
                     for (int i = 1; i <= _positions.Count; i++)
@@ -112,7 +118,7 @@ namespace Sketch.Circle
                         var a = center;
                         var b = _positions[i - 1];
                         var c = (i == _positions.Count ? _positions[0] : _positions[i]);
-                        var color = PointInTriangle(enn.transform.position, a, b, c) ? Color.green : Color.grey;
+                        var color = PointInTriangle(enn.Position, a, b, c) ? Color.green : Color.grey;
                         Debug.DrawLine(a, b, color);
                         Debug.DrawLine(b, c, color);
                         Debug.DrawLine(c, a, color);
@@ -145,18 +151,21 @@ namespace Sketch.Circle
             return false;
         }
 
-        private void Update()
+        public void UpdateMousePress(bool isPressed)
+        {
+            _isMousePressed = isPressed;
+        }
+
+        public void UpdatePosition(Vector2 mousePosition)
         {
             if (_isMousePressed)
             {
-                // Mouse position
-                var mousePos = CursorUtils.GetPosition(_pInput).Value;
-                var pos = _cam.ScreenToWorldPoint(mousePos);
-                pos.z = 0;
+                var position = _cam.ScreenToWorldPoint(mousePosition);
+                position.z = 0;
 
                 // Is the mouse inside a Katsis
                 var isColliding = false;
-                foreach (var enn in EnemyManager.Instance.Enemies) // For each enemy...
+                foreach (var enn in _shapes) // For each enemy...
                 {
                     if (IsTouchingLines(enn.Collider))
                     {
@@ -171,7 +180,7 @@ namespace Sketch.Circle
                 {
                     if (_positions.Any())
                     {
-                        var dist = Vector2.Distance(_positions.Last(), pos);
+                        var dist = Vector2.Distance(_positions.Last(), position);
                         if (dist > MinDistance)
                         {
                             if (_positions.Count > 3)
@@ -179,27 +188,21 @@ namespace Sketch.Circle
                                 var pointC = _positions.Last();
                                 for (int i = 1; i < _positions.Count - 1; i++)
                                 {
-                                    int catchCount = 0;
-                                    if (Intersect(_positions[i - 1], _positions[i], pointC, pos)) // We made a closed shape...
+                                    if (Intersect(_positions[i - 1], _positions[i], pointC, position)) // We made a closed shape...
                                     {
                                         // Is a Katsis inside the circle
-                                        for (int it = EnemyManager.Instance.Enemies.Count - 1; it >= 0; it--) // ...for all enemies...
+                                        for (int it = _shapes.Count - 1; it >= 0; it--) // ...for all enemies...
                                         {
-                                            var enn = EnemyManager.Instance.Enemies[it];
+                                            var enn = _shapes[it];
                                             var center = ShapeCenter(_positions);
                                             for (int y = 1; y <= _positions.Count; y++) // ...we get each triangle of what we drew...
                                             {
                                                 var a = center;
                                                 var b = _positions[y - 1];
                                                 var c = y == _positions.Count ? _positions[0] : _positions[y];
-                                                if (PointInTriangle(enn.transform.position, a, b, c)) // ...and check if the enemy is inside
+                                                if (PointInTriangle(enn.Position, a, b, c)) // ...and check if the enemy is inside
                                                 {
-                                                    enn.Health--;
-                                                    if (enn.Health == 0)
-                                                    {
-                                                        EnemyManager.Instance.Remove(it);
-                                                        catchCount++;
-                                                    }
+                                                    enn.GetCircled();
                                                     break;
                                                 }
                                             }
@@ -208,7 +211,7 @@ namespace Sketch.Circle
                                         // 2 lines interect, we bufferize them
                                         _positionBuffer = new(_positions)
                                         {
-                                            pos
+                                            position
                                         };
                                         _bufferLr.positionCount = _positionBuffer.Count;
                                         _bufferLr.SetPositions(_positionBuffer.ToArray());
@@ -216,10 +219,6 @@ namespace Sketch.Circle
                                         _positions.Clear();
                                         CurrLength = 0;
 
-                                        if (catchCount >= 3)
-                                        {
-                                            AchievementManager.Instance.Unlock(AchievementID.CIR_CircleN);
-                                        }
                                         break;
                                     }
                                 }
@@ -232,12 +231,12 @@ namespace Sketch.Circle
                                 CurrLength -= firstDist;
                                 _positions.RemoveAt(0);
                             }
-                            _positions.Add(pos);
+                            _positions.Add(position);
                         }
                     }
                     else
                     {
-                        _positions.Add(pos);
+                        _positions.Add(position);
                     }
                 }
             }
@@ -248,12 +247,6 @@ namespace Sketch.Circle
 
             _lr.positionCount = _positions.Count;
             _lr.SetPositions(_positions.ToArray());
-        }
-
-        public void OnClick(InputAction.CallbackContext value)
-        {
-            if (value.phase == InputActionPhase.Started) _isMousePressed = true;
-            else if (value.phase == InputActionPhase.Canceled) _isMousePressed = false;
         }
     }
 }
