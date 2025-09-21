@@ -20,8 +20,6 @@ namespace Sketch.Drawing
         public float CurrLength { private set; get; }
         private const float MaxLength = 20f;
 
-        private bool _isMousePressed;
-
         private List<ITargetShape> _shapes = new();
 
         public void Register(ITargetShape shape)
@@ -80,15 +78,6 @@ namespace Sketch.Drawing
         }
 
         // Drawing code
-
-        public void CleanLines()
-        {
-            _positions.Clear();
-            _positionBuffer.Clear();
-            _lr.positionCount = 0;
-            _bufferLr.positionCount = 0;
-            CurrLength = 0;
-        }
 
         private Vector2 ShapeCenter(List<Vector3> points)
         {
@@ -155,14 +144,29 @@ namespace Sketch.Drawing
             return false;
         }
 
-        public void UpdateMousePress(bool isPressed)
+        /// <summary>
+        /// Remove all lines on screen
+        /// </summary>
+        public void CleanLines()
         {
-            _isMousePressed = isPressed;
+            _positions.Clear();
+            _positionBuffer.Clear();
+            _lr.positionCount = 0;
+            _bufferLr.positionCount = 0;
+            CurrLength = 0;
         }
 
-        public void UpdatePosition(Vector2 mousePosition)
+        /// <summary>
+        /// Update position to draw on screen
+        /// </summary>
+        /// <remarks>This should be called every Update frame</remarks>
+        /// <param name="mousePosition">Position of the mouse</param>
+        /// <param name="isMousePressed">Is the mouse pressed or not</param>
+        /// <returns>Did the user made an enclosed shape this current frame</returns>
+        public bool UpdatePosition(Vector2 mousePosition, bool isMousePressed)
         {
-            if (_isMousePressed)
+            var didCircle = false;
+            if (isMousePressed)
             {
                 var position = _cam.ScreenToWorldPoint(mousePosition);
                 position.z = 0;
@@ -223,6 +227,8 @@ namespace Sketch.Drawing
                                         _positions.Clear();
                                         CurrLength = 0;
 
+                                        didCircle = true;
+
                                         break;
                                     }
                                 }
@@ -251,6 +257,8 @@ namespace Sketch.Drawing
 
             _lr.positionCount = _positions.Count;
             _lr.SetPositions(_positions.ToArray());
+
+            return didCircle;
         }
     }
 }

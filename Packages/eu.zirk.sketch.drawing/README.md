@@ -2,6 +2,8 @@
 
 This package come with no dependency by default but we recommand you to add sketch.common with the following code to get started easily
 ```cs
+private bool _isMousePressed;
+
 private void Update()
 {
     // Get an instance of your PlayerInput
@@ -19,11 +21,11 @@ public void OnClick(InputAction.CallbackContext value)
 {
     if (value.phase == InputActionPhase.Started)
     {
-        DrawingManager.Instance.UpdateMousePress(true);
+        _isMousePressed = true;
     }
     else if (value.phase == InputActionPhase.Canceled)
     {
-        DrawingManager.Instance.UpdateMousePress(false);
+        _isMousePressed = false;
     }
 }
 ```

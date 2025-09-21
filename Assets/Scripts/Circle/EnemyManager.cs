@@ -17,6 +17,7 @@ namespace Sketch.Circle
 
         private PlayerInput _pInput;
         private int _amountCircled;
+        private bool _isMousePressed;
 
         [SerializeField]
         private GameObject[] _spawnables;
@@ -41,18 +42,18 @@ namespace Sketch.Circle
         {
             _amountCircled = 0;
             var mousePos = CursorUtils.GetPosition(_pInput).Value;
-            DrawingManager.Instance.UpdatePosition(mousePos);
+            DrawingManager.Instance.UpdatePosition(mousePos, _isMousePressed);
         }
 
         public void OnClick(InputAction.CallbackContext value)
         {
             if (value.phase == InputActionPhase.Started)
             {
-                DrawingManager.Instance.UpdateMousePress(true);
+                _isMousePressed = true;
             }
             else if (value.phase == InputActionPhase.Canceled)
             {
-                DrawingManager.Instance.UpdateMousePress(false);
+                _isMousePressed = false;
             }
         }
 
