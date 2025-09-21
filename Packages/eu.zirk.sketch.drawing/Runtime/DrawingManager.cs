@@ -215,7 +215,7 @@ namespace Sketch.Drawing
                                         };
                                         _bufferLr.positionCount = _positionBuffer.Count;
                                         _bufferLr.SetPositions(_positionBuffer.ToArray());
-                                        _bufferAnim.StartTimer();
+                                        _bufferAnim?.StartTimer();
                                         _positions.Clear();
                                         CurrLength = 0;
 
