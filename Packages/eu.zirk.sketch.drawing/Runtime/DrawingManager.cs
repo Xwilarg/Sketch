@@ -38,6 +38,10 @@ namespace Sketch.Drawing
         {
             Instance = this;
 
+            // If objects are prefabs, we instantiate them
+            if (_lr.gameObject.scene.name == null) _lr = Instantiate(_lr).GetComponent<LineRenderer>();
+            if (_bufferLr.gameObject.scene.name == null) _bufferLr = Instantiate(_bufferLr).GetComponent<LineRenderer>();
+
             _cam = Camera.main;
             _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
         }
