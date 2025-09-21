@@ -1,7 +1,7 @@
 ## How to use
 
 This package come with no dependency by default but we recommand you to add sketch.common with the following code to get started easily
-```
+```cs
 private void Update()
 {
     // Get an instance of your PlayerInput
