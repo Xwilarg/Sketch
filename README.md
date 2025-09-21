@@ -11,7 +11,7 @@ Various utility tools
 
 ## eu.zirk.sketch.drawing
 
-Various utility tools
+Add ability to draw on screen and detect circles
 
 - **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.drawing`
 - **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.drawing/README.md
