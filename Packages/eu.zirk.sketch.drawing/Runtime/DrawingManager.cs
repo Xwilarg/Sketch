@@ -17,6 +17,9 @@ namespace Sketch.Drawing
         private List<Vector3> _positionBuffer = new();
         private readonly float MinDistance = .1f;
 
+        /// <summary>
+        /// Current length of the stroke drawn on screen
+        /// </summary>
         public float CurrLength { private set; get; }
         private const float MaxLength = 20f;
 
