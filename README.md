@@ -63,4 +63,5 @@ Localize your game with a few clicks
 
 - **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.translation`
 - **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.translation/README.md
-- **Dependencies** None
+- **Dependencies**
+    - **com.unity.nuget.newtonsoft-json**
