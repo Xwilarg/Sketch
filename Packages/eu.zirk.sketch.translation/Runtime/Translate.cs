@@ -34,6 +34,7 @@ namespace Sketch.Translation
 
         private void UpdateTranslations()
         {
+            _translationData.Clear();
             foreach (var lang in Languages)
             {
                 _translationData.Add(lang, JsonConvert.DeserializeObject<Dictionary<string, string>>(Resources.Load<TextAsset>(lang).text));
