@@ -31,6 +31,10 @@ namespace Sketch.FPS
         [SerializeField]
         private float _gravityMultiplier = .75f;
 
+        [Header("Physics")]
+        [SerializeField]
+        private bool _enablePhysics;
+
         [Header("Data")]
         [SerializeField]
         private Transform _head;
@@ -137,6 +141,21 @@ namespace Sketch.FPS
             Physics.SphereCast(transform.position, _controller.radius, Vector3.down, out RaycastHit hitInfo,
                                _controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+
+            // Push objects on the way
+            if (_enablePhysics)
+            {
+                var hits = Physics.SphereCastAll(transform.position, _controller.radius, desiredMove,
+                                   .1f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                foreach (var hit in hits)
+                {
+                    var hitRb = hit.collider.GetComponent<Rigidbody>();
+                    if (hitRb != null)
+                    {
+                        hitRb.AddForce(desiredMove, ForceMode.Force);
+                    }
+                }
+            }
 
             Vector3 moveDir = Vector3.zero;
             if (IsActive)
