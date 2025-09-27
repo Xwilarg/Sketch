@@ -37,7 +37,7 @@ namespace Sketch.FPS
         private float _headRotation;
 
         [SerializeField]
-        private PlayerInput _pInput;
+        protected PlayerInput _pInput;
 
         [SerializeField]
         private TriggerArea _triggerArea;

@@ -173,7 +173,7 @@ MonoBehaviour:
   m_DefaultControlScheme: 
   m_DefaultActionMap: Sketch.FirstPersonController
   m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 5265322079990475046}
 --- !u!1 &5179004131544224430
 GameObject:
   m_ObjectHideFlags: 0
