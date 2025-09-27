@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "PlayerInputs",
     "maps": [
         {
@@ -9,6 +10,15 @@
                     "name": "Move",
                     "type": "Value",
                     "id": "0f7324db-897f-482f-8783-ae55bf672f8e",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "LookController",
+                    "type": "Value",
+                    "id": "13e01fc3-a8c0-42f2-9ef9-5470a34793e1",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -195,33 +205,11 @@
                 },
                 {
                     "name": "",
-                    "id": "20b14720-bd85-4406-ac8c-7a2ef9a1827e",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "211bf5a0-9308-4dee-8529-feaeedb20e9f",
                     "path": "<Pointer>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6aa36cb7-133f-439b-8124-e4a8c0b13711",
-                    "path": "<Joystick>/{Hatswitch}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Joystick",
                     "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -322,6 +310,28 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6aa36cb7-133f-439b-8124-e4a8c0b13711",
+                    "path": "<Joystick>/{Hatswitch}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "LookController",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "20b14720-bd85-4406-ac8c-7a2ef9a1827e",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "LookController",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

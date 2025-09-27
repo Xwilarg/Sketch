@@ -20,6 +20,9 @@ namespace Sketch.FPS
         private float _verticalSensitivity = .1f;
 
         [SerializeField]
+        private float _controllerSensitivity = 750f;
+
+        [SerializeField]
         private float _runningMultiplier = 1.5f;
 
         [SerializeField]
@@ -54,6 +57,9 @@ namespace Sketch.FPS
         private Vector2 _mov;
 
         private Vector3 _baseSpawnPos;
+
+        // Last controller input
+        private Vector2? _lastControllerRot;
 
         // Mobile interactions
         private bool? _mobileIsMoving;
@@ -162,6 +168,12 @@ namespace Sketch.FPS
             // If we can interact with anything, we check if target changed
             if (_interactions.Count > 1) UpdateInteractionText();
 
+            // If we are playing on a controller, we update the rotation
+            if (_lastControllerRot != null)
+            {
+                OnLookInternal(_lastControllerRot.Value * Time.deltaTime * _controllerSensitivity);
+            }
+
             /*
             if (_isSprinting && _staminaLeft > 0f && desiredMove.magnitude > 0f)
             {
@@ -255,7 +267,14 @@ namespace Sketch.FPS
         public void OnLook(InputAction.CallbackContext value)
         {
             var rot = value.ReadValue<Vector2>();
+            _lastControllerRot = null;
             OnLookInternal(rot);
+        }
+
+        public void OnLookController(InputAction.CallbackContext value)
+        {
+            _lastControllerRot = value.ReadValue<Vector2>();
+            Debug.Log(_lastControllerRot);
         }
 
         public void OnJump(InputAction.CallbackContext value)

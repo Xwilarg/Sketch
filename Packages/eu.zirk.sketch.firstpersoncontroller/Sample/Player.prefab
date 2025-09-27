@@ -153,6 +153,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 24a58f9e-ac58-40dc-91fb-01bc6a968c18
     m_ActionName: 'Sketch.FirstPersonController/Sprint[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 79024464993118885}
+        m_TargetAssemblyTypeName: Sketch.FPS.PlayerController, xwilarg.eu.zirk.sketch.firstpersoncontroller
+        m_MethodName: OnLookController
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 13e01fc3-a8c0-42f2-9ef9-5470a34793e1
+    m_ActionName: 'Sketch.FirstPersonController/LookController[/XInputControllerWindows/rightStick]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Sketch.FirstPersonController
@@ -350,6 +366,7 @@ MonoBehaviour:
   _mouvementSpeed: 5
   _horizontalSensitivity: 0.1
   _verticalSensitivity: 0.1
+  _controllerSensitivity: 750
   _runningMultiplier: 1.5
   _jumpForce: 2
   _gravityMultiplier: 0.75
