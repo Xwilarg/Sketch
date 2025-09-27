@@ -1,3 +1,4 @@
+using Sketch.Translation;
 using UnityEngine;
 
 namespace Sketch
@@ -9,6 +10,10 @@ namespace Sketch
 #if UNITY_WEBGL && !UNITY_EDITOR
             WebGLInput.captureAllKeyboardInput = false;
 #endif
+            Translate.Instance.SetLanguages(new string[]
+            {
+                "english", "french", "japanese"
+            });
         }
     }
 }

@@ -7,19 +7,11 @@ namespace Sketch.Translation
 {
     public class Translate
     {
-        public static readonly string[] Languages =
-        {
-            "english",
-            "french",
-            "japanese"
-        };
+        public static string[] Languages { set; get; } = new string[] { "english" };
 
         private Translate()
         {
-            foreach (var lang in Languages)
-            {
-                _translationData.Add(lang, JsonConvert.DeserializeObject<Dictionary<string, string>>(Resources.Load<TextAsset>(lang).text));
-            }
+            UpdateTranslations();
         }
 
         private static Translate _instance;
@@ -30,6 +22,21 @@ namespace Sketch.Translation
             {
                 _instance ??= new Translate();
                 return _instance;
+            }
+        }
+
+        public void SetLanguages(string[] overrideLanguages)
+        {
+            if (overrideLanguages != null) Languages = overrideLanguages;
+
+            UpdateTranslations();
+        }
+
+        private void UpdateTranslations()
+        {
+            foreach (var lang in Languages)
+            {
+                _translationData.Add(lang, JsonConvert.DeserializeObject<Dictionary<string, string>>(Resources.Load<TextAsset>(lang).text));
             }
         }
 

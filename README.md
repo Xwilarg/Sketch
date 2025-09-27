@@ -15,6 +15,7 @@ Add ability to draw on screen and detect circles
 
 - **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.drawing`
 - **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.drawing/README.md
+- **Dependencies** None
 
 ## eu.zirk.sketch.firstpersoncontroller
 
@@ -53,5 +54,13 @@ Show dialogs workflows within your game and let the text scale properly with its
 
 - **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.visualnovel`
 - **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.visualnovel/README.md
-- **Dependencies** None
+- **Dependencies**
     - **com.inkle.ink-unity-integration**: `https://github.com/inkle/ink-unity-integration.git#upm`
+
+## eu.zirk.sketch.translation
+
+Localize your game with a few clicks
+
+- **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.translation`
+- **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.translation/README.md
+- **Dependencies** None
