@@ -13,7 +13,7 @@ namespace Sketch.VN
 
         private int _index;
 
-        private const float _displaySpeedRef = .02f;
+        public float DisplaySpeedRef { set; get; } = .02f;
 
         private string _toDisplay;
         public string ToDisplay
@@ -21,7 +21,7 @@ namespace Sketch.VN
             set
             {
                 _index = 0;
-                _timer = _displaySpeedRef;
+                _timer = DisplaySpeedRef;
                 if (_text == null)
                 {
                     Awake();
@@ -116,7 +116,7 @@ namespace Sketch.VN
                 _timer -= Time.deltaTime;
                 if (_timer <= 0f)
                 {
-                    _timer = _displaySpeedRef;
+                    _timer = DisplaySpeedRef;
                     _text.text += _toDisplay[_index];
                     _index++;
                     if (IsDisplayDone)
