@@ -58,7 +58,7 @@ namespace Sketch.FPS
         private bool _isSprinting;
         private float _verticalSpeed;
 
-        private Vector2 _mov;
+        protected Vector2 _mov;
 
         private Vector3 _baseSpawnPos;
 
