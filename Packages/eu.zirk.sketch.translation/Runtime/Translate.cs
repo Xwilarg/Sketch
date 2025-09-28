@@ -9,6 +9,8 @@ namespace Sketch.Translation
     {
         public static string[] Languages { set; get; } = new string[] { "english" };
 
+        public Func<string, string> TranslationHook;
+
         private Translate()
         {
             UpdateTranslations();
@@ -59,6 +61,8 @@ namespace Sketch.Translation
             {
                 sentence = sentence.Replace("{" + i + "}", arguments[i]);
             }
+
+            if (TranslationHook != null) return TranslationHook(sentence);
 
             return sentence;
         }
