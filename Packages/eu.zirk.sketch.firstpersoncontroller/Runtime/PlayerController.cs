@@ -74,6 +74,7 @@ namespace Sketch.FPS
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
         public virtual bool IsActive => true;
+        public virtual bool CanSprint => true;
 
         protected virtual void Awake()
         {
@@ -160,8 +161,8 @@ namespace Sketch.FPS
             Vector3 moveDir = Vector3.zero;
             if (IsActive)
             {
-                moveDir.x = desiredMove.x * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
-                moveDir.z = desiredMove.z * _mouvementSpeed * (_isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+                moveDir.x = desiredMove.x * _mouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+                moveDir.z = desiredMove.z * _mouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
             }
 
             if (_controller.isGrounded && _verticalSpeed < 0f) // We are on the ground and not jumping
