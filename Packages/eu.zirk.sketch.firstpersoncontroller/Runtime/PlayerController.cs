@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 namespace Sketch.FPS
@@ -75,6 +76,8 @@ namespace Sketch.FPS
 
         public virtual bool IsActive => true;
         public virtual bool CanSprint => true;
+
+        protected UnityEvent<bool> OnSprintStateChanges { get; } = new();
 
         protected virtual void Awake()
         {
@@ -308,6 +311,7 @@ namespace Sketch.FPS
         public void OnSprint(InputAction.CallbackContext value)
         {
             _isSprinting = value.ReadValueAsButton();
+            OnSprintStateChanges.Invoke(_isSprinting);
         }
 
         private void OnInteractInternal()
