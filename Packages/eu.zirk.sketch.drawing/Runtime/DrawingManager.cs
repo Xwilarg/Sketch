@@ -12,7 +12,7 @@ namespace Sketch.Drawing
         private LineRenderer _lr, _bufferLr;
         private LineShineAnim _bufferAnim;
 
-        private Camera _cam;
+        public Camera Camera { set; private get; }
         private readonly List<Vector3> _positions = new();
         private List<Vector3> _positionBuffer = new();
         private readonly float MinDistance = .1f;
@@ -43,7 +43,7 @@ namespace Sketch.Drawing
             if (_lr.gameObject.scene.name == null) _lr = Instantiate(_lr).GetComponent<LineRenderer>();
             if (_bufferLr.gameObject.scene.name == null) _bufferLr = Instantiate(_bufferLr).GetComponent<LineRenderer>();
 
-            _cam = Camera.main;
+            Camera = Camera.main;
             _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
         }
         // Check if 2 segments intersect
@@ -171,7 +171,7 @@ namespace Sketch.Drawing
             var didCircle = false;
             if (isMousePressed)
             {
-                var position = _cam.ScreenToWorldPoint(mousePosition);
+                var position = Camera.ScreenToWorldPoint(mousePosition);
                 position.z = 0;
 
                 // Is the mouse inside a Katsis
