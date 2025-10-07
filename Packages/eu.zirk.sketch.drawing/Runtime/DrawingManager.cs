@@ -171,7 +171,7 @@ namespace Sketch.Drawing
             var didCircle = false;
             if (isMousePressed)
             {
-                var position = Camera.ScreenToWorldPoint(mousePosition) + offset;
+                var position = Camera.ScreenToWorldPoint(mousePosition) + (Vector3)offset;
                 position.z = 0;
 
                 // Is the mouse inside a Katsis
