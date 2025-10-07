@@ -166,12 +166,12 @@ namespace Sketch.Drawing
         /// <param name="mousePosition">Position of the mouse</param>
         /// <param name="isMousePressed">Is the mouse pressed or not</param>
         /// <returns>Did the user made an enclosed shape this current frame</returns>
-        public bool UpdatePosition(Vector2 mousePosition, bool isMousePressed)
+        public bool UpdatePosition(Vector2 mousePosition, bool isMousePressed, Vector2 offset = default)
         {
             var didCircle = false;
             if (isMousePressed)
             {
-                var position = Camera.ScreenToWorldPoint(mousePosition);
+                var position = Camera.ScreenToWorldPoint(mousePosition) + offset;
                 position.z = 0;
 
                 // Is the mouse inside a Katsis
