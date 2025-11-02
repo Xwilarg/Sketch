@@ -44,7 +44,8 @@ A way to save and load user data
 
 - **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.persistency`
 - **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.persistency/README.md
-- **Dependencies** None
+- **Dependencies**
+    - **com.unity.nuget.newtonsoft-json**
 
 ## eu.zirk.sketch.visualnovel
 
