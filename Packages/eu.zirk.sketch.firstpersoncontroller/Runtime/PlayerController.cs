@@ -10,6 +10,7 @@ namespace Sketch.FPS
 {
     public class PlayerController : MonoBehaviour
     {
+        #region Serialized fields
         [Header("Configuration")]
         [SerializeField]
         private float _mouvementSpeed = 5f;
@@ -42,7 +43,7 @@ namespace Sketch.FPS
         private float _headRotation;
 
         [SerializeField]
-        protected PlayerInput _pInput;
+        private PlayerInput _pInput;
 
         [SerializeField]
         private TriggerArea _triggerArea;
@@ -54,12 +55,13 @@ namespace Sketch.FPS
         private RectTransform _stamina;
         private float _staminaLeft = 1f;
         private float _timerStaminaReload = 0f;*/
+        #endregion Serialized fields
 
+        #region Member variables
+        // Base controls
         private CharacterController _controller;
         private bool _isSprinting;
         private float _verticalSpeed;
-
-        protected Vector2 _mov;
 
         private Vector3 _baseSpawnPos;
 
@@ -71,13 +73,21 @@ namespace Sketch.FPS
         private Vector2 _touchRef;
         private Vector2 _touchPos;
 
-        private List<IInteractable> _interactions = new();
-        public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
+        // Mouvements
+        protected Vector2 _mov;
 
+        // Interactions
+        private readonly List<IInteractable> _interactions = new();
+        public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
+        #endregion Member variables
+
+        // Overrides behaviors
         public virtual bool IsActive => true;
         public virtual bool CanSprint => true;
 
+        // Movement callbacks
         protected UnityEvent<bool> OnSprintStateChanges { get; } = new();
+        protected UnityEvent OnJumpDone { get; } = new();
 
         protected virtual void Awake()
         {
@@ -297,7 +307,6 @@ namespace Sketch.FPS
         public void OnLookController(InputAction.CallbackContext value)
         {
             _lastControllerRot = value.ReadValue<Vector2>();
-            Debug.Log(_lastControllerRot);
         }
 
         public void OnJump(InputAction.CallbackContext value)
@@ -305,6 +314,7 @@ namespace Sketch.FPS
             if (_controller.isGrounded && IsActive)
             {
                 _verticalSpeed = _jumpForce;
+                OnJumpDone.Invoke();
             }
         }
 
