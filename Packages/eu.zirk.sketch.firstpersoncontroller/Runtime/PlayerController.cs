@@ -62,7 +62,6 @@ namespace Sketch.FPS
         private CharacterController _controller;
         private bool _isSprinting;
         private float _verticalSpeed;
-
         private Vector3 _baseSpawnPos;
 
         // Last controller input

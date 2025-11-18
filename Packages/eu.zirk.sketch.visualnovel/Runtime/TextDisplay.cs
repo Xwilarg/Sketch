@@ -15,7 +15,7 @@ namespace Sketch.VN
 
         public float DisplaySpeedRef { set; get; } = .02f;
 
-        private string _toDisplay;
+        private string _toDisplay = string.Empty;
         public string ToDisplay
         {
             set
@@ -27,7 +27,7 @@ namespace Sketch.VN
                     Awake();
                 }
                 _text.text = string.Empty;
-                _toDisplay = value.Replace("\r", ""); // Remove \r cause we don't care
+                _toDisplay = value == null ? string.Empty : value.Replace("\r", ""); // Remove \r cause we don't care
                 SplitVertical();
             }
             private get => _toDisplay;
