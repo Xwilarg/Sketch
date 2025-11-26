@@ -65,19 +65,7 @@ namespace Sketch.Persistency
             {
                 if (_saveData == null)
                 {
-                    if (File.Exists(SaveFilePath))
-                    {
-                        _saveData = JsonConvert.DeserializeObject<T>(Decrypt(File.ReadAllBytes(SaveFilePath)));
-                        if (_saveData == null)
-                        {
-                            Debug.LogError("Save file couldn't be parsed, creating a new one...");
-                            _saveData = new();
-                        }
-                    }
-                    else
-                    {
-                        _saveData = new();
-                    }
+                    ReloadSaves();
                 }
                 return _saveData;
             }
@@ -92,6 +80,23 @@ namespace Sketch.Persistency
         {
             if (File.Exists(SaveFilePath)) File.Delete(SaveFilePath);
             _saveData = new();
+        }
+
+        public void ReloadSaves()
+        {
+            if (File.Exists(SaveFilePath))
+            {
+                _saveData = JsonConvert.DeserializeObject<T>(Decrypt(File.ReadAllBytes(SaveFilePath)));
+                if (_saveData == null)
+                {
+                    Debug.LogError("Save file couldn't be parsed, creating a new one...");
+                    _saveData = new();
+                }
+            }
+            else
+            {
+                _saveData = new();
+            }
         }
     }
 }
