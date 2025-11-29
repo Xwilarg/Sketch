@@ -29,3 +29,27 @@ public void OnClick(InputAction.CallbackContext value)
     }
 }
 ```
+
+You can then define your object that will be circled
+```cs
+public class YourObject : MonoBehaviour, ITargetShape
+{
+    public PolygonCollider2D Collider => _coll;
+
+    public Vector2 Position => transform.position;
+
+    public float Scale => transform.localScale.x;
+
+    public void GetCircled()
+    {
+        // Do something once this object is circled
+    }
+
+    private PolygonCollider2D _coll;
+    
+    private void Awake()
+    {
+        _coll = GetComponent<PolygonCollider2D>();
+    }
+}
+```
