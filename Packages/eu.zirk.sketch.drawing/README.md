@@ -13,7 +13,7 @@ private void Update()
     var mousePos = CursorUtils.GetPosition(pInput).Value;
 
     // Update position of drawing
-    DrawingManager.Instance.UpdatePosition(mousePos);
+    DrawingManager.Instance.UpdatePosition(mousePos, _isMousePressed);
 }
 
 // Callback for Unity input system
