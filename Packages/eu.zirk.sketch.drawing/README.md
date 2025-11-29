@@ -50,6 +50,7 @@ public class YourObject : MonoBehaviour, ITargetShape
     private void Awake()
     {
         _coll = GetComponent<PolygonCollider2D>();
+        DrawingManager.Instance.Register(this);
     }
 }
 ```
