@@ -43,6 +43,8 @@ public class YourObject : MonoBehaviour, ITargetShape
     public void GetCircled()
     {
         // Do something once this object is circled
+        Destroy(gameObject);
+        DrawingManager.Instance.Unregister(this); // If we destroy the object, we need to remember to unregister it!
     }
 
     private PolygonCollider2D _coll;
