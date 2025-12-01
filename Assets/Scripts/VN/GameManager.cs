@@ -1,6 +1,7 @@
 using Sketch.Achievement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace Sketch.VN
 {
@@ -14,7 +15,7 @@ namespace Sketch.VN
         private void Start()
         {
             VNManager.Instance.ShowStory(_introStory,
-                onDone: () => { },
+                onDone: () => { SceneManager.LoadScene("Main"); },
                 onTags: (tag, value) =>
                 {
                     if (tag == "ach-noskip")

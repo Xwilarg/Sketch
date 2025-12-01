@@ -12,7 +12,7 @@ namespace Sketch
 #endif
             Translate.Instance.SetLanguages(new string[]
             {
-                "english", "french", "japanese"
+                "english", "french"//, "japanese"
             });
         }
     }
