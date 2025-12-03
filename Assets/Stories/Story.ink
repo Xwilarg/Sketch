@@ -35,7 +35,7 @@ Well, Yuzu is not there so you better appreciate the chance you got
 === Engine ===
 The engine is the medium we use so I can speak to you, magnificent isn't it? Almost as great as me!
 You already some of its feature, showing text letter by letter, displaying choices and sprites...
-Along with these little buttons under the screen!
+Along with these little buttons your the right!
 
 Let's start with the "Auto" button, it allow you to pass the dialogues automatically when they end, after all it should be the engine job to pass dialogues, not yours!
 Feel free to test it for the rest of this technical preview
