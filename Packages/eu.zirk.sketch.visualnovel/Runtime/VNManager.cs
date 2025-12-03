@@ -11,11 +11,20 @@ using UnityEngine.UI;
 
 namespace Sketch.VN
 {
+    [Serializable]
+    public class CharacterImageOverlay
+    {
+        public string Tag;
+        public Image Image;
+        public bool IsSet { set; get; }
+    }
+
     public class VNManager : MonoBehaviour
     {
         public static bool QuickRetry = false;
         public static VNManager Instance { private set; get; }
 
+        [Header("Mandatory fields")]
         [SerializeField, Tooltip("Text that will show your visual novel story")]
         private TextDisplay _display;
 
@@ -25,6 +34,14 @@ namespace Sketch.VN
 
         private Story _story;
 
+        [Header("Displayed sprite")]
+        [SerializeField, Tooltip("Where the image of the character will be shown")]
+        private Image _characterImage;
+
+        [SerializeField, Tooltip("Others elements that overlaps the character sprite (emotions, clothes, etc...)")]
+        private CharacterImageOverlay[] _overlays;
+
+        [Header("Interface")]
         [SerializeField, Tooltip("Object that contains all the others visual novel components")]
         private GameObject _container;
 
@@ -34,9 +51,7 @@ namespace Sketch.VN
         [SerializeField, Tooltip("Text that show the name of the character")]
         private TMP_Text _nameText;
 
-        [SerializeField, Tooltip("Where the image of the character will be shown")]
-        private Image _characterImage;
-
+        [Header("Choices")]
         [SerializeField, Tooltip("Object that contains the choices")]
         private Transform _choiceContainer;
 
@@ -203,7 +218,7 @@ namespace Sketch.VN
                                 };
                             }
                         }
-                            break;
+                        break;
 
                     case "skip":
                         if (content == "TRUE") _isSkipEnabled = true;
@@ -212,9 +227,36 @@ namespace Sketch.VN
                         break;
 
                     default:
-                        if (_onTags == null || !_onTags.Invoke(s[0], content))
+                        var overlayTag = _currentCharacter.Overlays.FirstOrDefault(x => x.ParentTag.ToLowerInvariant() == s[0]);
+                        if (overlayTag != null)
                         {
-                            Debug.LogError($"[STORY] Unknown tag {s[0]}");
+                            var img = _overlays.FirstOrDefault(x => x.Tag.ToLowerInvariant() == overlayTag.ParentTag.ToLowerInvariant());
+                            if (img == null)
+                            {
+                                Debug.LogError($"[STORY] {nameof(_overlays)} is missing an element for the tag {overlayTag.ParentTag}");
+                                break;
+                            }
+
+                            var elem = overlayTag.OverlayContent.FirstOrDefault(x => x.Tag.ToUpperInvariant() == content);
+                            if (elem == null)
+                            {
+                                Debug.LogError($"[STORY] character overlay info is missing content {content} for tag {overlayTag.ParentTag}");
+                                break;
+                            }
+
+                            img.Image.sprite = elem.Image;
+                            img.Image.gameObject.SetActive(true);
+                            img.IsSet = true;
+                        }
+                        else
+                        {
+                            foreach (var o in _currentCharacter.Overlays)
+                            {
+                                if (_onTags == null || !_onTags.Invoke(s[0], content))
+                                {
+                                    Debug.LogError($"[STORY] Unknown tag {s[0]}");
+                                }
+                            }
                         }
                         break;
                 }
@@ -228,7 +270,10 @@ namespace Sketch.VN
                     _nameText.text = string.Empty;
                 }
                 if (_characterImage != null)
+                {
                     _characterImage.gameObject.SetActive(false);
+                    foreach (var cio in _overlays) cio.Image.gameObject.SetActive(false);
+                }
             }
             else
             {
@@ -241,6 +286,7 @@ namespace Sketch.VN
                 {
                     _characterImage.gameObject.SetActive(true);
                     _characterImage.sprite = _currentCharacter.Image;
+                    foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
                 }
             }
         }

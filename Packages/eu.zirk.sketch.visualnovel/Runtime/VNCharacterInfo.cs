@@ -8,5 +8,20 @@ namespace Sketch.VN
         public string Name;
         public string DisplayName;
         public Sprite Image;
+        public CharacterOverlayInfo[] Overlays;
+    }
+
+    [System.Serializable]
+    public class CharacterOverlayInfo
+    {
+        public string ParentTag;
+        public CharacterOverlayContentInfo[] OverlayContent;
+    }
+
+    [System.Serializable]
+    public class CharacterOverlayContentInfo
+    {
+        public string Tag;
+        public Sprite Image;
     }
 }

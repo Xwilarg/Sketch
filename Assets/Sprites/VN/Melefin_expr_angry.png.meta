@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 2711ff08ca4f62f459f54c5d9bc7bfc6
+guid: 9e675adf052e4424fa2bb176ccd94a36
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4573514537795334995
-    second: Yuzu_0
+      213: 839546415868054951
+    second: Melefin_expr_angry_0
+  - first:
+      213: -6363199838461572784
+    second: Melefin_expr_angry_1
+  - first:
+      213: -6572976882242505521
+    second: Melefin_expr_angry_2
+  - first:
+      213: 4766766365010462
+    second: Melefin_expr_angry_3
+  - first:
+      213: -3753759567824151386
+    second: Melefin_expr_angry_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -70,7 +82,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -83,8 +95,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
+  - serializedVersion: 4
+    buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -96,8 +108,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Standalone
+  - serializedVersion: 4
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -113,27 +125,117 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Yuzu_0
+      name: Melefin_expr_angry_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1039
-        height: 1988
+        x: 697
+        y: 1992
+        width: 607
+        height: 400
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 35330689d33687f30800000000000000
-      internalID: 4573514537795334995
+      spriteID: 7ad8442640ba6ab00800000000000000
+      internalID: 839546415868054951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Melefin_expr_angry_1
+      rect:
+        serializedVersion: 2
+        x: 1037
+        y: 2345
+        width: 100
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 059cca9e57f51b7a0800000000000000
+      internalID: -6363199838461572784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Melefin_expr_angry_2
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 2304
+        width: 50
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc4b419c95818c4a0800000000000000
+      internalID: -6572976882242505521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Melefin_expr_angry_3
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 1947
+        width: 35
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ae9e7495fe01000800000000000000
+      internalID: 4766766365010462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Melefin_expr_angry_4
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 1934
+        width: 153
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ac1e93bf87f7ebc0800000000000000
+      internalID: -3753759567824151386
       vertices: []
       indices: 
       edges: []
       weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -143,8 +245,14 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable:
-      Yuzu_0: 4573514537795334995
+      Melefin_expr_angry_0: 839546415868054951
+      Melefin_expr_angry_1: -6363199838461572784
+      Melefin_expr_angry_2: -6572976882242505521
+      Melefin_expr_angry_3: 4766766365010462
+      Melefin_expr_angry_4: -3753759567824151386
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
