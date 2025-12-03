@@ -146,6 +146,7 @@ namespace Sketch.VN
                 if (_characterImage != null && _currentCharacter != null)
                 {
                     _characterImage.gameObject.SetActive(true);
+                    foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
                 }
                 if (_choiceContainer != null)
                 {
@@ -348,8 +349,18 @@ namespace Sketch.VN
         {
             _container.SetActive(!_container.activeInHierarchy);
 
-            if (_characterImage != null)
+            if (_characterImage != null && _currentCharacter != null)
+            {
                 _characterImage.gameObject.SetActive(_container.activeInHierarchy);
+                if (_container.activeInHierarchy)
+                {
+                    foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
+                }
+                else
+                {
+                    foreach (var cio in _overlays) cio.Image.gameObject.SetActive(false);
+                }
+            }
             if (_choiceContainer != null)
                 _choiceContainer.gameObject.SetActive(_container.activeInHierarchy);
 
@@ -383,7 +394,7 @@ namespace Sketch.VN
                 else
                 {
                     // Hide mode is active
-                    _container.SetActive(true);
+                    ToggleHide();
                 }
             }
         }
