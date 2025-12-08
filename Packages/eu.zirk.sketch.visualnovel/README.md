@@ -63,12 +63,13 @@ For example on this example:
 Overlays are a way to easily set sprites within Ink
 
 For example in the screenshot above the base sprite of Melefin is separated between the base body, clothes and visual expressions
-![alt text](README/README_overlays_folder.png)
-We can then create images that will overlaps your base Melefin body and assign them a tag in our VNManager
-![alt text](README/README_overlays_vnmanager.png)
-We then add which sprite corresponds to what tag in our scriptable object
-![alt text](README/README_overlays_scriptableobject.png)
+![alt text](README/README_overlays_folder.png) \
+We can then create images that will overlaps your base Melefin body and assign them a tag in our VNManager \
+![alt text](README/README_overlays_vnmanager.png) \
+We then add which sprite corresponds to what tag in our scriptable object \
+![alt text](README/README_overlays_scriptableobject.png) \
 We can see that here in our VNManager the tag "clothes" is associated to the Image named "Clothes" \
 Likewise in our scriptable objects, we created a tag with parent tag "clothes" (must match the VNManager one and inside defined all our clothes associated to a tag)
-We can then use the syntax `#parentTag tag` within Ink
+
+We can then use the syntax `#parentTag tag` within Ink \
 For example `#clothes formal` will show Melefin formal attire
