@@ -21,7 +21,6 @@ namespace Sketch.VN
 
     public class VNManager : MonoBehaviour
     {
-        public static bool QuickRetry = false;
         public static VNManager Instance { private set; get; }
 
         [Header("Mandatory fields")]
@@ -369,27 +368,34 @@ namespace Sketch.VN
 
         public void OnNextDialogue(InputAction.CallbackContext value)
         {
-            if (value.performed && !_isSkipEnabled)
+            if (value.phase == InputActionPhase.Started)
             {
                 if (_container.activeInHierarchy)
                 {
-                    // If we click on a button, we don't advance the 
-                    PointerEventData pointerEventData = new(EventSystem.current)
+                    if (_isSkipEnabled)
                     {
-                        position = Mouse.current.position.ReadValue()
-                    };
-                    List<RaycastResult> raycastResultsList = new List<RaycastResult>();
-                    EventSystem.current.RaycastAll(pointerEventData, raycastResultsList);
-                    for (int i = 0; i < raycastResultsList.Count; i++)
-                    {
-                        if (raycastResultsList[i].gameObject.TryGetComponent<Button>(out var _))
-                        {
-                            return;
-                        }
+                        _isSkipEnabled = false;
                     }
+                    else
+                    {
+                        // If we click on a button, we don't advance the 
+                        PointerEventData pointerEventData = new(EventSystem.current)
+                        {
+                            position = Mouse.current.position.ReadValue()
+                        };
+                        List<RaycastResult> raycastResultsList = new List<RaycastResult>();
+                        EventSystem.current.RaycastAll(pointerEventData, raycastResultsList);
+                        for (int i = 0; i < raycastResultsList.Count; i++)
+                        {
+                            if (raycastResultsList[i].gameObject.TryGetComponent<Button>(out var _))
+                            {
+                                return;
+                            }
+                        }
 
-                    ResetVN();
-                    DisplayNextDialogue();
+                        ResetVN();
+                        DisplayNextDialogue();
+                    }
                 }
                 else
                 {
@@ -401,7 +407,7 @@ namespace Sketch.VN
 
         public void OnHide(InputAction.CallbackContext value)
         {
-            if (value.performed)
+            if (value.phase == InputActionPhase.Started)
             {
                 ToggleHide();
             }
@@ -409,13 +415,9 @@ namespace Sketch.VN
 
         public void OnSkip(InputAction.CallbackContext value)
         {
-            if (value.phase == InputActionPhase.Started)
+            if (value.phase == InputActionPhase.Started && _container.activeInHierarchy)
             {
-                _isSkipEnabled = true;
-            }
-            else if (value.phase == InputActionPhase.Canceled)
-            {
-                _isSkipEnabled = false;
+                _isSkipEnabled = !_isSkipEnabled;
             }
         }
     }

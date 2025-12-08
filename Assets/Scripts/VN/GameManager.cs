@@ -20,13 +20,9 @@ namespace Sketch.VN
                 {
                     if (tag == "ach-noskip")
                     {
-                        if (value == "START") _didUseSkip = false;
-                        else
+                        if (!_didUseSkip)
                         {
-                            if (!_didUseSkip)
-                            {
-                                AchievementManager.Instance.Unlock(AchievementID.VIS_NoSkip);
-                            }
+                            AchievementManager.Instance.Unlock(AchievementID.VIS_NoSkip);
                         }
                         return true;
                     }
@@ -35,7 +31,7 @@ namespace Sketch.VN
             );
         }
 
-        public void OnUseSkip(InputAction value)
+        public void OnUseSkip(InputAction.CallbackContext value)
         {
             if (value.phase == InputActionPhase.Started)
             {

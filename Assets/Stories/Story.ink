@@ -43,7 +43,7 @@ Feel free to test it for the rest of this technical preview
 Then we have the "Hide" button, its use is pretty straighfoward too, it allows to hide the interface to better see the background image
 Beautiful landscape isn't it? Might be a bit blurry for you but I assure you that from where I am, it truly is magnificent
 
-After that we have the "Skip" button, as its name says, it allows to skip text, try it, I'll ramble for a bit in my native language and stop you when I'm done #ach-noskip start
+After that we have the "Skip" button, as its name says, it allows to skip text, try it, I'll ramble for a bit in my native language and stop you when I'm done
 ... Bah, baa-
 Baah, baa, baaa
 Baaaa, baaaa-
@@ -55,7 +55,7 @@ Baa, baaah
 Baa baaaa-
 Bah baa baaaaaa
 Baaa...
-Amazing isn't it? It feels like no time passed! #skip false #ach-noskip stop
+Amazing isn't it? It feels like no time passed! #skip false #ach-noskip check
 Of course be careful with that, you wouldn't want to miss too much of what I say!
 
 Our last feature, and the most important one is all about me and how my sprite can change, for that let me show you more about my wardrobe
