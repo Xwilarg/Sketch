@@ -310,7 +310,7 @@ namespace Sketch.VN
             {
                 DisplayStory(_story.Continue());
             }
-            else if (IsPlayingStory)
+            else if (!IsPlayingStory)
             {
                 _container.SetActive(false);
                 _onDone?.Invoke();
