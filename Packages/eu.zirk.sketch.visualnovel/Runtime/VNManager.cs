@@ -119,7 +119,7 @@ namespace Sketch.VN
             }
         }
 
-        public bool IsPlayingStory => _story != null && _story.canContinue || (_story.currentChoices != null && _story.currentChoices.Any());
+        public bool IsPlayingStory => _story != null && (_story.canContinue || (_story.currentChoices != null && _story.currentChoices.Any()));
 
         private void Update()
         {
