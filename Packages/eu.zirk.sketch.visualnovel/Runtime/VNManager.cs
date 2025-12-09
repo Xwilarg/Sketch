@@ -397,7 +397,7 @@ namespace Sketch.VN
                         DisplayNextDialogue();
                     }
                 }
-                else
+                else if (_story.canContinue || _story.currentChoices.Any())
                 {
                     // Hide mode is active
                     ToggleHide();
@@ -407,7 +407,7 @@ namespace Sketch.VN
 
         public void OnHide(InputAction.CallbackContext value)
         {
-            if (value.phase == InputActionPhase.Started)
+            if (value.phase == InputActionPhase.Started && (_story.canContinue || _story.currentChoices.Any()))
             {
                 ToggleHide();
             }
