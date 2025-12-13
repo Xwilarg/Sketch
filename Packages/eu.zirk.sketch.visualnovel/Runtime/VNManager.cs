@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -39,6 +40,13 @@ namespace Sketch.VN
 
         [SerializeField, Tooltip("Others elements that overlaps the character sprite (emotions, clothes, etc...)")]
         private CharacterImageOverlay[] _overlays;
+
+        [Header("Background")]
+        [SerializeField, Tooltip("Image containing the background")]
+        private Image _backgroundImage;
+
+        [SerializeField, Tooltip("Tags matching the different backgrounds")]
+        private CharacterOverlayContentInfo[] _backgrounds;
 
         [Header("Interface")]
         [SerializeField, Tooltip("Object that contains all the others visual novel components")]
@@ -217,6 +225,27 @@ namespace Sketch.VN
                                     Name = content
                                 };
                             }
+                        }
+                        break;
+
+                    case "background":
+                        if (_backgroundImage == null)
+                        {
+                            Debug.LogError($"[STORY] Trying to set background when {nameof(_backgroundImage)} is not set");
+                            break;
+                        }
+
+                        if (content == "NONE") _backgroundImage.gameObject.SetActive(false);
+                        else
+                        {
+                            var bgSprite = _backgrounds.FirstOrDefault(x => x.Tag.ToUpperInvariant() == content);
+                            if (bgSprite == null)
+                            {
+                                Debug.LogError($"[STORY] Unable to find background {content}");
+                            }
+
+                            _backgroundImage.gameObject.SetActive(true);
+                            _backgroundImage.sprite = bgSprite.Image;
                         }
                         break;
 

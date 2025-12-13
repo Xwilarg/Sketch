@@ -180,8 +180,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "3.2.1",
-      "depth": 0,
+      "version": "3.2.2",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -305,19 +305,25 @@
       "version": "file:eu.zirk.sketch.persistency",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.2"
+      }
     },
     "eu.zirk.sketch.translation": {
       "version": "file:eu.zirk.sketch.translation",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.2"
+      }
     },
     "eu.zirk.sketch.visualnovel": {
       "version": "file:eu.zirk.sketch.visualnovel",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.inkle.ink-unity-integration": "1.2.2"
+      }
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

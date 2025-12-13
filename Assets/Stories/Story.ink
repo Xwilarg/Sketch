@@ -1,4 +1,4 @@
-This is the beginning of the visual novel demo, please give a warm welcome to...
+This is the beginning of the visual novel demo, please give a warm welcome to... #background outside
 Melefin! #speaker melefin #emotion happy #clothes casual
 Yuzu is not here today, but lucky you because it means you get me instead!
 Oh my, what a privilege you get indeed, please no touching, I'm a feast for the eyes only #emotion neutral

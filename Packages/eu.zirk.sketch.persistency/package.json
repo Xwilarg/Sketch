@@ -6,5 +6,8 @@
     "email": "contact@zirk.eu",
     "url": "https://zirk.eu"
   },
-  "displayName": "Sketch.Persistency"
+  "displayName": "Sketch.Persistency",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.2"
+  }
 }

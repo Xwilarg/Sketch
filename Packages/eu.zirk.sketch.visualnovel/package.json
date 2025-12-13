@@ -6,5 +6,8 @@
     "email": "contact@zirk.eu",
     "url": "https://zirk.eu"
   },
-  "displayName": "Sketch.VisualNovel"
+  "displayName": "Sketch.VisualNovel",
+  "dependencies": {
+    "com.inkle.ink-unity-integration": "1.2.2"
+  }
 }

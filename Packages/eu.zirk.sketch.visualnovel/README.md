@@ -31,11 +31,14 @@ VNManager.Instance.ShowStory(compiledStoryFile);
 Some of the [Ink tags](https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md#tags) will be interpreted by the engine:
 - **#speaker name/none**: Look for the corresponding character and how its name and image, if the characters attribute is empty, will use the parameter given as text
 - **#skip true/false**: Toggle skip option manually
+- **#background name/none**: Show an image on the background
 
 ### VNManager attributes
 All the following attributes are optional
 - **Characters**: A list of `VNCharacterInfo`, these allow you to use the speaker tag as mentionned above
 - **Overlays**: Allow to display images with tags, see section below
+- **Background Image**: Image containing the background
+- **Backgrounds**: Associate tags with background images
 - **Container**: Object surrounding your text, is automatically shown or hide depending of the state of the VN
 - **Name Panel**: Container surrounding the name text, only shown when a name is shown
 - **Name Text**: Show the name of a character, used with the speaker tag as mentionned above
@@ -45,6 +48,7 @@ All the following attributes are optional
 
 For example on this example:
 - **Characters**: File for the character "Melefin", speaker set from Ink using #speaker melefin
+- **Background Image**: Image showing the grassy area with tree in the background
 - **Container**: Object containing the bottom part of the visual novel (panel containing name and visual novel text)
 - **Name panel**: Panel around the name "Melefin"
 - **Name Text**: TMP_Text object containing the text "Melefin"
@@ -73,3 +77,6 @@ Likewise in our scriptable objects, we created a tag with parent tag "clothes" (
 
 We can then use the syntax `#parentTag tag` within Ink \
 For example `#clothes formal` will show Melefin formal attire
+
+### Example
+An example of using tags with Ink is available at https://github.com/Xwilarg/Sketch/blob/master/Assets/Stories/Story.ink
