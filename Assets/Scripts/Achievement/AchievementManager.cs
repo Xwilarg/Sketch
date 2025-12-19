@@ -33,7 +33,6 @@ namespace Sketch.Achievement
             instance.GetComponentInChildren<TMP_Text>().text = data.Name;
 
             PersistencyManager<SaveData>.Instance.SaveData.Unlock(achievement);
-            PersistencyManager<SaveData>.Instance.Save();
 
             Destroy(instance, 2f);
         }

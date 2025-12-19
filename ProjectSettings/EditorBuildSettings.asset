@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 6cbc0896dcfbbd349aa2c4abf8a057e9
   - enabled: 1
-    path: Assets/Scenes/MapGeneration2.unity
+    path: Assets/Scenes/MapGeneration.unity
     guid: ec7d4519523db30459242bf9565b7f24
   - enabled: 1
     path: Assets/Scenes/Fishing.unity
@@ -41,5 +41,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LoS.unity
     guid: 9fbfaed522da17040959e0e3b4651d74
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
+    guid: d65807144b4b73c44a3135fa3411379e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

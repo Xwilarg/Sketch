@@ -1,14 +1,26 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
 namespace Sketch.Persistency
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    internal static class WebGLSyncFiles
+    {
+        [DllImport("__Internal")]
+        internal static extern void SyncFiles();
+    }
+#endif
+
     public class PersistencyManager<T>
         where T : ISaveData, new()
     {
+
         // Exactly 16 bytes
         private const string _key = "Yuzu we love you";
 
@@ -74,6 +86,9 @@ namespace Sketch.Persistency
         public void Save()
         {
             File.WriteAllBytes(SaveFilePath, Encrypt(JsonConvert.SerializeObject(_saveData)));
+#if UNITY_WEBGL && !UNITY_EDITOR
+            WebGLSyncFiles.SyncFiles();
+#endif
         }
 
         public void DeleteSave()
