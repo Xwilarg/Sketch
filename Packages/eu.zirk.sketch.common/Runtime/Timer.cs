@@ -1,6 +1,6 @@
 ﻿using UnityEngine.Events;
 
-namespace Sketch.Utils
+namespace Sketch.Common
 {
     public class Timer
     {
