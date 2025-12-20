@@ -1,4 +1,5 @@
-﻿using UnityEngine.Events;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace Sketch.Common
 {
@@ -7,11 +8,16 @@ namespace Sketch.Common
         public UnityEvent OnDone { set; get; } = new();
 
         private float _timer;
+        private float _maxTime;
         private bool _isActive;
 
-        public void Start(float time)
+        public float TimerClamped => Mathf.Clamp(_timer, 0f, _maxTime);
+        public float TimerClamped01 => Mathf.Clamp01(_timer / _maxTime);
+
+        public void Start(float maxTime)
         {
-            _timer = time;
+            _timer = 0f;
+            _maxTime = maxTime;
             _isActive = true;
         }
 
@@ -19,9 +25,9 @@ namespace Sketch.Common
         {
             if (!_isActive) return;
 
-            _timer -= deltaTime;
+            _timer += deltaTime;
 
-            if (_timer <= 0f)
+            if (_timer >= _maxTime)
             {
                 OnDone.Invoke();
                 _isActive = false;
