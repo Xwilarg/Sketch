@@ -1,6 +1,6 @@
 ﻿using UnityEngine.Events;
 
-namespace QuimblyJam.Utils
+namespace Sketch.Utils
 {
     public class Timer
     {
