@@ -9,28 +9,29 @@ namespace Sketch.Common
 
         private float _timer;
         private float _maxTime;
-        private bool _isActive;
+
+        public bool IsActive { private set; get; }
 
         public float TimerClamped => Mathf.Clamp(_timer, 0f, _maxTime);
-        public float TimerClamped01 => Mathf.Clamp01(_timer / _maxTime);
+        public float TimerClamped01 => _maxTime == 0f ? 0f : Mathf.Clamp01(_timer / _maxTime);
 
         public void Start(float maxTime)
         {
             _timer = 0f;
             _maxTime = maxTime;
-            _isActive = true;
+            IsActive = true;
         }
 
         public void Update(float deltaTime)
         {
-            if (!_isActive) return;
+            if (!IsActive) return;
 
             _timer += deltaTime;
 
             if (_timer >= _maxTime)
             {
                 OnDone.Invoke();
-                _isActive = false;
+                IsActive = false;
             }
         }
     }
