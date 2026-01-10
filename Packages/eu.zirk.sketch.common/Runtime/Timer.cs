@@ -22,6 +22,12 @@ namespace Sketch.Common
             IsActive = true;
         }
 
+        public void Stop()
+        {
+            IsActive = false;
+            OnDone.Invoke();
+        }
+
         public void Update(float deltaTime)
         {
             if (!IsActive) return;
@@ -30,8 +36,8 @@ namespace Sketch.Common
 
             if (_timer >= _maxTime)
             {
-                OnDone.Invoke();
                 IsActive = false;
+                OnDone.Invoke();
             }
         }
     }
