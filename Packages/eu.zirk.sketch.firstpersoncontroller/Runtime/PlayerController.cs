@@ -291,10 +291,13 @@ namespace Sketch.FPS
 
             transform.rotation *= Quaternion.AngleAxis(rot.x * _horizontalSensitivity, Vector3.up);
 
-            _headRotation -= rot.y * _verticalSensitivity; // Vertical look is inverted by default, hence the -=
+            if (_head != null)
+            {
+                _headRotation -= rot.y * _verticalSensitivity; // Vertical look is inverted by default, hence the -=
 
-            _headRotation = Mathf.Clamp(_headRotation, -89, 89);
-            _head.transform.localRotation = Quaternion.AngleAxis(_headRotation, Vector3.right);
+                _headRotation = Mathf.Clamp(_headRotation, -89, 89);
+                _head.transform.localRotation = Quaternion.AngleAxis(_headRotation, Vector3.right);
+            }
         }
         public void OnLook(InputAction.CallbackContext value)
         {
