@@ -73,20 +73,23 @@ namespace Sketch.FPS
         private Vector2 _touchPos;
 
         // Mouvements
-        protected Vector2 _mov;
+        private Vector2 _mov;
 
         // Interactions
         private readonly List<IInteractable> _interactions = new();
-        public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
         #endregion Member variables
 
         // Overrides behaviors
         public virtual bool IsActive => true;
         public virtual bool CanSprint => true;
 
+        public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
+
         // Movement callbacks
         protected UnityEvent<bool> OnSprintStateChanges { get; } = new();
         protected UnityEvent OnJumpDone { get; } = new();
+
+        #region Unity methods
 
         protected virtual void Awake()
         {
@@ -138,11 +141,11 @@ namespace Sketch.FPS
                     var dir = _touchPos - _touchRef;
                     if (_mobileIsMoving.Value)
                     {
-                        _mov = dir.normalized;
+                        SetMouvement(dir.normalized);
                     }
                     else
                     {
-                        OnLookInternal(dir.normalized * 10f);
+                        RotateHead(dir.normalized * 10f);
                     }
                 }
             }
@@ -203,7 +206,7 @@ namespace Sketch.FPS
             // If we are playing on a controller, we update the rotation
             if (_lastControllerRot != null)
             {
-                OnLookInternal(_lastControllerRot.Value * Time.deltaTime * _controllerSensitivity);
+                RotateHead(_lastControllerRot.Value * Time.deltaTime * _controllerSensitivity);
             }
 
             /*
@@ -225,15 +228,39 @@ namespace Sketch.FPS
             */
         }
 
+        #endregion Unity methods
+
+        /// <summary>
+        /// Unregister an interaction in the list of those being in range to the player
+        /// </summary>
         public void RemoveInteraction(IInteractable i)
         {
             _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
             UpdateInteractionText();
         }
 
+        /// <summary>
+        /// Set player velocity, please note that this can be override easily when player move with keyboard/controller/other
+        /// </summary>
+        public void SetMouvement(Vector2 mouvement)
+        {
+            _mov = mouvement;
+        }
+
+        /// <summary>
+        /// Return the text that is shown when interacting with something that can be interacted with
+        /// </summary>
+        /// <param name="interactionVerb">Verb used describing the option, for example for a door it would be "open"</param>
         public virtual string GetInteractionText(string interactionVerb) => string.IsNullOrEmpty(interactionVerb) ? string.Empty : $"Press 'E' to {interactionVerb}";
+        /// <summary>
+        /// Return the sentence when we can't interact with something
+        /// For example being closed to a door that requires a key
+        /// </summary>
         public virtual string GetDenyText(string denySentence) => denySentence;
 
+        /// <summary>
+        /// Update the interaction text
+        /// </summary>
         public void UpdateInteractionText()
         {
             if (_interactionText == null) return;
@@ -260,32 +287,11 @@ namespace Sketch.FPS
             }
         }
 
-        public void OnMobileDrag(InputAction.CallbackContext value)
-        {
-            if (value.phase == InputActionPhase.Started)
-            {
-                var mousePos = CursorUtils.GetPosition(_pInput);
-                _mobileIsMoving = mousePos.Value.x < Screen.width / 2f;
-                _touchRef = mousePos.Value;
-                _touchPos = mousePos.Value;
-            }
-            else if (value.phase == InputActionPhase.Canceled)
-            {
-                if (_mobileIsMoving == true) _mov = Vector2.zero;
-                _mobileIsMoving = null;
-                if (_touchRef == _touchPos)
-                {
-                    OnInteractInternal();
-                }
-            }
-        }
-
-        public void OnMovement(InputAction.CallbackContext value)
-        {
-            _mov = value.ReadValue<Vector2>();
-        }
-
-        private void OnLookInternal(Vector2 rot)
+        /// <summary>
+        /// Rotate the player by the given rotation
+        /// If _head isn't set, the Y rotation is ignored
+        /// </summary>
+        protected void RotateHead(Vector2 rot)
         {
             if (!IsActive) return;
 
@@ -299,11 +305,48 @@ namespace Sketch.FPS
                 _head.transform.localRotation = Quaternion.AngleAxis(_headRotation, Vector3.right);
             }
         }
+
+        /// <summary>
+        /// Make player jump
+        /// </summary>
+        /// <param name="jumpForceMultiplier">Force factor of the jump (based on _jumpForce), 1f mean a normal jump, 0.5f apply half the force</param>
+        public void Jump(float jumpForceMultiplier = 1f)
+        {
+            _verticalSpeed = _jumpForce * jumpForceMultiplier;
+            OnJumpDone.Invoke();
+        }
+
+        #region Inputs
+        public void OnMobileDrag(InputAction.CallbackContext value)
+        {
+            if (value.phase == InputActionPhase.Started)
+            {
+                var mousePos = CursorUtils.GetPosition(_pInput);
+                _mobileIsMoving = mousePos.Value.x < Screen.width / 2f;
+                _touchRef = mousePos.Value;
+                _touchPos = mousePos.Value;
+            }
+            else if (value.phase == InputActionPhase.Canceled)
+            {
+                if (_mobileIsMoving == true) SetMouvement(Vector2.zero);
+                _mobileIsMoving = null;
+                if (_touchRef == _touchPos)
+                {
+                    OnInteractInternal();
+                }
+            }
+        }
+
+        public void OnMovement(InputAction.CallbackContext value)
+        {
+            SetMouvement(value.ReadValue<Vector2>());
+        }
+
         public void OnLook(InputAction.CallbackContext value)
         {
             var rot = value.ReadValue<Vector2>();
             _lastControllerRot = null;
-            OnLookInternal(rot);
+            RotateHead(rot);
         }
 
         public void OnLookController(InputAction.CallbackContext value)
@@ -315,8 +358,7 @@ namespace Sketch.FPS
         {
             if (_controller.isGrounded && IsActive)
             {
-                _verticalSpeed = _jumpForce;
-                OnJumpDone.Invoke();
+                Jump();
             }
         }
 
@@ -345,5 +387,6 @@ namespace Sketch.FPS
                 OnInteractInternal();
             }
         }
+        #endregion Inputs
     }
 }
