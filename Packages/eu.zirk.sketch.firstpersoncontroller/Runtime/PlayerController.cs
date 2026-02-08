@@ -80,10 +80,26 @@ namespace Sketch.FPS
         #endregion Member variables
 
         // Overrides behaviors
+        /// <summary>
+        /// Is the player active (if false, all controls are disabled)
+        /// </summary>
         public virtual bool IsActive => true;
+        /// <summary>
+        /// Are we able to spring (only work if OnSprint is called)
+        /// </summary>
         public virtual bool CanSprint => true;
-        public virtual Vector2 GetCurrentMovement(Vector2 movInput) => movInput;
-        public virtual Vector2 GetCurrentRotation(Vector2 movInput) => movInput;
+        /// <summary>
+        /// Apply a transformation on raw movement input
+        /// </summary>
+        public virtual Vector2 GetCurrentInputMovement(Vector2 movInput) => movInput;
+        /// <summary>
+        /// Apply a transformation on raw rotation input
+        /// </summary>
+        public virtual Vector2 GetCurrentInputRotation(Vector2 movInput) => movInput;
+        /// <summary>
+        /// Apply a transformation on character movement
+        /// </summary>
+        public virtual Vector3 GetCurrentPlayerMove(Vector3 mov) => mov;
 
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
