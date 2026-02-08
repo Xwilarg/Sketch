@@ -82,6 +82,7 @@ namespace Sketch.FPS
         // Overrides behaviors
         public virtual bool IsActive => true;
         public virtual bool CanSprint => true;
+        public virtual Vector2 GetCurrentMovement(Vector2 movInput) => movInput;
 
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
@@ -150,7 +151,7 @@ namespace Sketch.FPS
                 }
             }
 
-            var pos = _mov;
+            var pos = GetCurrentMovement(_mov);
             Vector3 desiredMove = transform.forward * pos.y + transform.right * pos.x;
 
             // Get a normal for the surface that is being touched to move along it
