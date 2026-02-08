@@ -174,7 +174,7 @@ namespace Sketch.FPS
             // Get a normal for the surface that is being touched to move along it
             Physics.SphereCast(transform.position, _controller.radius, Vector3.down, out RaycastHit hitInfo,
                                _controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+            desiredMove = GetCurrentPlayerMovement(Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized);
 
             // Push objects on the way
             if (_enablePhysics)
@@ -210,7 +210,7 @@ namespace Sketch.FPS
                 moveDir.y += _verticalSpeed;
             }
 
-            _controller.Move(GetCurrentPlayerMovement(moveDir) * Time.deltaTime);
+            _controller.Move(moveDir * Time.deltaTime);
 
             if (transform.position.y < -10f)
             {
