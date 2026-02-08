@@ -99,7 +99,7 @@ namespace Sketch.FPS
         /// <summary>
         /// Apply a transformation on character movement
         /// </summary>
-        public virtual Vector3 GetCurrentPlayerMove(Vector3 mov) => mov;
+        public virtual Vector3 GetCurrentPlayerMovement(Vector3 mov) => mov;
 
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
@@ -168,7 +168,7 @@ namespace Sketch.FPS
                 }
             }
 
-            var pos = GetCurrentMovement(_mov);
+            var pos = GetCurrentInputMovement(_mov);
             Vector3 desiredMove = transform.forward * pos.y + transform.right * pos.x;
 
             // Get a normal for the surface that is being touched to move along it
@@ -210,7 +210,7 @@ namespace Sketch.FPS
                 moveDir.y += _verticalSpeed;
             }
 
-            _controller.Move(moveDir * Time.deltaTime);
+            _controller.Move(GetCurrentPlayerMovement(moveDir) * Time.deltaTime);
 
             if (transform.position.y < -10f)
             {
@@ -313,7 +313,7 @@ namespace Sketch.FPS
         {
             if (!IsActive) return;
 
-            rot = GetCurrentRotation(rot);
+            rot = GetCurrentInputRotation(rot);
 
             transform.rotation *= Quaternion.AngleAxis(rot.x * _horizontalSensitivity, Vector3.up);
 
