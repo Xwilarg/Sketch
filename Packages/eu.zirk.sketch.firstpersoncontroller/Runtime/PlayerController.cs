@@ -83,6 +83,7 @@ namespace Sketch.FPS
         public virtual bool IsActive => true;
         public virtual bool CanSprint => true;
         public virtual Vector2 GetCurrentMovement(Vector2 movInput) => movInput;
+        public virtual Vector2 GetCurrentRotation(Vector2 movInput) => movInput;
 
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
@@ -295,6 +296,8 @@ namespace Sketch.FPS
         protected void RotateHead(Vector2 rot)
         {
             if (!IsActive) return;
+
+            rot = GetCurrentRotation(rot);
 
             transform.rotation *= Quaternion.AngleAxis(rot.x * _horizontalSensitivity, Vector3.up);
 
