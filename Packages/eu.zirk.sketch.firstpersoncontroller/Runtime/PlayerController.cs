@@ -13,7 +13,7 @@ namespace Sketch.FPS
         #region Serialized fields
         [Header("Configuration")]
         [SerializeField]
-        private float _mouvementSpeed = 5f;
+        private PlayerControlInfo[] _controls;
 
         [SerializeField]
         private float _horizontalSensitivity = .1f;
@@ -23,15 +23,6 @@ namespace Sketch.FPS
 
         [SerializeField]
         private float _controllerSensitivity = 750f;
-
-        [SerializeField]
-        private float _runningMultiplier = 1.5f;
-
-        [SerializeField]
-        private float _jumpForce = 2f;
-
-        [SerializeField]
-        private float _gravityMultiplier = .75f;
 
         [Header("Physics")]
         [SerializeField]
@@ -63,6 +54,9 @@ namespace Sketch.FPS
         private bool _isSprinting;
         private float _verticalSpeed;
         private Vector3 _baseSpawnPos;
+
+        private int _controlIndex;
+        private PlayerControlInfo CurrentControl => _controls[_controlIndex];
 
         // Last controller input
         private Vector2? _lastControllerRot;
@@ -101,6 +95,11 @@ namespace Sketch.FPS
         /// </summary>
         public virtual Vector3 GetCurrentPlayerMovement(Vector3 mov) => mov;
 
+        public void SetControlIndex(int index)
+        {
+            _controlIndex = index;
+        }
+
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
         // Movement callbacks
@@ -114,6 +113,14 @@ namespace Sketch.FPS
             if (_pInput == null) Debug.LogWarning("PInput not assigned, mobile controls won't be available");
             if (_triggerArea == null) Debug.LogWarning("Trigger Area not assigned, interactions won't be available");
             if (_interactionText == null) Debug.LogWarning("Interaction Text not assigned, interaction hints won't be available");
+
+            if (_controls.Length == 0)
+            {
+                Debug.LogWarning("Log control scheme found, creating a default one...");
+                _controls = new PlayerControlInfo[] {
+                    ScriptableObject.CreateInstance<PlayerControlInfo>()
+                };
+            }
 
             _controller = GetComponent<CharacterController>();
             _baseSpawnPos = transform.position;
@@ -194,19 +201,19 @@ namespace Sketch.FPS
             Vector3 moveDir = Vector3.zero;
             if (IsActive)
             {
-                moveDir.x = desiredMove.x * _mouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
-                moveDir.z = desiredMove.z * _mouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? _runningMultiplier : 1f);
+                moveDir.x = desiredMove.x * CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f);
+                moveDir.z = desiredMove.z * CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f);
             }
 
             if (_controller.isGrounded && _verticalSpeed < 0f) // We are on the ground and not jumping
             {
                 moveDir.y = -.1f; // Stick to the ground
-                _verticalSpeed = -_gravityMultiplier;
+                _verticalSpeed = -CurrentControl.GravityMultiplier;
             }
             else
             {
                 // We are currently jumping, reduce our jump velocity by gravity and apply it
-                _verticalSpeed += Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
+                _verticalSpeed += Physics.gravity.y * CurrentControl.GravityMultiplier * Time.deltaTime;
                 moveDir.y += _verticalSpeed;
             }
 
@@ -332,7 +339,7 @@ namespace Sketch.FPS
         /// <param name="jumpForceMultiplier">Force factor of the jump (based on _jumpForce), 1f mean a normal jump, 0.5f apply half the force</param>
         public void Jump(float jumpForceMultiplier = 1f)
         {
-            _verticalSpeed = _jumpForce * jumpForceMultiplier;
+            _verticalSpeed = CurrentControl.JumpForce * jumpForceMultiplier;
             OnJumpDone.Invoke();
         }
 
