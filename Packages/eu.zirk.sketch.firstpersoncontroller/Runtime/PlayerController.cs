@@ -73,6 +73,8 @@ namespace Sketch.FPS
         private readonly List<IInteractable> _interactions = new();
         #endregion Member variables
 
+        protected Vector3 Velocity { private set; get; }
+
         // Overrides behaviors
         /// <summary>
         /// Is the player active (if false, all controls are disabled)
@@ -179,7 +181,10 @@ namespace Sketch.FPS
         protected virtual void Update()
         {
             if (!_controller.enabled)
+            {
+                Velocity = Vector3.zero;
                 return;
+            }
 
             var desiredMove = GetForwardMovement();
 
@@ -222,7 +227,9 @@ namespace Sketch.FPS
                 moveDir.y += _verticalSpeed;
             }
 
+            var p = transform.position;
             _controller.Move(moveDir * Time.deltaTime);
+            Velocity = transform.position - p;
 
             if (transform.position.y < -10f)
             {
