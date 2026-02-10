@@ -95,7 +95,7 @@ namespace Sketch.FPS
         /// <summary>
         /// Apply a transformation on character movement
         /// </summary>
-        public virtual Vector3 GetCurrentPlayerMovement(Vector3 mov) => mov;
+        public virtual Vector3 GetCurrentPlayerMovement(Vector3 mov, float speed) => mov * speed;
 
         public virtual float GetSpeed(float baseSpeed) => baseSpeed;
 
@@ -193,29 +193,31 @@ namespace Sketch.FPS
             // Get a normal for the surface that is being touched to move along it
             Physics.SphereCast(transform.position, _controller.radius, Vector3.down, out RaycastHit hitInfo,
                                _controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = GetCurrentPlayerMovement(Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized);
+            var movement = GetCurrentPlayerMovement(
+                Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized,
+                GetSpeed(CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f))
+            );
+
+            Vector3 moveDir = Vector3.zero;
+            if (IsActive)
+            {
+                moveDir.x = movement.x;
+                moveDir.z = movement.z;
+            }
 
             // Push objects on the way
             if (_enablePhysics)
             {
-                var hits = Physics.SphereCastAll(transform.position, _controller.radius, desiredMove,
+                var hits = Physics.SphereCastAll(transform.position, _controller.radius, movement,
                                    .1f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
                 foreach (var hit in hits)
                 {
                     var hitRb = hit.collider.GetComponent<Rigidbody>();
                     if (hitRb != null)
                     {
-                        hitRb.AddForce(desiredMove, ForceMode.Force);
+                        hitRb.AddForce(movement, ForceMode.Force);
                     }
                 }
-            }
-
-            Vector3 moveDir = Vector3.zero;
-            if (IsActive)
-            {
-                var speed = GetSpeed(CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f));
-                moveDir.x = desiredMove.x * speed;
-                moveDir.z = desiredMove.z * speed;
             }
 
             if (_controller.isGrounded && _verticalSpeed < 0f) // We are on the ground and not jumping
