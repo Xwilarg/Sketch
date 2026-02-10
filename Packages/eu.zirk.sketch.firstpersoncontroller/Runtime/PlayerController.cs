@@ -106,6 +106,31 @@ namespace Sketch.FPS
         protected UnityEvent<bool> OnSprintStateChanges { get; } = new();
         protected UnityEvent OnJumpDone { get; } = new();
 
+        protected Vector3 GetForwardMovement()
+        {
+            // Mobile controls
+            if (_mobileIsMoving != null)
+            {
+                var mousePos = CursorUtils.GetPosition(_pInput);
+                if (mousePos != null)
+                {
+                    _touchPos = mousePos.Value;
+                    var dir = _touchPos - _touchRef;
+                    if (_mobileIsMoving.Value)
+                    {
+                        SetMouvement(dir.normalized);
+                    }
+                    else
+                    {
+                        RotateHead(dir.normalized * 10f);
+                    }
+                }
+            }
+
+            var pos = GetCurrentInputMovement(_mov);
+            return transform.forward * pos.y + transform.right * pos.x;
+        }
+
         #region Unity methods
 
         protected virtual void Awake()
@@ -156,27 +181,7 @@ namespace Sketch.FPS
             if (!_controller.enabled)
                 return;
 
-            // Mobile controls
-            if (_mobileIsMoving != null)
-            {
-                var mousePos = CursorUtils.GetPosition(_pInput);
-                if (mousePos != null)
-                {
-                    _touchPos = mousePos.Value;
-                    var dir = _touchPos - _touchRef;
-                    if (_mobileIsMoving.Value)
-                    {
-                        SetMouvement(dir.normalized);
-                    }
-                    else
-                    {
-                        RotateHead(dir.normalized * 10f);
-                    }
-                }
-            }
-
-            var pos = GetCurrentInputMovement(_mov);
-            Vector3 desiredMove = transform.forward * pos.y + transform.right * pos.x;
+            var desiredMove = GetForwardMovement();
 
             // Get a normal for the surface that is being touched to move along it
             Physics.SphereCast(transform.position, _controller.radius, Vector3.down, out RaycastHit hitInfo,
