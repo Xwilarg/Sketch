@@ -97,6 +97,8 @@ namespace Sketch.FPS
         /// </summary>
         public virtual Vector3 GetCurrentPlayerMovement(Vector3 mov) => mov;
 
+        public virtual float GetSpeed(float baseSpeed) => baseSpeed;
+
         public void SetControlIndex(int index)
         {
             _controlIndex = index;
@@ -211,8 +213,9 @@ namespace Sketch.FPS
             Vector3 moveDir = Vector3.zero;
             if (IsActive)
             {
-                moveDir.x = desiredMove.x * CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f);
-                moveDir.z = desiredMove.z * CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f);
+                var speed = GetSpeed(CurrentControl.MouvementSpeed * (CanSprint && _isSprinting/* && _staminaLeft > 0f*/ ? CurrentControl.RunningMultiplier : 1f));
+                moveDir.x = desiredMove.x * speed;
+                moveDir.z = desiredMove.z * speed;
             }
 
             if (_controller.isGrounded && _verticalSpeed < 0f) // We are on the ground and not jumping
