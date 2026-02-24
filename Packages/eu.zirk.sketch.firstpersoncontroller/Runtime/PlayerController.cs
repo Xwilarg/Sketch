@@ -106,6 +106,8 @@ namespace Sketch.FPS
 
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
+        public bool IsOnFloor => _controller.isGrounded;
+
         // Movement callbacks
         protected UnityEvent<bool> OnSprintStateChanges { get; } = new();
         protected UnityEvent OnJumpDone { get; } = new();
@@ -233,8 +235,9 @@ namespace Sketch.FPS
             }
 
             var p = transform.position;
-            _controller.Move(moveDir * Time.deltaTime);
-            Velocity = transform.position - p;
+            var velocity = moveDir * Time.deltaTime;
+            _controller.Move(velocity);
+            Velocity = velocity;
 
             if (transform.position.y < -10f)
             {
