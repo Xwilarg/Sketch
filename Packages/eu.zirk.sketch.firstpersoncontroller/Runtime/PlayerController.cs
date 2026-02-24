@@ -235,9 +235,8 @@ namespace Sketch.FPS
             }
 
             var p = transform.position;
-            var velocity = moveDir * Time.deltaTime;
-            _controller.Move(velocity);
-            Velocity = velocity;
+            _controller.Move(moveDir * Time.deltaTime);
+            Velocity = transform.position - p;
 
             if (transform.position.y < -10f)
             {
