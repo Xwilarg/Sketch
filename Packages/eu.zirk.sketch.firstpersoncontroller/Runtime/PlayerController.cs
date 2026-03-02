@@ -56,7 +56,7 @@ namespace Sketch.FPS
         private Vector3 _baseSpawnPos;
 
         private int _controlIndex;
-        private PlayerControlInfo CurrentControl => _controls[_controlIndex];
+        protected PlayerControlInfo CurrentControl => _controls[_controlIndex];
 
         // Last controller input
         private Vector2? _lastControllerRot;
