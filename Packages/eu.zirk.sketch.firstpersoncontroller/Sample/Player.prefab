@@ -349,7 +349,7 @@ CharacterController:
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &79024464993118885
 MonoBehaviour:
@@ -363,13 +363,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84f5737a1a5bfed499cc17c588590562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mouvementSpeed: 5
+  _controls: []
   _horizontalSensitivity: 0.1
   _verticalSensitivity: 0.1
   _controllerSensitivity: 750
-  _runningMultiplier: 1.5
-  _jumpForce: 2
-  _gravityMultiplier: 0.75
+  _enablePhysics: 0
   _head: {fileID: 3000573060241736991}
   _pInput: {fileID: 661079623806977242}
   _triggerArea: {fileID: 6192575117345682737}
