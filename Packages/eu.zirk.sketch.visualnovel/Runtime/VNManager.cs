@@ -127,7 +127,8 @@ namespace Sketch.VN
             }
         }
 
-        public bool IsPlayingStory => _story != null && (_story.canContinue || (_story.currentChoices != null && _story.currentChoices.Any()));
+        public bool IsActive => _container.activeInHierarchy;
+        public bool IsStoryOngoing => _story != null && (_story.canContinue || (_story.currentChoices != null && _story.currentChoices.Any()));
 
         private void Update()
         {
@@ -325,7 +326,7 @@ namespace Sketch.VN
         /// </summary>
         public void DisplayNextDialogue()
         {
-            if (!_container.activeInHierarchy)
+            if (!IsActive)
             {
                 return;
             }
@@ -339,7 +340,7 @@ namespace Sketch.VN
             {
                 DisplayStory(_story.Continue());
             }
-            else if (!IsPlayingStory)
+            else if (!IsStoryOngoing)
             {
                 _container.SetActive(false);
                 _onDone?.Invoke();
@@ -399,7 +400,7 @@ namespace Sketch.VN
         {
             if (value.phase == InputActionPhase.Started)
             {
-                if (_container.activeInHierarchy)
+                if (IsActive)
                 {
                     if (_isSkipEnabled)
                     {
@@ -426,7 +427,7 @@ namespace Sketch.VN
                         DisplayNextDialogue();
                     }
                 }
-                else if (IsPlayingStory)
+                else if (IsStoryOngoing)
                 {
                     // Hide mode is active
                     ToggleHide();
@@ -436,7 +437,7 @@ namespace Sketch.VN
 
         public void OnHide(InputAction.CallbackContext value)
         {
-            if (value.phase == InputActionPhase.Started && IsPlayingStory)
+            if (value.phase == InputActionPhase.Started && IsStoryOngoing)
             {
                 ToggleHide();
             }
