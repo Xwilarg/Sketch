@@ -257,7 +257,7 @@ namespace Sketch.VN
                         break;
 
                     default:
-                        var overlayTag = _currentCharacter.Overlays.FirstOrDefault(x => x.ParentTag.ToLowerInvariant() == s[0]);
+                        var overlayTag = _currentCharacter?.Overlays?.FirstOrDefault(x => x.ParentTag.ToLowerInvariant() == s[0]);
                         if (overlayTag != null)
                         {
                             var img = _overlays.FirstOrDefault(x => x.Tag.ToLowerInvariant() == overlayTag.ParentTag.ToLowerInvariant());
@@ -280,12 +280,9 @@ namespace Sketch.VN
                         }
                         else
                         {
-                            foreach (var o in _currentCharacter.Overlays)
+                            if (_onTags == null || !_onTags.Invoke(s[0], content))
                             {
-                                if (_onTags == null || !_onTags.Invoke(s[0], content))
-                                {
-                                    Debug.LogError($"[STORY] Unknown tag {s[0]}");
-                                }
+                                Debug.LogError($"[STORY] Unknown tag {s[0]}");
                             }
                         }
                         break;
