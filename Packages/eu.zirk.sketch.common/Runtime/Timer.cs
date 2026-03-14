@@ -18,10 +18,10 @@ namespace Sketch.Common
 
         public void Start(float maxTime)
         {
+            if (IsActive) OnReset.Invoke();
             _timer = 0f;
             _maxTime = maxTime;
             IsActive = true;
-            if (IsActive) OnReset.Invoke();
         }
 
         public void Stop()
