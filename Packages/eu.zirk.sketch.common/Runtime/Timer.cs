@@ -6,6 +6,7 @@ namespace Sketch.Common
     public class Timer
     {
         public UnityEvent OnDone { set; get; } = new();
+        public UnityEvent OnReset { set; get; } = new();
 
         private float _timer;
         private float _maxTime;
@@ -20,12 +21,14 @@ namespace Sketch.Common
             _timer = 0f;
             _maxTime = maxTime;
             IsActive = true;
+            if (IsActive) OnReset.Invoke();
         }
 
         public void Stop()
         {
             IsActive = false;
             OnDone.Invoke();
+            OnReset.Invoke();
         }
 
         public void Update(float deltaTime)
