@@ -71,6 +71,7 @@ namespace Sketch.FPS
 
         // Interactions
         private readonly List<IInteractable> _interactions = new();
+        private CollisionFlags _collisions;
         #endregion Member variables
 
         protected Vector3 Velocity { private set; get; }
@@ -107,6 +108,7 @@ namespace Sketch.FPS
         public IEnumerable<IInteractable> InteractionByDistance => _interactions.OrderBy(x => Vector2.Distance(x.GameObject.transform.position, _triggerArea.transform.position));
 
         public bool IsOnFloor => _controller.isGrounded;
+        public bool DidHitWall => (_collisions & CollisionFlags.Sides) != 0;
 
         // Movement callbacks
         protected UnityEvent<bool> OnSprintStateChanges { get; } = new();
@@ -187,6 +189,7 @@ namespace Sketch.FPS
             if (!_controller.enabled)
             {
                 Velocity = Vector3.zero;
+                _collisions = CollisionFlags.None;
                 return;
             }
 
@@ -235,7 +238,7 @@ namespace Sketch.FPS
             }
 
             var p = transform.position;
-            _controller.Move(moveDir * Time.deltaTime);
+            _collisions = _controller.Move(moveDir * Time.deltaTime);
             Velocity = transform.position - p;
 
             if (transform.position.y < -10f)
