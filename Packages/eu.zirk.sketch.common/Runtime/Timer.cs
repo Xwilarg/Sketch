@@ -41,6 +41,7 @@ namespace Sketch.Common
             {
                 IsActive = false;
                 OnDone.Invoke();
+                OnReset.Invoke();
             }
         }
     }
