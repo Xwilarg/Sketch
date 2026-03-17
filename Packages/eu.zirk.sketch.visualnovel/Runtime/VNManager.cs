@@ -206,7 +206,7 @@ namespace Sketch.VN
                     case "speaker":
                         if (_characters.Length > 0)
                         {
-                            if (content == "NONE") _currentCharacter = null;
+                            if (string.Equals(content, "none", StringComparison.InvariantCultureIgnoreCase)) _currentCharacter = null;
                             else
                             {
                                 _currentCharacter = _characters.FirstOrDefault(x => string.Equals(x.Name, content, StringComparison.InvariantCultureIgnoreCase));
@@ -218,7 +218,7 @@ namespace Sketch.VN
                         }
                         else
                         {
-                            if (content == "NONE") _currentCharacter = null;
+                            if (string.Equals(content, "none", StringComparison.InvariantCultureIgnoreCase)) _currentCharacter = null;
                             else
                             {
                                 _currentCharacter = new()
@@ -237,7 +237,7 @@ namespace Sketch.VN
                             break;
                         }
 
-                        if (content == "NONE") _backgroundImage.gameObject.SetActive(false);
+                        if (string.Equals(content, "none", StringComparison.InvariantCultureIgnoreCase)) _backgroundImage.gameObject.SetActive(false);
                         else
                         {
                             var bgSprite = _backgrounds.FirstOrDefault(x => string.Equals(x.Tag, content, StringComparison.InvariantCultureIgnoreCase));
@@ -252,8 +252,8 @@ namespace Sketch.VN
                         break;
 
                     case "skip":
-                        if (content == "true") _isSkipEnabled = true;
-                        else if (content == "false") _isSkipEnabled = false;
+                        if (string.Equals(content, "true", StringComparison.InvariantCultureIgnoreCase)) _isSkipEnabled = true;
+                        else if (string.Equals(content, "false", StringComparison.InvariantCultureIgnoreCase)) _isSkipEnabled = false;
                         else Debug.LogError($"[STORY] Unable to find format {content}");
                         break;
 
