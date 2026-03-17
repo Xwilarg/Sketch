@@ -124,7 +124,7 @@ namespace Sketch.VN
             if (_toDisplay != null && _index < _toDisplay.Length)
             {
                 var delta = _useDeltaTime ? Time.deltaTime : (Time.unscaledDeltaTime - _timeReferenceAbsolute);
-                _timer -= Time.deltaTime;
+                _timer -= delta;
                 if (_timer <= 0f)
                 {
                     _timer = _displaySpeedRef;
