@@ -127,7 +127,7 @@ namespace Sketch.VN
             }
         }
 
-        public bool IsActive => _container.activeInHierarchy;
+        public bool IsActive => _container.activeInHierarchy || IsStoryOngoing;
         public bool IsStoryOngoing => _story != null && (_story.canContinue || (_story.currentChoices != null && _story.currentChoices.Any()));
 
         private void Update()
@@ -323,7 +323,7 @@ namespace Sketch.VN
         /// </summary>
         public void DisplayNextDialogue()
         {
-            if (!IsActive)
+            if (!_container.activeInHierarchy)
             {
                 return;
             }
