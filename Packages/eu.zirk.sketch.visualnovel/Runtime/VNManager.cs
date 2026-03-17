@@ -341,9 +341,9 @@ namespace Sketch.VN
             else if (IsStoryOngoing)
             {
                 _container.SetActive(false);
-                _onDone?.Invoke();
                 _isStoryOngoing = false;
                 Cursor.lockState = _lastCursorMode;
+                _onDone?.Invoke();
             }
         }
 
