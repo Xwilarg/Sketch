@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -71,6 +70,8 @@ namespace Sketch.VN
 
         private bool _isAutoEnabled;
 
+        private bool _isStoryOngoing;
+
         private Action _onDone;
         private Func<string, string, bool> _onTags;
 
@@ -127,8 +128,7 @@ namespace Sketch.VN
             }
         }
 
-        public bool IsActive => _container.activeInHierarchy || IsStoryOngoing;
-        public bool IsStoryOngoing => _story != null && (_story.canContinue || (_story.currentChoices != null && _story.currentChoices.Any()));
+        public bool IsStoryOngoing => _isStoryOngoing;
 
         private void Update()
         {
@@ -183,6 +183,7 @@ namespace Sketch.VN
             _lastCursorMode = Cursor.lockState;
             Cursor.lockState = CursorLockMode.None;
 
+            _isStoryOngoing = true;
             DisplayStory(_story.Continue());
         }
 
@@ -337,10 +338,11 @@ namespace Sketch.VN
             {
                 DisplayStory(_story.Continue());
             }
-            else if (!IsStoryOngoing)
+            else if (IsStoryOngoing)
             {
                 _container.SetActive(false);
                 _onDone?.Invoke();
+                _isStoryOngoing = false;
                 Cursor.lockState = _lastCursorMode;
             }
         }
@@ -397,7 +399,7 @@ namespace Sketch.VN
         {
             if (value.phase == InputActionPhase.Started)
             {
-                if (IsActive)
+                if (_container.activeInHierarchy)
                 {
                     if (_isSkipEnabled)
                     {
