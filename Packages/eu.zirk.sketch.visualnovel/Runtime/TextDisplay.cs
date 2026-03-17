@@ -13,9 +13,13 @@ namespace Sketch.VN
 
         private int _index;
 
-        public bool UseDeltaTime { set; get; } = true;
+        [SerializeField]
+        private bool _useDeltaTime = true;
+        public bool SetUseDeltaTime(bool value) => _useDeltaTime = value;
 
-        public float DisplaySpeedRef { set; get; } = .02f;
+        [SerializeField]
+        private float _displaySpeedRef = .02f;
+        public void SetDisplaySpeedRef(float speed) => _displaySpeedRef = speed;
 
         private string _toDisplay = string.Empty;
         public string ToDisplay
@@ -23,7 +27,7 @@ namespace Sketch.VN
             set
             {
                 _index = 0;
-                _timer = DisplaySpeedRef;
+                _timer = _displaySpeedRef;
                 if (_text == null)
                 {
                     Awake();
@@ -119,11 +123,11 @@ namespace Sketch.VN
         {
             if (_toDisplay != null && _index < _toDisplay.Length)
             {
-                var delta = UseDeltaTime ? Time.deltaTime : (Time.unscaledDeltaTime - _timeReferenceAbsolute);
+                var delta = _useDeltaTime ? Time.deltaTime : (Time.unscaledDeltaTime - _timeReferenceAbsolute);
                 _timer -= Time.deltaTime;
                 if (_timer <= 0f)
                 {
-                    _timer = DisplaySpeedRef;
+                    _timer = _displaySpeedRef;
                     _text.text += _toDisplay[_index];
                     _index++;
                     if (IsDisplayDone)
