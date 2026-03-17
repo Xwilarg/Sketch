@@ -200,7 +200,7 @@ namespace Sketch.VN
             foreach (var tag in _story.currentTags)
             {
                 var s = tag.Split(' ');
-                var content = string.Join(' ', s.Skip(1)).ToUpperInvariant();
+                var content = string.Join(' ', s.Skip(1));
                 switch (s[0])
                 {
                     case "speaker":
@@ -209,7 +209,7 @@ namespace Sketch.VN
                             if (content == "NONE") _currentCharacter = null;
                             else
                             {
-                                _currentCharacter = _characters.FirstOrDefault(x => x.Name.ToUpperInvariant() == content);
+                                _currentCharacter = _characters.FirstOrDefault(x => string.Equals(x.Name, content, StringComparison.InvariantCultureIgnoreCase));
                                 if (_currentCharacter == null)
                                 {
                                     Debug.LogError($"[STORY] Unable to find character {content}");
@@ -240,7 +240,7 @@ namespace Sketch.VN
                         if (content == "NONE") _backgroundImage.gameObject.SetActive(false);
                         else
                         {
-                            var bgSprite = _backgrounds.FirstOrDefault(x => x.Tag.ToUpperInvariant() == content);
+                            var bgSprite = _backgrounds.FirstOrDefault(x => string.Equals(x.Tag, content, StringComparison.InvariantCultureIgnoreCase));
                             if (bgSprite == null)
                             {
                                 Debug.LogError($"[STORY] Unable to find background {content}");
@@ -252,23 +252,23 @@ namespace Sketch.VN
                         break;
 
                     case "skip":
-                        if (content == "TRUE") _isSkipEnabled = true;
-                        else if (content == "FALSE") _isSkipEnabled = false;
+                        if (content == "true") _isSkipEnabled = true;
+                        else if (content == "false") _isSkipEnabled = false;
                         else Debug.LogError($"[STORY] Unable to find format {content}");
                         break;
 
                     default:
-                        var overlayTag = _currentCharacter?.Overlays?.FirstOrDefault(x => x.ParentTag.ToLowerInvariant() == s[0]);
+                        var overlayTag = _currentCharacter?.Overlays?.FirstOrDefault(x => string.Equals(x.ParentTag, s[0], StringComparison.InvariantCultureIgnoreCase));
                         if (overlayTag != null)
                         {
-                            var img = _overlays.FirstOrDefault(x => x.Tag.ToLowerInvariant() == overlayTag.ParentTag.ToLowerInvariant());
+                            var img = _overlays.FirstOrDefault(x => string.Equals(x.Tag, overlayTag.ParentTag, StringComparison.InvariantCultureIgnoreCase));
                             if (img == null)
                             {
                                 Debug.LogError($"[STORY] {nameof(_overlays)} is missing an element for the tag {overlayTag.ParentTag}");
                                 break;
                             }
 
-                            var elem = overlayTag.OverlayContent.FirstOrDefault(x => x.Tag.ToUpperInvariant() == content);
+                            var elem = overlayTag.OverlayContent.FirstOrDefault(x => string.Equals(x.Tag, content, StringComparison.InvariantCultureIgnoreCase));
                             if (elem == null)
                             {
                                 Debug.LogError($"[STORY] character overlay info is missing content {content} for tag {overlayTag.ParentTag}");

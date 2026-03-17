@@ -38,5 +38,9 @@ namespace Sketch.VN
                 _didUseSkip = true;
             }
         }
+        public void OnUseSkipBtn()
+        {
+            _didUseSkip = true;
+        }
     }
 }
