@@ -45,8 +45,6 @@ namespace Sketch.VN
 
         public bool IsDisplayDone => _index == _toDisplay.Length && _displayLeft == string.Empty;
 
-        private float _timeReferenceAbsolute;
-
         /// <summary>
         /// Makes sure the current text vertically fit in the box
         /// </summary>
@@ -115,15 +113,13 @@ namespace Sketch.VN
         private void Awake()
         {
             _text = GetComponent<TMP_Text>();
-
-            _timeReferenceAbsolute = Time.unscaledTime;
         }
 
         private void Update()
         {
             if (_toDisplay != null && _index < _toDisplay.Length)
             {
-                var delta = _useDeltaTime ? Time.deltaTime : (Time.unscaledDeltaTime - _timeReferenceAbsolute);
+                var delta = _useDeltaTime ? Time.deltaTime : Time.unscaledDeltaTime;
                 _timer -= delta;
                 if (_timer <= 0f)
                 {
@@ -136,7 +132,6 @@ namespace Sketch.VN
                     }
                 }
             }
-            _timeReferenceAbsolute = Time.unscaledTime;
         }
     }
 }

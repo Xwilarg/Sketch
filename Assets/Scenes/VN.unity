@@ -590,9 +590,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 791639718995232558, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: _useDeltaTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5292116920693007050, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
       propertyPath: m_Name
       value: VisualNovelCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021222303349631377, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021222303349631377, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021222303349631377, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021222303349631377, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455302152232395557, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455302152232395557, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455302152232395557, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455302152232395557, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6504453285322515390, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
       propertyPath: m_Pivot.x
@@ -678,6 +714,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 306783562}
+    - target: {fileID: 7606678338438186716, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606678338438186716, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606678338438186716, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606678338438186716, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8055961103435723128, guid: af094bd7f6af7a64bb4f3bfeb216586c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
