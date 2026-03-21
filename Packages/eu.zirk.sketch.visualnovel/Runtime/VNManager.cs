@@ -221,11 +221,9 @@ namespace Sketch.VN
                             if (string.Equals(content, "none", StringComparison.InvariantCultureIgnoreCase)) _currentCharacter = null;
                             else
                             {
-                                _currentCharacter = new()
-                                {
-                                    DisplayName = content,
-                                    Name = content
-                                };
+                                _currentCharacter = ScriptableObject.CreateInstance<VNCharacterInfo>();
+                                _currentCharacter.DisplayName = content;
+                                _currentCharacter.Name = content;
                             }
                         }
                         break;
