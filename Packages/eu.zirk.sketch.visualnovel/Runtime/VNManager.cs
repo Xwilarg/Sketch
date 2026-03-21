@@ -308,11 +308,19 @@ namespace Sketch.VN
                     _namePanel?.SetActive(true);
                     _nameText.text = _currentCharacter.DisplayName;
                 }
-                if (_characterImage != null && _currentCharacter.Image != null)
+                if (_characterImage != null)
                 {
-                    _characterImage.gameObject.SetActive(true);
-                    _characterImage.sprite = _currentCharacter.Image;
-                    foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
+                    if (_currentCharacter.Image != null)
+                    {
+                        _characterImage.gameObject.SetActive(true);
+                        _characterImage.sprite = _currentCharacter.Image;
+                        foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        _characterImage.gameObject.SetActive(false);
+                        foreach (var cio in _overlays) cio.Image.gameObject.SetActive(false);
+                    }
                 }
             }
         }
