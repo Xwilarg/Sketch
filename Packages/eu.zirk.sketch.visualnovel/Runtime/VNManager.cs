@@ -151,7 +151,7 @@ namespace Sketch.VN
             if (resetUI)
             {
                 _container.SetActive(true);
-                if (_characterImage != null && _currentCharacter != null)
+                if (_characterImage != null && _currentCharacter != null && _currentCharacter.Image != null)
                 {
                     _characterImage.gameObject.SetActive(true);
                     foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
