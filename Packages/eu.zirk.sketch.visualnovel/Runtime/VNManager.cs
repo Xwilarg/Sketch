@@ -403,7 +403,7 @@ namespace Sketch.VN
                     {
                         _isSkipEnabled = false;
                     }
-                    else
+                    else if (_story.canContinue || !_display.IsDisplayDone)
                     {
                         // If we click on a button, we don't advance the 
                         PointerEventData pointerEventData = new(EventSystem.current)
