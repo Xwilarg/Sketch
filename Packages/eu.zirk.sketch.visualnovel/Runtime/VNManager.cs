@@ -331,6 +331,10 @@ namespace Sketch.VN
                 // We are slowly displaying a text, force the whole display
                 _display.ForceDisplay();
             }
+            else if (_story.currentChoices.Any())
+            {
+                // Waiting for the user to input a choice
+            }
             else if (_story.canContinue && // There is text left to write
                 !_story.currentChoices.Any()) // We are not currently in a choice
             {
@@ -403,7 +407,7 @@ namespace Sketch.VN
                     {
                         _isSkipEnabled = false;
                     }
-                    else if (_story.canContinue || !_display.IsDisplayDone)
+                    else
                     {
                         // If we click on a button, we don't advance the 
                         PointerEventData pointerEventData = new(EventSystem.current)
