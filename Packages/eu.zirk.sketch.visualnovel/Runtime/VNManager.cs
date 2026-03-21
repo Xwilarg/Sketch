@@ -308,7 +308,7 @@ namespace Sketch.VN
                     _namePanel?.SetActive(true);
                     _nameText.text = _currentCharacter.DisplayName;
                 }
-                if (_characterImage != null)
+                if (_characterImage != null && _currentCharacter.Image != null)
                 {
                     _characterImage.gameObject.SetActive(true);
                     _characterImage.sprite = _currentCharacter.Image;
