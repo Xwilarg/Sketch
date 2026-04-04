@@ -140,6 +140,12 @@ namespace Sketch.FPS
             return transform.forward * pos.y + transform.right * pos.x;
         }
 
+        // Reset vertical movement to 0
+        public void ResetGravity()
+        {
+            _verticalSpeed = 0f;
+        }
+
         #region Unity methods
 
         protected virtual void Awake()
