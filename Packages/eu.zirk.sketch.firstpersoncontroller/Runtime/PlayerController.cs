@@ -248,6 +248,11 @@ namespace Sketch.FPS
             _collisions = _controller.Move(moveDir * Time.deltaTime);
             Velocity = transform.position - p;
 
+            if (DidHitRoof)
+            {
+                ResetGravity();
+            }
+
             if (transform.position.y < -10f)
             {
                 transform.position = _baseSpawnPos;
