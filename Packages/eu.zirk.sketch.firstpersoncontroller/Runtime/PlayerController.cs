@@ -109,6 +109,7 @@ namespace Sketch.FPS
 
         public bool IsOnFloor => _controller.isGrounded;
         public bool DidHitWall => (_collisions & CollisionFlags.Sides) != 0;
+        public bool DidHitRoof => (_collisions & CollisionFlags.Above) != 0;
 
         // Movement callbacks
         protected UnityEvent<bool> OnSprintStateChanges { get; } = new();

@@ -27,6 +27,7 @@ namespace Sketch.VN
         [SerializeField, Tooltip("Text that will show your visual novel story")]
         private TextDisplay _display;
 
+        [Header("Characters")]
         [SerializeField, Tooltip("List of characters that are shown by your visual novel")]
         private VNCharacterInfo[] _characters;
         private VNCharacterInfo _currentCharacter;
