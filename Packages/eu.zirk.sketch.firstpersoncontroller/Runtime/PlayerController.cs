@@ -53,7 +53,6 @@ namespace Sketch.FPS
         private CharacterController _controller;
         private bool _isSprinting;
         private float _verticalSpeed;
-        private Vector3 _baseSpawnPos;
 
         private int _controlIndex;
         protected PlayerControlInfo CurrentControl => _controls[_controlIndex];
@@ -163,7 +162,6 @@ namespace Sketch.FPS
             }
 
             _controller = GetComponent<CharacterController>();
-            _baseSpawnPos = transform.position;
             if (_interactionText != null) _interactionText.gameObject.SetActive(false);
 
             if (_triggerArea != null)
@@ -251,12 +249,6 @@ namespace Sketch.FPS
             if (DidHitRoof)
             {
                 ResetGravity();
-            }
-
-            if (transform.position.y < -10f)
-            {
-                transform.position = _baseSpawnPos;
-                _verticalSpeed = 0f;
             }
 
             // If we can interact with anything, we check if target changed
