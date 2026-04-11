@@ -2,14 +2,26 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Sketch.Translation
 {
     public class Translate
     {
-        public static string[] Languages { set; get; } = new string[] { "english" };
+        /// <summary>
+        /// Languages available in the game
+        /// </summary>
+        public static string[] Languages { private set; get; } = new string[] { "english" };
 
+        /// <summary>
+        /// Apply a modification on a translation
+        /// </summary>
         public Func<string, string> TranslationHook;
+
+        /// <summary>
+        /// Called when the current language is changed
+        /// </summary>
+        public UnityEvent OnLanguageChanged { get; } = new();
 
         private Translate()
         {
@@ -32,6 +44,7 @@ namespace Sketch.Translation
             if (overrideLanguages != null) Languages = overrideLanguages;
 
             UpdateTranslations();
+            OnLanguageChanged.Invoke();
         }
 
         private void UpdateTranslations()
