@@ -44,7 +44,6 @@ namespace Sketch.Translation
             if (overrideLanguages != null) Languages = overrideLanguages;
 
             UpdateTranslations();
-            OnLanguageChanged.Invoke();
         }
 
         private void UpdateTranslations()
@@ -94,12 +93,10 @@ namespace Sketch.Translation
                 {
                     tt.UpdateText();
                 }
-                OnTranslationChange?.Invoke(this, new());
+                OnLanguageChanged.Invoke();
             }
             get => _currentLanguage;
         }
-
-        public event EventHandler OnTranslationChange;
 
         private readonly Dictionary<string, Dictionary<string, string>> _translationData = new();
     }
