@@ -89,7 +89,7 @@ namespace Sketch.Translation
                     throw new ArgumentException($"Invalid translation key {value}", nameof(value));
                 }
                 _currentLanguage = value;
-                foreach (var tt in UnityEngine.Object.FindObjectsByType<TMP_TextTranslate>(FindObjectsSortMode.None))
+                foreach (var tt in UnityEngine.Object.FindObjectsByType<TMP_TextTranslate>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 {
                     tt.UpdateText();
                 }
