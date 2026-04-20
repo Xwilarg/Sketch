@@ -55,8 +55,17 @@ Show dialogs workflows within your game and let the text scale properly with its
 
 - **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.visualnovel`
 - **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.visualnovel/README.md
+- **Dependencies**: None
+
+## eu.zirk.sketch.visualnovel.inkleink
+
+Ink plugin foor Sketch.VisualNovel
+
+- **Package** `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.visualnovel.inkleink`
+- **Documentation** https://github.com/Xwilarg/Sketch/blob/master/Packages/eu.zirk.sketch.visualnovel.inkleink/README.md
 - **Dependencies**
     - **com.inkle.ink-unity-integration**: `https://github.com/inkle/ink-unity-integration.git#upm`
+    - **eu.zirk.sketch.visualnovel**: `https://github.com/Xwilarg/Sketch.git?path=/Packages/eu.zirk.sketch.visualnovel`
 
 ## eu.zirk.sketch.translation
 
