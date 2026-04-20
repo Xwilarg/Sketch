@@ -1,4 +1,5 @@
 using Sketch.Achievement;
+using Sketch.VN.InkleInk;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -14,7 +15,7 @@ namespace Sketch.VN
 
         private void Start()
         {
-            VNManager.Instance.ShowStory(_introStory,
+            VNManager.Instance.ShowStory(new InkStory(_introStory),
                 onDone: () => { SceneManager.LoadScene("Main"); },
                 onTags: (tag, value) =>
                 {

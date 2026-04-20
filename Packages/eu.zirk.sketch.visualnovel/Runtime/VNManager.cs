@@ -1,5 +1,4 @@
-﻿using Ink.Runtime;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +31,6 @@ namespace Sketch.VN
         private VNCharacterInfo[] _characters;
         private VNCharacterInfo _currentCharacter;
 
-        private Story _story;
-
         [Header("Displayed sprite")]
         [SerializeField, Tooltip("Where the image of the character will be shown")]
         private Image _characterImage;
@@ -65,6 +62,8 @@ namespace Sketch.VN
         [SerializeField, Tooltip("Prefab of the choices to spawn them in runtime")]
         private GameObject _choicePrefab;
 
+        private IStory _story;
+
         private bool _isSkipEnabled;
         private float _skipTimer;
         private float _skipTimerRef = .1f;
@@ -93,18 +92,18 @@ namespace Sketch.VN
             {
                 _display.OnDisplayDone += (_sender, _e) =>
                 {
-                    if (_story.currentChoices.Any())
+                    if (_story.Choices.Any())
                     {
                         ResetVN();
-                        foreach (var choice in _story.currentChoices)
+                        foreach (var choice in _story.Choices)
                         {
                             var button = Instantiate(_choicePrefab, _choiceContainer);
-                            button.GetComponentInChildren<TMP_Text>().text = choice.text;
+                            button.GetComponentInChildren<TMP_Text>().text = choice.Text;
 
                             var elem = choice;
                             button.GetComponent<Button>().onClick.AddListener(() =>
                             {
-                                _story.ChoosePath(elem.targetPath);
+                                _story.ChoosePath(elem);
                                 for (int i = 0; i < _choiceContainer.childCount; i++)
                                     Destroy(_choiceContainer.GetChild(i).gameObject);
                                 DisplayStory(_story.Continue());
@@ -171,12 +170,10 @@ namespace Sketch.VN
         /// <param name="updateVariables">Method taking a VariablesState as parameter, allow to update the variables within the Ink file</param>
         /// <param name="onDone">Called once the story is done being read</param>
         /// <param name="onTags">Called upon an unknown tag is found, first parameter is the tag name and second is its value, function expect to return if the tag was treated or not</param>
-        public void ShowStory(TextAsset asset, Action<VariablesState> updateVariables = null, Action onDone = null, Func<string, string, bool> onTags = null)
+        public void ShowStory(IStory story, Action onDone = null, Func<string, string, bool> onTags = null)
         {
-            Debug.Log($"[STORY] Playing {asset.name}");
+            _story = story;
             _currentCharacter = null;
-            _story = new(asset.text);
-            updateVariables?.Invoke(_story.variablesState);
             _onDone = onDone;
             _onTags = onTags;
             ResetVN();
@@ -198,7 +195,7 @@ namespace Sketch.VN
                 _nameText.text = string.Empty;
             }
 
-            foreach (var tag in _story.currentTags)
+            foreach (var tag in _story.CurrentTags)
             {
                 var s = tag.Split(' ');
                 var content = string.Join(' ', s.Skip(1));
@@ -340,12 +337,12 @@ namespace Sketch.VN
                 // We are slowly displaying a text, force the whole display
                 _display.ForceDisplay();
             }
-            else if (_story.currentChoices.Any())
+            else if (_story.Choices.Any())
             {
                 // Waiting for the user to input a choice
             }
-            else if (_story.canContinue && // There is text left to write
-                !_story.currentChoices.Any()) // We are not currently in a choice
+            else if (_story.CanContinue && // There is text left to write
+                !_story.Choices.Any()) // We are not currently in a choice
             {
                 DisplayStory(_story.Continue());
             }
@@ -375,7 +372,7 @@ namespace Sketch.VN
         {
             _isAutoEnabled = !_isAutoEnabled;
 
-            if (_isAutoEnabled && _display.IsDisplayDone && _story.canContinue && !_story.currentChoices.Any())
+            if (_isAutoEnabled && _display.IsDisplayDone && _story.CanContinue && !_story.Choices.Any())
             {
                 DisplayNextDialogue();
             }

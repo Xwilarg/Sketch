@@ -327,6 +327,15 @@
         "com.inkle.ink-unity-integration": "1.2.2"
       }
     },
+    "eu.zirk.sketch.visualnovel.inkleink": {
+      "version": "file:eu.zirk.sketch.visualnovel.inkleink",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.inkle.ink-unity-integration": "1.2.2",
+        "eu.zirk.sketch.visualnovel": "1.0.0"
+      }
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
