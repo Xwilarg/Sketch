@@ -49,7 +49,7 @@ A way to save and load user data
 
 ## eu.zirk.sketch.visualnovel
 
-Visual novel engine working with Ink
+Visual novel engine working
 
 Show dialogs workflows within your game and let the text scale properly with its container
 

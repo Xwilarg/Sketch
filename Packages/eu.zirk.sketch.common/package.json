@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "author": {
     "name": "Xwilarg",
-    "email": "contact@zirk.eu",
-    "url": "https://zirk.eu"
+    "url": "https://zirk.eu",
+    "email": "contact@zirk.eu"
   },
-  "displayName": "Sketch.Common"
+  "displayName": "Sketch.Common",
+  "description": "Various utility tools"
 }

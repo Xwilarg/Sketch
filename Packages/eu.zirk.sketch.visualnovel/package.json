@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "author": {
     "name": "Xwilarg",
-    "email": "contact@zirk.eu",
-    "url": "https://zirk.eu"
+    "url": "https://zirk.eu",
+    "email": "contact@zirk.eu"
   },
   "displayName": "Sketch.VisualNovel",
-  "dependencies": {
-    "com.inkle.ink-unity-integration": "1.2.2"
-  }
+  "description": "Visual novel engine\r\n\r\nShow dialogs workflows within your game and let the text scale properly with its container"
 }

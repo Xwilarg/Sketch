@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "author": {
     "name": "Xwilarg",
-    "email": "contact@zirk.eu",
-    "url": "https://zirk.eu"
+    "url": "https://zirk.eu",
+    "email": "contact@zirk.eu"
   },
   "dependencies": {
     "eu.zirk.sketch.common": "1.0.0"
   },
-  "displayName": "Sketch.FirstPersonController"
+  "displayName": "Sketch.FirstPersonController",
+  "description": "Easy first person controller to integrate in your project\r\n\r\nAlso come with an interaction system and with mobile compatibility"
 }

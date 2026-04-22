@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "author": {
     "name": "Xwilarg",
-    "email": "contact@zirk.eu",
-    "url": "https://zirk.eu"
+    "url": "https://zirk.eu",
+    "email": "contact@zirk.eu"
   },
   "displayName": "Sketch.Translation",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.2"
-  }
+  },
+  "description": "Localize your game with a few clicks"
 }
