@@ -18,10 +18,12 @@ namespace Sketch.Drawing
         [SerializeField]
         private float _maxLength = 20f;
 
+        [SerializeField]
+        private float MinDistance = .1f;
+
         public Camera Camera { set; private get; }
         private readonly List<Vector3> _positions = new();
         private List<Vector3> _positionBuffer = new();
-        private readonly float MinDistance = .1f;
 
         /// <summary>
         /// Current length of the stroke drawn on screen
