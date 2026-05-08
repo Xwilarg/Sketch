@@ -12,6 +12,12 @@ namespace Sketch.Drawing
         private LineRenderer _lr, _bufferLr;
         private LineShineAnim _bufferAnim;
 
+        [SerializeField]
+        private bool _detectClosedShapes = true;
+
+        [SerializeField]
+        private float _maxLength = 20f;
+
         public Camera Camera { set; private get; }
         private readonly List<Vector3> _positions = new();
         private List<Vector3> _positionBuffer = new();
@@ -21,7 +27,6 @@ namespace Sketch.Drawing
         /// Current length of the stroke drawn on screen
         /// </summary>
         public float CurrLength { private set; get; }
-        private const float MaxLength = 20f;
 
         private readonly List<ITargetShape> _shapes = new();
 
@@ -218,7 +223,7 @@ namespace Sketch.Drawing
                         var dist = Vector2.Distance(_positions.Last(), position);
                         if (dist > MinDistance)
                         {
-                            if (_positions.Count > 3)
+                            if (_positions.Count > 3 && _detectClosedShapes)
                             {
                                 var pointC = _positions.Last();
                                 for (int i = 1; i < _positions.Count - 1; i++)
@@ -265,7 +270,7 @@ namespace Sketch.Drawing
                             }
 
                             CurrLength += dist;
-                            while (CurrLength > MaxLength)
+                            while (CurrLength > _maxLength)
                             {
                                 var firstDist = Vector2.Distance(_positions[0], _positions[1]);
                                 CurrLength -= firstDist;
