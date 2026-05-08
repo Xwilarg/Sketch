@@ -23,13 +23,21 @@ namespace Sketch.Drawing
         public float CurrLength { private set; get; }
         private const float MaxLength = 20f;
 
-        private List<ITargetShape> _shapes = new();
+        private readonly List<ITargetShape> _shapes = new();
 
+        /// <summary>
+        /// Register a shape to those that can be caught
+        /// </summary>
+        /// <param name="shape"></param>
         public void Register(ITargetShape shape)
         {
             _shapes.Add(shape);
         }
 
+        /// <summary>
+        /// Unregister a shape to those that can be caught
+        /// </summary>
+        /// <param name="shape"></param>
         public void Unregister(ITargetShape shape)
         {
             _shapes.Remove(shape);
@@ -38,13 +46,19 @@ namespace Sketch.Drawing
         private void Awake()
         {
             Instance = this;
+            Camera = Camera.main;
+
+            if (_lr == null) Debug.LogError($"The {nameof(_lr)} parameter of DrawingManager must be set");
 
             // If objects are prefabs, we instantiate them
             if (_lr.gameObject.scene.name == null) _lr = Instantiate(_lr).GetComponent<LineRenderer>();
-            if (_bufferLr.gameObject.scene.name == null) _bufferLr = Instantiate(_bufferLr).GetComponent<LineRenderer>();
 
-            Camera = Camera.main;
-            _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
+            if (_bufferLr != null)
+            {
+                if (_bufferLr.gameObject.scene.name == null) _bufferLr = Instantiate(_bufferLr).GetComponent<LineRenderer>();
+
+                _bufferAnim = _bufferLr.GetComponent<LineShineAnim>();
+            }
         }
         // Check if 2 segments intersect
         // https://stackoverflow.com/a/9997374
@@ -148,6 +162,16 @@ namespace Sketch.Drawing
         }
 
         /// <summary>
+        /// Get all positions of the currently drawn line
+        /// </summary>
+        public IEnumerable<Vector3> GetOngoingPositions()
+        {
+            Vector3[] positions = new Vector3[_lr.positionCount];
+            _lr.GetPositions(positions);
+            return positions;
+        }
+
+        /// <summary>
         /// Remove all lines on screen
         /// </summary>
         public void CleanLines()
@@ -155,7 +179,7 @@ namespace Sketch.Drawing
             _positions.Clear();
             _positionBuffer.Clear();
             _lr.positionCount = 0;
-            _bufferLr.positionCount = 0;
+            if (_bufferLr != null) _bufferLr.positionCount = 0;
             CurrLength = 0;
         }
 
@@ -224,9 +248,12 @@ namespace Sketch.Drawing
                                         {
                                             position
                                         };
-                                        _bufferLr.positionCount = _positionBuffer.Count;
-                                        _bufferLr.SetPositions(_positionBuffer.ToArray());
-                                        _bufferAnim?.StartTimer();
+                                        if (_bufferLr != null)
+                                        {
+                                            _bufferLr.positionCount = _positionBuffer.Count;
+                                            _bufferLr.SetPositions(_positionBuffer.ToArray());
+                                            _bufferAnim?.StartTimer();
+                                        }
                                         _positions.Clear();
                                         CurrLength = 0;
 
