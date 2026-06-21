@@ -149,12 +149,11 @@ namespace Sketch.VN
         {
             _isSkipEnabled = false;
             _isAutoEnabled = false;
-            _hideCharacter = false;
 
             if (resetUI)
             {
                 _container.SetActive(true);
-                if (_characterImage != null && _currentCharacter != null && _currentCharacter.Image != null)
+                if (_characterImage != null && _currentCharacter != null && _currentCharacter.Image != null && !_hideCharacter)
                 {
                     _characterImage.gameObject.SetActive(true);
                     foreach (var cio in _overlays.Where(x => x.IsSet)) cio.Image.gameObject.SetActive(true);
@@ -177,6 +176,7 @@ namespace Sketch.VN
         {
             _story = story;
             _currentCharacter = null;
+            _hideCharacter = false;
             _onDone = onDone;
             _onTags = onTags;
             ResetVN();
