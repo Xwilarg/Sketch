@@ -32,6 +32,8 @@ Some of the [Ink tags](https://github.com/inkle/ink/blob/master/Documentation/Wr
 - **#speaker name/none**: Look for the corresponding character and how its name and image, if the characters attribute is empty, will use the parameter given as text
 - **#skip true/false**: Toggle skip option manually
 - **#background name/none**: Show an image on the background
+- **hide character**: Hide character sprite (speaker only set name)
+- **show character**: Show character sprite
 
 ### VNManager attributes
 All the following attributes are optional

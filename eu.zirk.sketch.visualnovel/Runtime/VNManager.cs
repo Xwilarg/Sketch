@@ -68,6 +68,8 @@ namespace Sketch.VN
         private float _skipTimer;
         private float _skipTimerRef = .1f;
 
+        private bool _hideCharacter;
+
         private bool _isAutoEnabled;
 
         private bool _isStoryOngoing;
@@ -147,6 +149,7 @@ namespace Sketch.VN
         {
             _isSkipEnabled = false;
             _isAutoEnabled = false;
+            _hideCharacter = false;
 
             if (resetUI)
             {
@@ -253,6 +256,14 @@ namespace Sketch.VN
                         else Debug.LogError($"[STORY] Unable to find format {content}");
                         break;
 
+                    case "hide":
+                        if (string.Equals(content, "character", StringComparison.InvariantCultureIgnoreCase)) _hideCharacter = true;
+                        break;
+
+                    case "show":
+                        if (string.Equals(content, "character", StringComparison.InvariantCultureIgnoreCase)) _hideCharacter = false;
+                        break;
+
                     default:
                         var overlayTag = _currentCharacter?.Overlays?.FirstOrDefault(x => string.Equals(x.ParentTag, s[0], StringComparison.InvariantCultureIgnoreCase));
                         if (overlayTag != null)
@@ -308,7 +319,7 @@ namespace Sketch.VN
                 }
                 if (_characterImage != null)
                 {
-                    if (_currentCharacter.Image != null)
+                    if (_currentCharacter.Image != null && !_hideCharacter)
                     {
                         _characterImage.gameObject.SetActive(true);
                         _characterImage.sprite = _currentCharacter.Image;
