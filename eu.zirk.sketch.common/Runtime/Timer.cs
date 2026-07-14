@@ -15,6 +15,7 @@ namespace Sketch.Common
 
         public float TimerClamped => Mathf.Clamp(_timer, 0f, _maxTime);
         public float TimerClamped01 => _maxTime == 0f ? 0f : Mathf.Clamp01(_timer / _maxTime);
+        public float Timer => _timer;
 
         public void Start(float maxTime)
         {
