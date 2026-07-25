@@ -3,7 +3,8 @@
     "rootNamespace": "Sketch.VN.InkleInk",
     "references": [
         "GUID:58bed0e7c5306824586d7eda03609289",
-        "GUID:d077f3486ef88474f92bbbcd528af7be"
+        "GUID:d077f3486ef88474f92bbbcd528af7be",
+        "GUID:15a4664aabb2e4c7cb551f393055a4ab"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
