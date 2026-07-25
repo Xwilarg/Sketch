@@ -8,7 +8,7 @@
   },
   "displayName": "Sketch.VisualNovel.Inkleink",
   "dependencies": {
-    "com.inkle.ink-unity-integration": "1.2.2",
+    "com.inkle.ink-unity-integration": "2.0.0",
     "eu.zirk.sketch.visualnovel": "1.0.0"
   },
   "description": "Ink plugin foor Sketch.VisualNovel"
