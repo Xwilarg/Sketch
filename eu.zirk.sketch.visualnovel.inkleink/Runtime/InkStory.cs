@@ -1,4 +1,5 @@
 using Ink.Runtime;
+using Ink.UnityIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ namespace Sketch.VN.InkleInk
 {
     public class InkStory : IStory
     {
-        public InkStory(TextAsset asset, Action<VariablesState> updateVariables = null)
+        public InkStory(InkFile inkFile, Action<VariablesState> updateVariables = null)
         {
-            _story = new(asset.text);
+            _story = new(inkFile.storyJson);
             updateVariables?.Invoke(_story.variablesState);
         }
 
