@@ -286,7 +286,7 @@ namespace Sketch.FPS
         /// </summary>
         public void RemoveInteraction(IInteractable i)
         {
-            _interactions.RemoveAll(x => x.GameObject.GetInstanceID() == i.GameObject.GetInstanceID());
+            _interactions.RemoveAll(x => x.GameObject.GetEntityId() == i.GameObject.GetEntityId());
             UpdateInteractionText();
         }
 
