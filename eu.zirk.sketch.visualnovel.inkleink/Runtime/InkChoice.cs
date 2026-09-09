@@ -2,8 +2,14 @@
 
 namespace Sketch.VN.InkleInk
 {
-    public class InkChoice : Choice, IChoice
+    public class InkChoice : IChoice
     {
-        public string Text => text;
+        public InkChoice(Choice choice)
+        {
+            Choice = choice;
+        }
+
+        public Choice Choice { get; }
+        public string Text => Choice.text;
     }
 }

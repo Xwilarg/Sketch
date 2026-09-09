@@ -3,7 +3,6 @@ using Ink.UnityIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Sketch.VN.InkleInk
 {
@@ -17,7 +16,7 @@ namespace Sketch.VN.InkleInk
 
         private Story _story;
 
-        public IEnumerable<IChoice> Choices => _story.currentChoices.Cast<InkChoice>();
+        public IEnumerable<IChoice> Choices => _story.currentChoices.Select(x => new InkChoice(x));
 
         public IEnumerable<string> CurrentTags => _story.currentTags;
 
@@ -30,7 +29,7 @@ namespace Sketch.VN.InkleInk
 
         public void ChoosePath(IChoice choice)
         {
-            _story.ChoosePath(((Choice)choice).targetPath);
+            _story.ChoosePath((((InkChoice)choice).Choice).targetPath);
         }
     }
 }
