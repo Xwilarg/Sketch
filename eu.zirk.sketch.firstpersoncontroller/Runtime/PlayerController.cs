@@ -370,7 +370,7 @@ namespace Sketch.FPS
         }
 
         #region Inputs
-        public void OnMobileDrag(InputAction.CallbackContext value)
+        public virtual void OnMobileDrag(InputAction.CallbackContext value)
         {
             if (value.phase == InputActionPhase.Started)
             {
@@ -390,24 +390,24 @@ namespace Sketch.FPS
             }
         }
 
-        public void OnMovement(InputAction.CallbackContext value)
+        public virtual void OnMovement(InputAction.CallbackContext value)
         {
             SetMouvement(value.ReadValue<Vector2>());
         }
 
-        public void OnLook(InputAction.CallbackContext value)
+        public virtual void OnLook(InputAction.CallbackContext value)
         {
             var rot = value.ReadValue<Vector2>();
             _lastControllerRot = null;
             RotateHead(rot);
         }
 
-        public void OnLookController(InputAction.CallbackContext value)
+        public virtual void OnLookController(InputAction.CallbackContext value)
         {
             _lastControllerRot = value.ReadValue<Vector2>();
         }
 
-        public void OnJump(InputAction.CallbackContext value)
+        public virtual void OnJump(InputAction.CallbackContext value)
         {
             if (_controller.isGrounded && IsActive)
             {
@@ -415,7 +415,7 @@ namespace Sketch.FPS
             }
         }
 
-        public void OnSprint(InputAction.CallbackContext value)
+        public virtual void OnSprint(InputAction.CallbackContext value)
         {
             _isSprinting = value.ReadValueAsButton();
             OnSprintStateChanges.Invoke(_isSprinting);
@@ -433,7 +433,7 @@ namespace Sketch.FPS
                 UpdateInteractionText();
             }
         }
-        public void OnInteract(InputAction.CallbackContext value)
+        public virtual void OnInteract(InputAction.CallbackContext value)
         {
             if (value.phase == InputActionPhase.Started)
             {
