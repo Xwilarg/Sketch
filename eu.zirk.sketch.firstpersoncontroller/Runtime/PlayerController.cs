@@ -17,9 +17,11 @@ namespace Sketch.FPS
 
         [SerializeField]
         private float _horizontalSensitivity = .1f;
+        public float HorizontalSensitivity { set { _horizontalSensitivity = value; } get { return _horizontalSensitivity; }  }
 
         [SerializeField]
         private float _verticalSensitivity = .1f;
+        public float VerticalSensitivity { set { _verticalSensitivity = value; } get { return _verticalSensitivity; } }
 
         [SerializeField]
         private float _controllerSensitivity = 750f;
