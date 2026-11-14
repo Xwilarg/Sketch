@@ -47,7 +47,7 @@ namespace Sketch.Translation
 
         public void SetLanguages(string[] overrideLanguages)
         {
-            if (overrideLanguages != null|| overrideLanguages.Length == 0) return;
+            if (overrideLanguages == null|| overrideLanguages.Length == 0) return;
             
             Languages = overrideLanguages;
             _defaultLanguage = overrideLanguages[0];
@@ -60,7 +60,7 @@ namespace Sketch.Translation
         }
         public void SetLanguages(Dictionary<string, string> overrideLanguages)
         {
-            if (overrideLanguages != null || overrideLanguages.Count == 0) return;
+            if (overrideLanguages == null || overrideLanguages.Count == 0) return;
 
             Languages = overrideLanguages.Keys.ToArray();
             _paths = overrideLanguages;
