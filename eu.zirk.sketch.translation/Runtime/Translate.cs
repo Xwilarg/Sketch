@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +13,10 @@ namespace Sketch.Translation
         /// Languages available in the game
         /// </summary>
         public static string[] Languages { private set; get; } = new string[] { "english" };
+        /// <summary>
+        /// Where all files are located in Resources/
+        /// </summary>
+        private static Dictionary<string, string> _paths = new();
 
         /// <summary>
         /// Apply a modification on a translation
@@ -45,13 +50,25 @@ namespace Sketch.Translation
 
             UpdateTranslations();
         }
+        public void SetLanguages(Dictionary<string, string> overrideLanguages)
+        {
+            if (overrideLanguages != null)
+            {
+                Languages = overrideLanguages.Keys.ToArray();
+                _paths = overrideLanguages;
+            }
+
+            UpdateTranslations();
+        }
 
         private void UpdateTranslations()
         {
             _translationData.Clear();
             foreach (var lang in Languages)
             {
-                _translationData.Add(lang, JsonConvert.DeserializeObject<Dictionary<string, string>>(Resources.Load<TextAsset>(lang).text));
+                _translationData.Add(lang, JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                    Resources.Load<TextAsset>(_paths.TryGetValue(lang, out var path) ? path : lang).text
+                ));
             }
         }
 
@@ -59,15 +76,26 @@ namespace Sketch.Translation
 
         public string Tr(string key, params string[] arguments)
         {
-            var langData = _translationData[_currentLanguage];
+            return TrWithLanguage(key, _currentLanguage, arguments);
+        }
+
+        public string TrWithLanguage(string key, string language, string[] arguments)
+        {
+            var langData = _translationData[language];
             string sentence;
             if (langData.ContainsKey(key))
             {
                 sentence = langData[key];
             }
+            else if (_translationData["english"].TryGetValue(key, out var value))
+            {
+                Debug.LogWarning($"[Translation] Impossible to find key {key} in {language}");
+                sentence = _translationData["english"][key];
+            }
             else
             {
-                sentence = _translationData["english"][key];
+                Debug.LogError($"[Translation] Impossible to find key {key}");
+                sentence = key;
             }
             for (int i = 0; i < arguments.Length; i++)
             {
