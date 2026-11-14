@@ -51,12 +51,11 @@ namespace Sketch.Translation
             
             Languages = overrideLanguages;
             _defaultLanguage = overrideLanguages[0];
+            UpdateTranslations();
             if (!Languages.Contains(CurrentLanguage))
             {
                 CurrentLanguage = _defaultLanguage;
             }
-
-            UpdateTranslations();
         }
         public void SetLanguages(Dictionary<string, string> overrideLanguages)
         {
@@ -65,12 +64,11 @@ namespace Sketch.Translation
             Languages = overrideLanguages.Keys.ToArray();
             _paths = overrideLanguages;
             _defaultLanguage = Languages[0];
+            UpdateTranslations();
             if (!Languages.Contains(CurrentLanguage))
             {
                 CurrentLanguage = _defaultLanguage;
             }
-
-            UpdateTranslations();
         }
 
         private void UpdateTranslations()
