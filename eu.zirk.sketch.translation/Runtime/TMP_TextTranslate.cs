@@ -18,16 +18,16 @@ namespace Sketch.Translation
 
         private void Start()
         {
+            if (_original != null) return; // UpdateText already called
+
             _original = GetComponent<TMP_Text>().text;
-            if (_original == null)
-            {
-                Debug.LogError("TMP_TextTranslate must have a TMP_Text component attached");
-            }
-            else UpdateText();
+            UpdateText();
         }
 
         public void UpdateText()
         {
+            _original ??= GetComponent<TMP_Text>().text;
+
             var sentence = _original;
             foreach (var match in Regex.Matches(_original, "{([^}]+)}").Cast<Match>())
             {
