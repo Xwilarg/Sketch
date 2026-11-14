@@ -9,6 +9,7 @@ namespace Sketch.Translation
 {
     public class Translate
     {
+        private static string _defaultLanguage = "english";
         /// <summary>
         /// Languages available in the game
         /// </summary>
@@ -46,16 +47,27 @@ namespace Sketch.Translation
 
         public void SetLanguages(string[] overrideLanguages)
         {
-            if (overrideLanguages != null) Languages = overrideLanguages;
+            if (overrideLanguages != null|| overrideLanguages.Length == 0) return;
+            
+            Languages = overrideLanguages;
+            _defaultLanguage = overrideLanguages[0];
+            if (!Languages.Contains(CurrentLanguage))
+            {
+                CurrentLanguage = _defaultLanguage;
+            }
 
             UpdateTranslations();
         }
         public void SetLanguages(Dictionary<string, string> overrideLanguages)
         {
-            if (overrideLanguages != null)
+            if (overrideLanguages != null || overrideLanguages.Count == 0) return;
+
+            Languages = overrideLanguages.Keys.ToArray();
+            _paths = overrideLanguages;
+            _defaultLanguage = Languages[0];
+            if (!Languages.Contains(CurrentLanguage))
             {
-                Languages = overrideLanguages.Keys.ToArray();
-                _paths = overrideLanguages;
+                CurrentLanguage = _defaultLanguage;
             }
 
             UpdateTranslations();
@@ -72,7 +84,7 @@ namespace Sketch.Translation
             }
         }
 
-        public bool Exists(string key) => _translationData["english"].ContainsKey(key);
+        public bool Exists(string key) => _translationData[_defaultLanguage].ContainsKey(key);
 
         public string Tr(string key, params string[] arguments)
         {
@@ -87,14 +99,14 @@ namespace Sketch.Translation
             {
                 sentence = langData[key];
             }
-            else if (_translationData["english"].TryGetValue(key, out var value))
+            else if (_translationData[_defaultLanguage].TryGetValue(key, out var value))
             {
                 Debug.LogWarning($"[Translation] Impossible to find key {key} in {language}");
                 sentence = _translationData["english"][key];
             }
             else
             {
-                Debug.LogError($"[Translation] Impossible to find key {key}");
+                Debug.LogError($"[Translation] Impossible to find key {key} in both {language} and {_defaultLanguage}");
                 sentence = key;
             }
             for (int i = 0; i < arguments.Length; i++)
