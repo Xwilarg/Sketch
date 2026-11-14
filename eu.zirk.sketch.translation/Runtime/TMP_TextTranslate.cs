@@ -19,7 +19,11 @@ namespace Sketch.Translation
         private void Start()
         {
             _original = GetComponent<TMP_Text>().text;
-            UpdateText();
+            if (_original == null)
+            {
+                Debug.LogError("TMP_TextTranslate must have a TMP_Text component attached");
+            }
+            else UpdateText();
         }
 
         public void UpdateText()
