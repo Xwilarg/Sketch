@@ -100,7 +100,7 @@ namespace Sketch.Translation
             else if (_translationData[_defaultLanguage].TryGetValue(key, out var value))
             {
                 Debug.LogWarning($"[Translation] Impossible to find key {key} in {language}");
-                sentence = _translationData["english"][key];
+                sentence = _translationData[_defaultLanguage][key];
             }
             else
             {
